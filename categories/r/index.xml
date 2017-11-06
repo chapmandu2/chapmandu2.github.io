@@ -6,10 +6,20 @@
     <description>Recent content in R on Phil Chapman&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 21 Feb 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 06 Nov 2017 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/r/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Bioinformatics Tutorials</title>
+      <link>/post/2017/11/06/bioinformatics-tutorials/</link>
+      <pubDate>Mon, 06 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017/11/06/bioinformatics-tutorials/</guid>
+      <description>I recorded a number of video tutorials before I left CRUK-MI on how to use various resources. These can be found on their own YouTube Channel or via the list below:
+ Introduction to cell line data: Overview of data available and an explanation of different genomics data types and what they can be used for. Using IGV To Explore RNAseq Data: How to use the Broad Integrated Genomics Vieer to identify mutations and their consequences in RNAseq data Using the CCLE Genomics Explorer Shiny App To Identify Cell Lines : How to explore public domain cell line genomic data to identify suitable cell lines for further experimentation.</description>
+    </item>
     
     <item>
       <title>Bioinformatics in the Tidyverse</title>

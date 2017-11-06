@@ -21,6 +21,15 @@
     </item>
     
     <item>
+      <title>Bioinformatics</title>
+      <link>/categories/bioinformatics/</link>
+      <pubDate>Mon, 06 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/bioinformatics/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Chemical biology</title>
       <link>/categories/chemical-biology/</link>
       <pubDate>Wed, 07 Dec 2016 00:00:00 +0000</pubDate>
@@ -41,7 +50,7 @@
     <item>
       <title>R</title>
       <link>/categories/r/</link>
-      <pubDate>Tue, 21 Feb 2017 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 06 Nov 2017 00:00:00 +0000</pubDate>
       
       <guid>/categories/r/</guid>
       <description></description>
