@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>RNAseq on Phil Chapman&#39;s Blog</title>
+    <link>/categories/rnaseq/</link>
+    <description>Recent content in RNAseq on Phil Chapman&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 07 Dec 2016 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/rnaseq/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>RNAseq in preclinical drug discovery 1</title>
+      <link>/post/2016/12/07/rnaseq-in-preclinical-drug-discovery-1/</link>
+      <pubDate>Wed, 07 Dec 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2016/12/07/rnaseq-in-preclinical-drug-discovery-1/</guid>
+      <description>Introduction In the summer, James Hadfield from the Cancer Research UK Cambridge Institute and author of the Core Genomics blog wrote an excellent blog post where he described experimental considerations when carrying out RNA-seq experiments. He advocated generating 10-20M 50bp single end reads for a standard ‘microarray substitute’ differential gene expression experiment. Mick Watson of Opinionomics then raised the findings from a paper published by his group (Robert &amp;amp; Watson Genome Biology 2015) that some genes couldn’t be accurately quantitated due to the issue of multi-mapping: regions of similarity between closely related genes just can’t be differentiated between with shorter reads.</description>
+    </item>
+    
+  </channel>
+</rss>

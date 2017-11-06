@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>RStudio::conf 2016 on Phil Chapman&#39;s Blog</title>
+    <link>/categories/rstudioconf-2016/</link>
+    <description>Recent content in RStudio::conf 2016 on Phil Chapman&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 14 Jan 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/rstudioconf-2016/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>RStudio::conf Highlights Day 4</title>
+      <link>/post/2017/01/14/rstudioconf-highlights-day-4/</link>
+      <pubDate>Sat, 14 Jan 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017/01/14/rstudioconf-highlights-day-4/</guid>
+      <description>Introduction I’ve been lucky enough to spend the last few days in sunny Florida at the RStudio::conf 2017. This was made possible by RStudio’s very generous academic discount scheme, so thanks to them for that! Whilst I’ve been tweeting a few of the key moments as they happened this series of posts expands further on these tweets and gives links to further information.
+ RStudio::conf Highlights Days 1-2: shiny workshop RStudio::conf Highlights Day 3: the tidyverse RStudio::conf Highlights Day 3: the tidyverse   Applications of R Markdown Much of my day was spent listening to Yihue Xie talking us through an Advanced R Markdown tutorial as well as two conference presentations, one of which was on blogdown which I was excited about since it’s what I used to create this blog and has only been around a few months.</description>
+    </item>
+    
+    <item>
+      <title>RStudio::conf Highlights Day 3</title>
+      <link>/post/2017/01/13/rstudioconf-highlights-day-3/</link>
+      <pubDate>Fri, 13 Jan 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017/01/13/rstudioconf-highlights-day-3/</guid>
+      <description>Introduction I’ve been lucky enough to spend the last few days in sunny Florida at the RStudio::conf 2017. This was made possible by RStudio’s very generous academic discount scheme, so thanks to them for that! Whilst I’ve been tweeting a few of the key moments as they happened this series of posts expands further on these tweets and gives links to further information.
+ RStudio::conf Highlights Days 1-2: shiny workshop RStudio::conf Highlights Day 3: the tidyverse RStudio::conf Highlights Day 3: the tidyverse   The tidyverse Inevitably a big theme of the first day was the tidyverse and Hadley Wickham kicked the conference off with an overview of his latest thinking and developments in the suite of packages.</description>
+    </item>
+    
+    <item>
+      <title>RStudio::conf Highlights Days 1-2</title>
+      <link>/post/2017/01/12/rstudioconf-highlights-days-1-2/</link>
+      <pubDate>Thu, 12 Jan 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017/01/12/rstudioconf-highlights-days-1-2/</guid>
+      <description>Introduction I’ve been lucky enough to spend the last few days in sunny Florida at the RStudio::conf 2017. This was made possible by RStudio’s very generous academic discount scheme, so thanks to them for that! Whilst I’ve been tweeting a few of the key moments as they happened this series of posts expands further on these tweets and gives links to further information.
+ RStudio::conf Highlights Days 1-2: shiny workshop RStudio::conf Highlights Day 3: the tidyverse RStudio::conf Highlights Day 3: the tidyverse   Shiny The first two days was the Intermediate Shiny Workshop run by Joe Cheng - creator of shiny.</description>
+    </item>
+    
+  </channel>
+</rss>

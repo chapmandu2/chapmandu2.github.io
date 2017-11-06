@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tidyverse on Phil Chapman&#39;s Blog</title>
+    <link>/categories/tidyverse/</link>
+    <description>Recent content in Tidyverse on Phil Chapman&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 21 Feb 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/tidyverse/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Bioinformatics in the Tidyverse</title>
+      <link>/post/2017/02/21/bioinformatics-in-the-tidyverse/</link>
+      <pubDate>Tue, 21 Feb 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017/02/21/bioinformatics-in-the-tidyverse/</guid>
+      <description>Introduction This is a blog post to expand on a talk I gave at the Manchester R Users Group on 21st February 2017. In it I give a brief overview of the tidyverse and its core concepts, before going on to discuss how the same concepts can be applied to bioinformatics analysis using Bioconductor classes and packages.
+ What is the tidyverse? The tidyverse is a suite of tools primarily developed by Hadley Wickham and collaborators at RStudio.</description>
+    </item>
+    
+    <item>
+      <title>RStudio::conf Highlights Day 3</title>
+      <link>/post/2017/01/13/rstudioconf-highlights-day-3/</link>
+      <pubDate>Fri, 13 Jan 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017/01/13/rstudioconf-highlights-day-3/</guid>
+      <description>Introduction I’ve been lucky enough to spend the last few days in sunny Florida at the RStudio::conf 2017. This was made possible by RStudio’s very generous academic discount scheme, so thanks to them for that! Whilst I’ve been tweeting a few of the key moments as they happened this series of posts expands further on these tweets and gives links to further information.
+ RStudio::conf Highlights Days 1-2: shiny workshop RStudio::conf Highlights Day 3: the tidyverse RStudio::conf Highlights Day 3: the tidyverse   The tidyverse Inevitably a big theme of the first day was the tidyverse and Hadley Wickham kicked the conference off with an overview of his latest thinking and developments in the suite of packages.</description>
+    </item>
+    
+  </channel>
+</rss>
