@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Data Science on Phil Chapman&#39;s Blog</title>
+    <link>/categories/data-science/</link>
+    <description>Recent content in Data Science on Phil Chapman&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 03 Mar 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/data-science/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Why bioinformaticians should consider themselves data scientists</title>
+      <link>/post/2018/03/03/why-bioinformaticians-should-consider-themselves-data-scientists/</link>
+      <pubDate>Sat, 03 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018/03/03/why-bioinformaticians-should-consider-themselves-data-scientists/</guid>
+      <description>My background I&amp;rsquo;ve been a bioinformatician for most of the 20 years since I graduated, but now I&amp;rsquo;m a data scientist working for the Civil Service. In this post I&amp;rsquo;m going to explain why I made this change, and why I think all bioinformaticians should think of themselves as data scientists with a specialism in biology, rather than as a biologist with a specialism in computational science.
+I started my career at AstraZeneca working in a genetics and sequencing lab, looking for variations in genes that might explain differential response to drugs.</description>
+    </item>
+    
+  </channel>
+</rss>
