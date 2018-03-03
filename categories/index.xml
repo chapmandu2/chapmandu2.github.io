@@ -23,7 +23,7 @@
     <item>
       <title>Bioinformatics</title>
       <link>/categories/bioinformatics/</link>
-      <pubDate>Mon, 06 Nov 2017 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 03 Mar 2018 00:00:00 +0000</pubDate>
       
       <guid>/categories/bioinformatics/</guid>
       <description></description>
@@ -35,6 +35,15 @@
       <pubDate>Wed, 07 Dec 2016 00:00:00 +0000</pubDate>
       
       <guid>/categories/chemical-biology/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Data Science</title>
+      <link>/categories/data-science/</link>
+      <pubDate>Sat, 03 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/data-science/</guid>
       <description></description>
     </item>
     

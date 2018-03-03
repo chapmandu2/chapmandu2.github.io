@@ -6,10 +6,29 @@
     <description>Recent content in Home on Phil Chapman&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 06 Nov 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 03 Mar 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Why bioinformaticians should consider themselves data scientists</title>
+      <link>/post/2018/03/03/why-bioinformaticians-should-consider-themselves-data-scientists/</link>
+      <pubDate>Sat, 03 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018/03/03/why-bioinformaticians-should-consider-themselves-data-scientists/</guid>
+      <description>My background I&amp;rsquo;ve been a bioinformatician for most of the 20 years since I graduated, but now I&amp;rsquo;m a data scientist working for the Civil Service. In this post I&amp;rsquo;m going to explain why I made this change, and why I think all bioinformaticians should think of themselves as data scientists with a specialism in biology, rather than as a biologist with a specialism in computational science.
+I started my career at AstraZeneca working in a genetics and sequencing lab, looking for variations in genes that might explain differential response to drugs.</description>
+    </item>
+    
+    <item>
+      <title>Last day as a bioinformatician</title>
+      <link>/post/2017/11/11/last-day-as-a-bioinformatician/</link>
+      <pubDate>Sat, 11 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2017/11/11/last-day-as-a-bioinformatician/</guid>
+      <description>Today is my last day in the Drug Discovery Unit at CRUK-MI. There has been so much change this year it&amp;rsquo;s been hard to keep track! In April our previous group head Donald Ogilvie retired, and on the day he retired there was a serious fire at the Institute. We have subsequently relocated to Alderley Park, where I used to work when I was at Astrazeneca, which is causing me serious problems from a commuting perspective - rather than just over an hour on the train I now have to change trains and get a bus.</description>
+    </item>
     
     <item>
       <title>Bioinformatics Tutorials</title>
@@ -94,7 +113,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/about/</guid>
-      <description>Work Experience  2012-present: Lead Scientist for bioinformatics and data science in the Drug Discovery Unit at Cancer Research UK&amp;rsquo;s Manchester Institute 2008-2012: Associate Principal Scientist (Bioinformatics) at AstraZeneca 2002-2008: Senior Scientist (Bioinformatics) at AstraZeneca 1998-2002: Geneticist at AstraZeneca  Technical Experience  R and Bioconductor Visualisation including ggplot2 Shiny SQL and relational databases Dotmatics  Scientific Experience  Preclinical drug discovery New target review and validation Oncology and diabetes/obesity Bioinformatics Genomics and genetics  See more information on my LinkedIn profile.</description>
+      <description>Work Experience  2017-present: Data Scientist at Department for Work and Pensions 2012-2017: Lead Scientist for bioinformatics and data science in the Drug Discovery Unit at Cancer Research UK&amp;rsquo;s Manchester Institute 2008-2012: Associate Principal Scientist (Bioinformatics) at AstraZeneca 2002-2008: Senior Scientist (Bioinformatics) at AstraZeneca 1998-2002: Geneticist at AstraZeneca  Technical Experience  R and Bioconductor Visualisation including ggplot2 Shiny SQL and relational databases Dotmatics  Scientific Experience  Preclinical drug discovery New target review and validation Oncology and diabetes/obesity Bioinformatics Genomics and genetics  See more information on my LinkedIn profile.</description>
     </item>
     
     <item>
@@ -103,7 +122,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/consulting/</guid>
-      <description>As well being the Lead Scientist for Bioinformatics in the Drug Discovery Unit at the Cancer Research UK Manchster Institute, I am also an independent bioinformatics and data science consultant. My specialisms are preclinical drug discovery and cancer genetics, but take a look at my blog and projects to see if I might be able to help you!</description>
+      <description>I was previously the Lead Scientist for Bioinformatics in the Drug Discovery Unit at the Cancer Research UK Manchster Institute. I used this experience to provide independent bioinformatics and drug discovery data science consultancy. My specialisms are preclinical drug discovery and cancer genetics, but take a look at my blog and projects to see if I might be able to help you!</description>
     </item>
     
   </channel>
