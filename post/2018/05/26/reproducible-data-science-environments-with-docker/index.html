@@ -36,7 +36,7 @@
 
 <h2 id="introduction">Introduction</h2>
 
-<p>Since starting at DWP Digital, I&rsquo;ve spent quite a bit of time working with some colleagues developing our analysis environments.  We need to be able to control and adapt our environments quite rapidly so that we can use the latest and greatest tools, but we also need these environments to be robust and reproducible and to be deployed in a variety of hosting contexts including laptops and our secure internal environment.  Containerisation technology, specifically Docker, has emerged as a key tool in this and I wrote a non-technical &lsquo;official&rsquo; <a href="https://dwpdigital.blog.gov.uk/2018/05/18/using-containers-to-deliver-our-data-projects/">blog for DWP Digital</a> which gained quite a bit of interest.  This post covers the technical aspects of how what we actually did this which will hopefully be helpful to others in a similar situation.</p>
+<p>Since starting at DWP Digital, I&rsquo;ve spent quite a bit of time working with some colleagues developing our analysis environments.  We need to be able to control and adapt our environments quite rapidly so that we can use the latest and greatest tools, but we also need these environments to be robust and reproducible and to be deployed in a variety of hosting contexts including laptops and our secure internal environment.  Containerisation technology, specifically <a href="https://www.docker.com/">Docker</a>, has emerged as a key tool in this and I wrote a non-technical &lsquo;official&rsquo; <a href="https://dwpdigital.blog.gov.uk/2018/05/18/using-containers-to-deliver-our-data-projects/">blog for DWP Digital</a> which gained quite a bit of interest.  This post covers the technical aspects of how what we actually did this which will hopefully be helpful to others in a similar situation by walking through an example codebase on GitHub at <a href="https://github.com/chapmandu2/datasci_docker">chapmandu2/datasci_docker</a>.</p>
 
 <h2 id="three-components-of-reproducibility">Three components of reproducibility</h2>
 
@@ -101,7 +101,7 @@
 <ul>
 <li>the make command captures the current git commit and any git tags</li>
 <li>these are included in the <code>docker build</code> command as build arguments</li>
-<li>the build arguments are captured in the Dockerfile as Docker labels (external metadata)</li>
+<li>the build arguments are captured in the Dockerfile as Docker labels that can be retrieved with a <code>docker inspect</code> command (external metadata)</li>
 <li>the build arguments are fed to a shell script (see 00-docker) which creates various audit files in <code>/etc/docker</code></li>
 <li>the information in <code>/etc/docker</code> is then available to anything running within the Docker container (internal metadata)</li>
 </ul>
@@ -112,9 +112,9 @@
 # DOCKER BUILD INFORMATION 
 ################################ 
  
-This is docker image: ds-stage-02-r:v1.0 
-Built from git commit: c64b653 
-See https://github.com/chapmandu2/datasci_docker/tree/c64b653 for Dockerfile code 
+This is docker image: ds-stage-02-r:v1.1 
+Built from git commit: 3d07371 
+See https://github.com/chapmandu2/datasci_docker/tree/3d07371 for Dockerfile code 
 See /etc/docker/docker_build_history.txt for provenance of this environment. 
 See /etc/docker for more information 
  
@@ -125,14 +125,14 @@ See /etc/docker for more information
 
 <h3 id="clone-the-git-repo">Clone the git repo</h3>
 
-<p>Assuming that you already have Docker installed on your computer, clone the git repository:</p>
+<p>Assuming that you already have Docker installed on your computer, clone the git repository <a href="https://github.com/chapmandu2/datasci_docker">chapmandu2/datasci_docker</a> from GitHub:</p>
 
 <pre><code>git clone https://github.com/chapmandu2/datasci_docker
 </code></pre>
 
 <h3 id="repo-structure">Repo structure</h3>
 
-<p>Within the repo there is a Makefile and a readme and a number of directories each corresponding to an image.  The Makefile is the master Makefile and contains the shared logic required to build all of the images.  Each image also has its own Makefile which references the master Makefile.  Feel free to look at the Makefile but you don&rsquo;t need to understand the details at this stage.</p>
+<p>Within the repo there is a Makefile and a readme and a number of directories each corresponding to an image.  The Makefile at the top level is the master Makefile and contains the shared logic required to build all of the images.  Each image also has its own Makefile which references the master Makefile.  Feel free to look at the Makefile but you don&rsquo;t need to understand the details at this stage.</p>
 
 <h3 id="make-the-00-docker-image">Make the 00-docker image</h3>
 
@@ -144,9 +144,11 @@ See /etc/docker for more information
 
 <h3 id="make-the-02-r-image">Make the 02-r image</h3>
 
-<p>Now navigate to the <code>ds-stage-02-r</code> directory do the same steps as above: <code>make build</code> to build the image and <code>make run</code> to run it.  For a bit of fun try this command:
-<code>docker run -it --rm --entrypoint R ds-stage-02-r:latest</code>
-This will instantiate a container from the image as before, but rather than expose a bash prompt will run R and expose this.  To the user it&rsquo;s almost as quick as launching R running natively on their local system.</p>
+<p>Now navigate to the <code>ds-stage-02-r</code> directory do the same steps as above: <code>make build</code> to build the image and <code>make run</code> to run it.  For a bit of fun try this command:</p>
+
+<p><code>docker run -it --rm --entrypoint R ds-stage-02-r:latest</code></p>
+
+<p>This will instantiate a container from the image as before, but rather than expose a bash prompt will run R and expose this.  To the user it&rsquo;s almost as quick as launching R running natively on their local system.</p>
 
 <h3 id="make-the-03-rstudio-image">Make the 03-rstudio image</h3>
 
@@ -160,15 +162,15 @@ This will instantiate a container from the image as before, but rather than expo
 
 <p>I have deliberately not included in this post the part of the workflow that involves pushing the Docker image to a registry. However, the code is present in the Makefile and it is just a case of specifying <code>my-repo/my-image</code> as the base image, and modifying the Amazon ECR section of the master Makefile (line 40).  Then add a <code>make push</code> command to the sequence of make commands used thus far.  Note that I set up some logic that required a git commit associated with the image to be tagged in order to be pushed to a repository.</p>
 
-<p>The benefit of using a registry is that it makes it easier to deploy and share images, and that the build process can be carried out anywhere that the git repo is accessible from.  One useful option is to build images on an EC2 instance, since this has a very fast network connection that expidites the build process.</p>
+<p>The benefit of using a registry is that it makes it easier to deploy and share images, and that the build process can be carried out anywhere that the git repo and docker registry is accessible from.  One useful option is to build images on an EC2 instance on AWS, since this has a very fast network connection that expidites the build process.</p>
 
 <h2 id="potential-improvements">Potential improvements</h2>
 
-<p>The template shared here seems to have worked reasonably well but there is room for improvement.  I am a complete beginner in using Make and whilst it&rsquo;s very powerful, the Makefiles could be more cleanly constructed.  In addition, shared parameters such as registry address could be stored in a repo-wide yaml file rather than being buried within a Makefile.  The main improvement, however, stems from the use of git tags and commit id&rsquo;s.  As it stands, changes to the Dockerfile could be made but not committed, and the resultant image would still have the current git commit associated with it.  I left it like this for pragmatic reasons - when you are developing Docker containers it&rsquo;s a pain to have to commit every time you attempt to build!  So it&rsquo;s important to remember this, and at the end when you think you&rsquo;re done, to go back and build every image again with the same code.</p>
+<p>The template shared here seems to have worked reasonably well but there is room for improvement.  I am a complete beginner in using Make and whilst it&rsquo;s very powerful, the Makefiles could be more cleanly constructed.  In addition, shared parameters such as the registry address could be stored in a repo-wide yaml file rather than being buried within a Makefile.  The main improvement, however, would be in how git tags and commit id&rsquo;s are used.  As it stands, changes to the Dockerfile could be made but not committed, and the resultant image would still have the current git commit associated with it.  I left it like this for pragmatic reasons - when you are developing Docker containers it&rsquo;s a pain to have to commit every time you attempt to build!  So it&rsquo;s important to remember this, and at the end when you think you&rsquo;re done, to go back and build every image again with the same code.</p>
 
 <h2 id="conclusions">Conclusions</h2>
 
-<p>In this blog post I have shared a possible workflow for developing reproducible data science environments using Docker.  I hope that it useful to others in their research, and please let me know if you have any ideas for improvements!</p>
+<p>In this blog post I have shared a workflow for developing reproducible data science environments using Docker.  I hope that it useful to others in their research, and please let me know if you have any ideas for improvements!</p>
 
 </main>
 
