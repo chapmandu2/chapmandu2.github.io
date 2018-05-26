@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Phil Chapman&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 03 Mar 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 26 May 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Reproducible data science environments with Docker</title>
+      <link>/post/2018/05/26/reproducible-data-science-environments-with-docker/</link>
+      <pubDate>Sat, 26 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018/05/26/reproducible-data-science-environments-with-docker/</guid>
+      <description>Introduction Since starting at DWP Digital, I&amp;rsquo;ve spent quite a bit of time working with some colleagues developing our analysis environments. We need to be able to control and adapt our environments quite rapidly so that we can use the latest and greatest tools, but we also need these environments to be robust and reproducible and to be deployed in a variety of hosting contexts including laptops and our secure internal environment.</description>
+    </item>
     
     <item>
       <title>Why bioinformaticians should consider themselves data scientists</title>
