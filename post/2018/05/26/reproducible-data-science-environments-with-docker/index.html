@@ -52,7 +52,7 @@
 
 <h2 id="open-source-is-great-but-also-a-challenge-for-reproducibility">Open source is great, but also a challenge for reproducibility</h2>
 
-<p>Control of environments is more difficult.  The diversity and rapid evolution of data science tools is a huge benefit in contemporary data science, but the plethora of libraries, packages and versions can also cause problems.  A slight change in functionality between versions of one library can result in a change in the output of an analysis, even though the same code is used.  Although environment management options are available for R and Python themselves (packrat for R, pipenv and conda for R), these can still be problematic to use, especially if components outside of R/Python are important, for example system libraries.</p>
+<p>Control of environments is more difficult.  The diversity and rapid evolution of data science tools is a huge benefit in contemporary data science, but the plethora of libraries, packages and versions can also cause problems.  A slight change in functionality between versions of one library can result in a change in the output of an analysis, even though the same code is used.  Although environment management options are available for R and Python themselves (packrat for R, pipenv and conda for Python), these can still be problematic to use, especially if components outside of R/Python are important, for example system libraries.</p>
 
 <h2 id="enter-docker">Enter Docker</h2>
 
@@ -171,6 +171,13 @@ See /etc/docker for more information
 <h2 id="conclusions">Conclusions</h2>
 
 <p>In this blog post I have shared a workflow for developing reproducible data science environments using Docker.  I hope that it useful to others in their research, and please let me know if you have any ideas for improvements!</p>
+
+<h2 id="postscript">Postscript</h2>
+
+<ul>
+<li>There are RStudio and R images available on DockerHub under the <a href="https://hub.docker.com/u/rocker/">rocker</a> account.  These can be more convenient starting points than a linux base image.  In our case we needed Centos as the base Linux OS rather than Ubuntu, hence why we started from scratch.</li>
+<li>The example git repo was designed to be relatively quick to build for example purposes, it probably doesn&rsquo;t include enough linux libraries or R packages to actually be useful.  I&rsquo;ll try to add a more useful example to the repo.</li>
+</ul>
 
 </main>
 
