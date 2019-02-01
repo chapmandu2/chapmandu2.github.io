@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>R on Phil Chapman&#39;s Blog</title>
-    <link>/categories/r/</link>
-    <description>Recent content in R on Phil Chapman&#39;s Blog</description>
+    <title>r on Phil Chapman&#39;s Blog</title>
+    <link>/categories/r/index.xml</link>
+    <description>Recent content in r on Phil Chapman&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 26 May 2018 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="/categories/r/index.xml" rel="self" type="application/rss+xml" />
-    
+    <atom:link href="/categories/r/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Reproducible data science environments with Docker</title>
@@ -17,7 +14,153 @@
       <pubDate>Sat, 26 May 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/2018/05/26/reproducible-data-science-environments-with-docker/</guid>
-      <description>Introduction Since starting at DWP Digital, I&amp;rsquo;ve spent quite a bit of time working with some colleagues developing our analysis environments. We need to be able to control and adapt our environments quite rapidly so that we can use the latest and greatest tools, but we also need these environments to be robust and reproducible and to be deployed in a variety of hosting contexts including laptops and our secure internal environment.</description>
+      <description>
+
+&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+
+&lt;p&gt;Since starting at DWP Digital, I&amp;rsquo;ve spent quite a bit of time working with some colleagues developing our analysis environments.  We need to be able to control and adapt our environments quite rapidly so that we can use the latest and greatest tools, but we also need these environments to be robust and reproducible and to be deployed in a variety of hosting contexts including laptops and our secure internal environment.  Containerisation technology, specifically &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt;, has emerged as a key tool in this and I wrote a non-technical &amp;lsquo;official&amp;rsquo; &lt;a href=&#34;https://dwpdigital.blog.gov.uk/2018/05/18/using-containers-to-deliver-our-data-projects/&#34;&gt;blog for DWP Digital&lt;/a&gt; which gained quite a bit of interest.  This post covers the technical aspects of how what we actually did this which will hopefully be helpful to others in a similar situation by walking through an example codebase on GitHub at &lt;a href=&#34;https://github.com/chapmandu2/datasci_docker&#34;&gt;chapmandu2/datasci_docker&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;three-components-of-reproducibility&#34;&gt;Three components of reproducibility&lt;/h2&gt;
+
+&lt;p&gt;There are three important aspects to reproducible data science:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;code&lt;/li&gt;
+&lt;li&gt;data&lt;/li&gt;
+&lt;li&gt;environment&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Unless we have systems and processes in place to control and monitor changes to these three aspects, we won&amp;rsquo;t be able to reproduce our analysis.  Data is perhaps the easiest aspect to control, since in many cases the data is static and just won&amp;rsquo;t change, but even so it is worth recording data time stamps or creation dates.  If the data is a live feed then things become a lot more complex.  Code version control is a critical component of data analysis and git has emerged as the de-facto standard in data science.&lt;/p&gt;
+
+&lt;h2 id=&#34;open-source-is-great-but-also-a-challenge-for-reproducibility&#34;&gt;Open source is great, but also a challenge for reproducibility&lt;/h2&gt;
+
+&lt;p&gt;Control of environments is more difficult.  The diversity and rapid evolution of data science tools is a huge benefit in contemporary data science, but the plethora of libraries, packages and versions can also cause problems.  A slight change in functionality between versions of one library can result in a change in the output of an analysis, even though the same code is used.  Although environment management options are available for R and Python themselves (packrat for R, pipenv and conda for Python), these can still be problematic to use, especially if components outside of R/Python are important, for example system libraries.&lt;/p&gt;
+
+&lt;h2 id=&#34;enter-docker&#34;&gt;Enter Docker&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt; has emerged as a way to manage data science environments.  Docker containers can be thought of as very lightweight virtual machines, with the advantage that they can be relatively small and also fast to instantiate.  A Docker container is derived from a Docker image, and an image can be built from a recipe file called a Dockerfile.  This means that the code to build the Docker image can be version controlled in the same way as the analysis code, but also that the Docker image can be archived and retrieved in future so that the exact same environment can be used to run an analysis.  The rest of this blog post describes one possible workflow for using Docker for environment management, that also integrates &lt;a href=&#34;https://www.gnu.org/software/make/manual/html_node/Introduction.html&#34;&gt;Makefiles&lt;/a&gt; and &lt;a href=&#34;https://git-scm.com/&#34;&gt;git&lt;/a&gt; for a very high level of reproducibility.&lt;/p&gt;
+
+&lt;h2 id=&#34;overview-of-the-workflow&#34;&gt;Overview of the workflow&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&#34;/post/docker_workflow.png&#34; alt=&#34;Docker Workflow&#34; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;images-as-layers&#34;&gt;Images as layers&lt;/h3&gt;
+
+&lt;p&gt;We built our images as layers which build on top of eachother:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;00-docker: creates some foundations for capturing metadata&lt;/li&gt;
+&lt;li&gt;01-linux: installs the linux system libraries and applications such as R&lt;/li&gt;
+&lt;li&gt;02-r: installs a set of R packages which tend to be used across all projects&lt;/li&gt;
+&lt;li&gt;03-rstudio: installs RStudio Server&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;On top of these we then build further project specific images which share the components above, but add project specific requirements.  For example, an NLP project might add various NLP packages.  This gives a balance of having some consistency between projects, whilst allowing projects to have flexibility over the tools they have access to.&lt;/p&gt;
+
+&lt;h3 id=&#34;dockerfiles-as-recipes&#34;&gt;Dockerfiles as recipes&lt;/h3&gt;
+
+&lt;p&gt;A &lt;a href=&#34;https://docs.docker.com/engine/reference/builder/&#34;&gt;Dockerfile&lt;/a&gt; is like a recipe for a cake.  Just as a recipe species which ingredients in what order are required to make the cake mix, we can specify the exact instructions required to make a Docker image. Which directories have to be created, which software has to be installed, all of this is captured in a Dockerfile, and as this is just a text file it can be version controlled using git.&lt;/p&gt;
+
+&lt;h3 id=&#34;makefiles-as-oven-settings&#34;&gt;Makefiles as oven settings&lt;/h3&gt;
+
+&lt;p&gt;If a Dockerfile is a recipe, then Makefiles are like the cooking instructions.  To bake a cake we need to know how long we need to bake it for and at what temperature, otherwise the cake will turn out differently even though the cake mix was the same. The same Dockerfile will give a slightly different result depending on the parameters that are specified in the &lt;code&gt;docker build&lt;/code&gt;  and &lt;code&gt;docker run&lt;/code&gt; commands.  This is especially important for controlling how metadata is captured.  Just like Dockerfiles, Makefiles can also be version controlled with git.&lt;/p&gt;
+
+&lt;h3 id=&#34;container-registries-as-a-freezer&#34;&gt;Container registries as a freezer&lt;/h3&gt;
+
+&lt;p&gt;So we have our recipe and our cooking instructions, but if I bake a cake today it won&amp;rsquo;t be exactly the same as a cake baked in a year&amp;rsquo;s time: the eggs will be slightly different, I might be using a different oven.  In the same way, even with our best efforts it is very difficult to guarantee that a docker image will be the same because the build process depends on various resources on the internet from which we download the software.  Even if we try to specify exact software versions, it&amp;rsquo;s going to be difficult to guarantee an identical build.  Therefore the only solution is to archive the Docker image itself, just as we might freeze a cake.  To do this we can use a container registry such as Amazon&amp;rsquo;s Elastic Container Registry.&lt;/p&gt;
+
+&lt;h3 id=&#34;metadata-and-git-integration&#34;&gt;Metadata and git integration&lt;/h3&gt;
+
+&lt;p&gt;We&amp;rsquo;ve gone to a lot of effort to ensure reproducibility, the last step is to capture metadata in our Docker image so that we know how it was created and what version it was.  We want to link the Docker image back to the code that created it, and the way to do this is to link it to our version control system: git.  There are two ways in which we need this metadata to be visible:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;from the outside: so we can choose which Docker image to use.&lt;/li&gt;
+&lt;li&gt;from the inside: so that when we carry out our analysis we know which Docker image we&amp;rsquo;re using.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The way that this is managed in the example repository is as follows:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;the make command captures the current git commit and any git tags&lt;/li&gt;
+&lt;li&gt;these are included in the &lt;code&gt;docker build&lt;/code&gt; command as build arguments&lt;/li&gt;
+&lt;li&gt;the build arguments are captured in the Dockerfile as Docker labels that can be retrieved with a &lt;code&gt;docker inspect&lt;/code&gt; command (external metadata)&lt;/li&gt;
+&lt;li&gt;the build arguments are fed to a shell script (see 00-docker) which creates various audit files in &lt;code&gt;/etc/docker&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;the information in &lt;code&gt;/etc/docker&lt;/code&gt; is then available to anything running within the Docker container (internal metadata)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In practice a message is shown when R is launched that shows the build information, and this message can also be included in output log files or within an RMarkdown document.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;################################ 
+# DOCKER BUILD INFORMATION 
+################################ 
+ 
+This is docker image: ds-stage-02-r:v1.1 
+Built from git commit: 3d07371 
+See https://github.com/chapmandu2/datasci_docker/tree/3d07371 for Dockerfile code 
+See /etc/docker/docker_build_history.txt for provenance of this environment. 
+See /etc/docker for more information 
+ 
+################################ 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;workflow-instructions&#34;&gt;Workflow instructions&lt;/h2&gt;
+
+&lt;h3 id=&#34;clone-the-git-repo&#34;&gt;Clone the git repo&lt;/h3&gt;
+
+&lt;p&gt;Assuming that you already have Docker installed on your computer, clone the git repository &lt;a href=&#34;https://github.com/chapmandu2/datasci_docker&#34;&gt;chapmandu2/datasci_docker&lt;/a&gt; from GitHub:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git clone https://github.com/chapmandu2/datasci_docker
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;repo-structure&#34;&gt;Repo structure&lt;/h3&gt;
+
+&lt;p&gt;Within the repo there is a Makefile and a readme and a number of directories each corresponding to an image.  The Makefile at the top level is the master Makefile and contains the shared logic required to build all of the images.  Each image also has its own Makefile which references the master Makefile.  Feel free to look at the Makefile but you don&amp;rsquo;t need to understand the details at this stage.&lt;/p&gt;
+
+&lt;h3 id=&#34;make-the-00-docker-image&#34;&gt;Make the 00-docker image&lt;/h3&gt;
+
+&lt;p&gt;Navigate to the &lt;code&gt;ds-stage-00-docker&lt;/code&gt; directory and enter &lt;code&gt;make build&lt;/code&gt; - this will build the first docker image which includes the metadata audit functionality.  If you wish you can enter &lt;code&gt;make run&lt;/code&gt; which will create and run a container from this image and you can look in the &lt;code&gt;/etc/docker&lt;/code&gt; directory.  The &lt;code&gt;generate_docker_info.sh&lt;/code&gt; script is run during the docker build process to capture and store all of the metadata.&lt;/p&gt;
+
+&lt;h3 id=&#34;make-the-01-linux-image&#34;&gt;Make the 01-linux image&lt;/h3&gt;
+
+&lt;p&gt;Next navigate to the &lt;code&gt;ds-stage-01-linux&lt;/code&gt; directory and again enter &lt;code&gt;make build&lt;/code&gt; to build the linux base image.  This will take a minute or two depending on your internet connection as various software libraries are downloaded.  Once finished, you can again enter &lt;code&gt;make run&lt;/code&gt; to explore the image - check out the &lt;code&gt;/etc/docker&lt;/code&gt; directory to see how the metadata has changed.&lt;/p&gt;
+
+&lt;h3 id=&#34;make-the-02-r-image&#34;&gt;Make the 02-r image&lt;/h3&gt;
+
+&lt;p&gt;Now navigate to the &lt;code&gt;ds-stage-02-r&lt;/code&gt; directory do the same steps as above: &lt;code&gt;make build&lt;/code&gt; to build the image and &lt;code&gt;make run&lt;/code&gt; to run it.  For a bit of fun try this command:&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;docker run -it --rm --entrypoint R ds-stage-02-r:latest&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;This will instantiate a container from the image as before, but rather than expose a bash prompt will run R and expose this.  To the user it&amp;rsquo;s almost as quick as launching R running natively on their local system.&lt;/p&gt;
+
+&lt;h3 id=&#34;make-the-03-rstudio-image&#34;&gt;Make the 03-rstudio image&lt;/h3&gt;
+
+&lt;p&gt;As before, navigate to the directory and enter &lt;code&gt;make build&lt;/code&gt; and &lt;code&gt;make run&lt;/code&gt;.  This time, however, the container runs in detatched mode and exposes an RStudio Server instance which can be accessed from &lt;code&gt;localhost:8787&lt;/code&gt; in a browser and authenticated using &lt;code&gt;rstudio:rstudio&lt;/code&gt;.  Now we are running R within the RStudio Server IDE.  It is this image which can be deployed onto a server, whether on the local network or on the cloud, allowing users to log in from their browser and use a reproducible data environment.&lt;/p&gt;
+
+&lt;h3 id=&#34;make-a-project-specific-image&#34;&gt;Make a project specific image&lt;/h3&gt;
+
+&lt;p&gt;To make a project specific image, it is as simple as building on the contents of the &lt;code&gt;ds-stage-11-project&lt;/code&gt; directory.  Add any linux system requirements, such as &lt;code&gt;libpng&lt;/code&gt; in this case, and any R packages to the relevant sections.  You can be as sophisticated as you like here, but the best approach is to work out your installation process on a container of the base image first, and then transfer this process into the Dockerfile.  I will try to add some more sophisticated examples later, we have images with Python also installed, difficult R installs such as the RStan, and R packages installed from github. &lt;a href=&#34;https://hub.docker.com/&#34;&gt;Dockerhub&lt;/a&gt; is a good place to look for inspiration.&lt;/p&gt;
+
+&lt;h2 id=&#34;docker-registries&#34;&gt;Docker registries&lt;/h2&gt;
+
+&lt;p&gt;I have deliberately not included in this post the part of the workflow that involves pushing the Docker image to a registry. However, the code is present in the Makefile and it is just a case of specifying &lt;code&gt;my-repo/my-image&lt;/code&gt; as the base image, and modifying the Amazon ECR section of the master Makefile (line 40).  Then add a &lt;code&gt;make push&lt;/code&gt; command to the sequence of make commands used thus far.  Note that I set up some logic that required a git commit associated with the image to be tagged in order to be pushed to a repository.&lt;/p&gt;
+
+&lt;p&gt;The benefit of using a registry is that it makes it easier to deploy and share images, and that the build process can be carried out anywhere that the git repo and docker registry is accessible from.  One useful option is to build images on an EC2 instance on AWS, since this has a very fast network connection that expidites the build process.&lt;/p&gt;
+
+&lt;h2 id=&#34;potential-improvements&#34;&gt;Potential improvements&lt;/h2&gt;
+
+&lt;p&gt;The template shared here seems to have worked reasonably well but there is room for improvement.  I am a complete beginner in using Make and whilst it&amp;rsquo;s very powerful, the Makefiles could be more cleanly constructed.  In addition, shared parameters such as the registry address could be stored in a repo-wide yaml file rather than being buried within a Makefile.  The main improvement, however, would be in how git tags and commit id&amp;rsquo;s are used.  As it stands, changes to the Dockerfile could be made but not committed, and the resultant image would still have the current git commit associated with it.  I left it like this for pragmatic reasons - when you are developing Docker containers it&amp;rsquo;s a pain to have to commit every time you attempt to build!  So it&amp;rsquo;s important to remember this, and at the end when you think you&amp;rsquo;re done, to go back and build every image again with the same code.&lt;/p&gt;
+
+&lt;h2 id=&#34;conclusions&#34;&gt;Conclusions&lt;/h2&gt;
+
+&lt;p&gt;In this blog post I have shared a workflow for developing reproducible data science environments using Docker.  I hope that it useful to others in their research, and please let me know if you have any ideas for improvements!&lt;/p&gt;
+
+&lt;h2 id=&#34;postscript&#34;&gt;Postscript&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;There are RStudio and R images available on DockerHub under the &lt;a href=&#34;https://hub.docker.com/u/rocker/&#34;&gt;rocker&lt;/a&gt; account.  These can be more convenient starting points than a linux base image.  In our case we needed Centos as the base Linux OS rather than Ubuntu, hence why we started from scratch.&lt;/li&gt;
+&lt;li&gt;The example git repo was designed to be relatively quick to build for example purposes, it probably doesn&amp;rsquo;t include enough linux libraries or R packages to actually be useful.  I&amp;rsquo;ll try to add a more useful example to the repo.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
     </item>
     
     <item>
@@ -26,8 +169,20 @@
       <pubDate>Mon, 06 Nov 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017/11/06/bioinformatics-tutorials/</guid>
-      <description>I recorded a number of video tutorials before I left CRUK-MI on how to use various resources. These can be found on their own YouTube Channel or via the list below:
- Introduction to cell line data: Overview of data available and an explanation of different genomics data types and what they can be used for. Using IGV To Explore RNAseq Data: How to use the Broad Integrated Genomics Vieer to identify mutations and their consequences in RNAseq data Using the CCLE Genomics Explorer Shiny App To Identify Cell Lines : How to explore public domain cell line genomic data to identify suitable cell lines for further experimentation.</description>
+      <description>&lt;p&gt;I recorded a number of video tutorials before I left CRUK-MI on how to use various resources.  These can be found on their own &lt;a href=&#34;https://www.youtube.com/playlist?list=PL-qAmPoTXMBTdV26X-hgud7jU5fKjXPc5&#34;&gt;YouTube Channel&lt;/a&gt; or via the list below:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://youtu.be/_H8wbeKM2Is&#34;&gt;Introduction to cell line data&lt;/a&gt;: Overview of data available and an explanation of different genomics data types and what they can be used for.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;Using IGV To Explore RNAseq Data&#34;&gt;Using IGV To Explore RNAseq Data&lt;/a&gt;: How to use the Broad Integrated Genomics Vieer to identify mutations and their consequences in RNAseq data&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://youtu.be/wrCuW87xppk&#34;&gt;Using the CCLE Genomics Explorer Shiny App To Identify Cell Lines &lt;/a&gt;: How to explore public domain cell line genomic data to identify suitable cell lines for further experimentation.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://youtu.be/4-Af4-qeoCY&#34;&gt;Using IGV To Understand Cell Line Copy Number Data&lt;/a&gt;: How to explore copy number information at the genomic level using IGV&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://youtu.be/DT8cLOn3epw&#34;&gt;Using ENSEMBL To Find A Gene Sequence&lt;/a&gt;: How to use ENSEMBL to understand different transcript variants for a gene and choose the most appropriate one for experimentation.&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://youtu.be/EQzeKefmZVw&#34;&gt;IncucyteDRC Demo&lt;/a&gt;: Demonstration of the Incucyte DRC shiny application&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;cBioPortal Demo &lt;a href=&#34;https://youtu.be/aXtJWYJs4Xw&#34;&gt;Part 1&lt;/a&gt; and &lt;a href=&#34;https://youtu.be/F_-eJ2mrXrM&#34;&gt;Part 2&lt;/a&gt;: Demonstration of how to use the cBioPortal to explore large genomics cohorts such as TCGA&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
     </item>
     
     <item>
@@ -36,8 +191,518 @@
       <pubDate>Tue, 21 Feb 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017/02/21/bioinformatics-in-the-tidyverse/</guid>
-      <description>Introduction This is a blog post to expand on a talk I gave at the Manchester R Users Group on 21st February 2017. In it I give a brief overview of the tidyverse and its core concepts, before going on to discuss how the same concepts can be applied to bioinformatics analysis using Bioconductor classes and packages.
- What is the tidyverse? The tidyverse is a suite of tools primarily developed by Hadley Wickham and collaborators at RStudio.</description>
+      <description>&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;This is a blog post to expand on a talk I gave at the &lt;a href=&#34;http://www.rmanchester.org/&#34;&gt;Manchester R Users Group&lt;/a&gt; on 21st February 2017. In it I give a brief overview of the &lt;a href=&#34;http://tidyverse.org/&#34;&gt;tidyverse&lt;/a&gt; and its core concepts, before going on to discuss how the same concepts can be applied to bioinformatics analysis using &lt;a href=&#34;http://bioconductor.org/&#34;&gt;Bioconductor&lt;/a&gt; classes and packages.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;what-is-the-tidyverse&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;What is the tidyverse?&lt;/h2&gt;
+&lt;p&gt;The tidyverse is a suite of tools primarily developed by &lt;a href=&#34;https://twitter.com/hadleywickham&#34;&gt;Hadley Wickham&lt;/a&gt; and collaborators at &lt;a href=&#34;http://rstudio.com/&#34;&gt;RStudio&lt;/a&gt;. The suite of packages can be conveniently installed as follows:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;install.packages(&amp;#39;tidyverse&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There are many talks and resources that go into much greater depth than I do here including:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.youtube.com/watch?v=rz3_FDVt9eg&#34;&gt;Managing many models&lt;/a&gt; talk on YouTube by Hadley Wickham&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://r4ds.had.co.nz/&#34;&gt;R for Data Science&lt;/a&gt; book and website&lt;/li&gt;
+&lt;li&gt;Recorded tutorials and presentations from &lt;a href=&#34;https://www.rstudio.com/conference/&#34;&gt;RStudio::conf 2017&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.rstudio.com/resources/webinars/&#34;&gt;Webinars&lt;/a&gt; on RStudio website&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.datacamp.com/&#34;&gt;DataCamp&lt;/a&gt; courses on dplyr and the tidyverse&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;key-concepts-in-the-tidyverse&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Key concepts in the tidyverse&lt;/h2&gt;
+&lt;div id=&#34;tidy-data&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Tidy data&lt;/h3&gt;
+&lt;p&gt;They key concept of the tidyverse is that of &lt;a href=&#34;http://r4ds.had.co.nz/tidy-data.html&#34;&gt;tidy data&lt;/a&gt;. If you’re from a database background then think of this as normalised data. For example, the table below is NOT tidy data since the year variable is encoded as a column name:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+table4a&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 3 x 3
+##       country `1999` `2000`
+## *       &amp;lt;chr&amp;gt;  &amp;lt;int&amp;gt;  &amp;lt;int&amp;gt;
+## 1 Afghanistan    745   2666
+## 2      Brazil  37737  80488
+## 3       China 212258 213766&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To turn this into tidy data with one observation per row, we can use the &lt;code&gt;tidyr&lt;/code&gt; package:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df &amp;lt;- gather(table4a, year, cases, -country)
+df&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 6 x 3
+##       country  year  cases
+##         &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt;  &amp;lt;int&amp;gt;
+## 1 Afghanistan  1999    745
+## 2      Brazil  1999  37737
+## 3       China  1999 212258
+## 4 Afghanistan  2000   2666
+## 5      Brazil  2000  80488
+## 6       China  2000 213766&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;tibbles&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Tibbles&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;http://r4ds.had.co.nz/tibbles.html&#34;&gt;Tibbles&lt;/a&gt; are an alternative to the data frame. The key differences are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Subsetting a tibble will always produce another tibble.&lt;/li&gt;
+&lt;li&gt;A tibble will only print to screen - no more pages of output…&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dplyr::filter(df, cases == &amp;#39;Nigeria&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 0 x 3
+## # ... with 3 variables: country &amp;lt;chr&amp;gt;, year &amp;lt;chr&amp;gt;, cases &amp;lt;int&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dplyr::select(df, country)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 6 x 1
+##       country
+##         &amp;lt;chr&amp;gt;
+## 1 Afghanistan
+## 2      Brazil
+## 3       China
+## 4 Afghanistan
+## 5      Brazil
+## 6       China&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(gapminder)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: package &amp;#39;gapminder&amp;#39; was built under R version 3.4.2&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gapminder&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 1,704 x 6
+##        country continent  year lifeExp      pop gdpPercap
+##         &amp;lt;fctr&amp;gt;    &amp;lt;fctr&amp;gt; &amp;lt;int&amp;gt;   &amp;lt;dbl&amp;gt;    &amp;lt;int&amp;gt;     &amp;lt;dbl&amp;gt;
+##  1 Afghanistan      Asia  1952  28.801  8425333  779.4453
+##  2 Afghanistan      Asia  1957  30.332  9240934  820.8530
+##  3 Afghanistan      Asia  1962  31.997 10267083  853.1007
+##  4 Afghanistan      Asia  1967  34.020 11537966  836.1971
+##  5 Afghanistan      Asia  1972  36.088 13079460  739.9811
+##  6 Afghanistan      Asia  1977  38.438 14880372  786.1134
+##  7 Afghanistan      Asia  1982  39.854 12881816  978.0114
+##  8 Afghanistan      Asia  1987  40.822 13867957  852.3959
+##  9 Afghanistan      Asia  1992  41.674 16317921  649.3414
+## 10 Afghanistan      Asia  1997  41.763 22227415  635.3414
+## # ... with 1,694 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;dplyr-and-the-pipe--&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;dplyr and the pipe - %&amp;gt;%&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;dplyr&lt;/code&gt; package provides an intuitive way of manipulating data frames that will come naturally to people from a database background who are used to SQL. Furthermore, the pipe operator allows function calls to be strung together sequentially rather than nested which improves readability. For example, the statements below:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# base r
+gapminder[gapminder$country==&amp;#39;China&amp;#39;, c(&amp;#39;country&amp;#39;, &amp;#39;continent&amp;#39;, &amp;#39;year&amp;#39;, &amp;#39;lifeExp&amp;#39;)]
+
+# dplyr
+dplyr::select(dplyr::filter(gapminder, country==&amp;#39;China&amp;#39;), country, continent, year, lifeExp)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Give the same output as this:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# pipe and dplyr
+gapminder %&amp;gt;% 
+    dplyr::filter(country==&amp;#39;China&amp;#39;) %&amp;gt;% 
+    dplyr::select(country, continent, year, lifeExp)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 12 x 4
+##    country continent  year  lifeExp
+##     &amp;lt;fctr&amp;gt;    &amp;lt;fctr&amp;gt; &amp;lt;int&amp;gt;    &amp;lt;dbl&amp;gt;
+##  1   China      Asia  1952 44.00000
+##  2   China      Asia  1957 50.54896
+##  3   China      Asia  1962 44.50136
+##  4   China      Asia  1967 58.38112
+##  5   China      Asia  1972 63.11888
+##  6   China      Asia  1977 63.96736
+##  7   China      Asia  1982 65.52500
+##  8   China      Asia  1987 67.27400
+##  9   China      Asia  1992 68.69000
+## 10   China      Asia  1997 70.42600
+## 11   China      Asia  2002 72.02800
+## 12   China      Asia  2007 72.96100&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;a href=&#34;https://www.rstudio.com/resources/cheatsheets/&#34;&gt;RStudio Data Wrangling cheatsheet&lt;/a&gt; provides a useful resource for getting to know dplyr.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;purrr-and-its-map-function&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;purrr and its map function&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;purrr&lt;/code&gt; package provides a number of functions to make R more consistent and programming friendly than the equivalent base R functions. At first it’s &lt;code&gt;map&lt;/code&gt; function seems like a reimplementation of &lt;code&gt;apply&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;map(c(4, 9, 16), sqrt)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [[1]]
+## [1] 2
+## 
+## [[2]]
+## [1] 3
+## 
+## [[3]]
+## [1] 4&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;But &lt;code&gt;map&lt;/code&gt; will &lt;em&gt;always&lt;/em&gt; return a list, and there are other members of the &lt;code&gt;map_&lt;/code&gt; family which will always return a certain data type:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;map_dbl(c(4, 9, 16), sqrt)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 2 3 4&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;map_chr(c(4, 9, 16), sqrt)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;2.000000&amp;quot; &amp;quot;3.000000&amp;quot; &amp;quot;4.000000&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;list-cols-in-data-frames&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;List-cols in data frames&lt;/h3&gt;
+&lt;p&gt;List-cols are a powerful concept that underpin the later part of this tutorial. If data frames are explained as a way to keep character and number vectors together, then list-cols in tibbles takes this a step further and allow lists of any object to be kept together. For example, we can create nested data frames where we have a data frame within a data frame:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gm_nest &amp;lt;- gapminder %&amp;gt;% group_by(country, continent) %&amp;gt;% nest()
+gm_nest&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 142 x 3
+##        country continent              data
+##         &amp;lt;fctr&amp;gt;    &amp;lt;fctr&amp;gt;            &amp;lt;list&amp;gt;
+##  1 Afghanistan      Asia &amp;lt;tibble [12 x 4]&amp;gt;
+##  2     Albania    Europe &amp;lt;tibble [12 x 4]&amp;gt;
+##  3     Algeria    Africa &amp;lt;tibble [12 x 4]&amp;gt;
+##  4      Angola    Africa &amp;lt;tibble [12 x 4]&amp;gt;
+##  5   Argentina  Americas &amp;lt;tibble [12 x 4]&amp;gt;
+##  6   Australia   Oceania &amp;lt;tibble [12 x 4]&amp;gt;
+##  7     Austria    Europe &amp;lt;tibble [12 x 4]&amp;gt;
+##  8     Bahrain      Asia &amp;lt;tibble [12 x 4]&amp;gt;
+##  9  Bangladesh      Asia &amp;lt;tibble [12 x 4]&amp;gt;
+## 10     Belgium    Europe &amp;lt;tibble [12 x 4]&amp;gt;
+## # ... with 132 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Since the data column is a list column (list-col) we can access it as we would expect from a list. For example, to get the data for the second row, Albania:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gm_nest$data[[2]]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 12 x 4
+##     year lifeExp     pop gdpPercap
+##    &amp;lt;int&amp;gt;   &amp;lt;dbl&amp;gt;   &amp;lt;int&amp;gt;     &amp;lt;dbl&amp;gt;
+##  1  1952  55.230 1282697  1601.056
+##  2  1957  59.280 1476505  1942.284
+##  3  1962  64.820 1728137  2312.889
+##  4  1967  66.220 1984060  2760.197
+##  5  1972  67.690 2263554  3313.422
+##  6  1977  68.930 2509048  3533.004
+##  7  1982  70.420 2780097  3630.881
+##  8  1987  72.000 3075321  3738.933
+##  9  1992  71.581 3326498  2497.438
+## 10  1997  72.950 3428038  3193.055
+## 11  2002  75.651 3508512  4604.212
+## 12  2007  76.423 3600523  5937.030&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;using-map-to-manipulate-list-cols&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Using map to manipulate list-cols&lt;/h3&gt;
+&lt;p&gt;Since this list column is just a list, we can use map to count the number of rows in each data frame in the list:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;map_dbl(gm_nest[1:10,]$data, nrow)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] 12 12 12 12 12 12 12 12 12 12&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Rather than providing a ready to use function we can also define our own:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;map_dbl(gm_nest[1:10,]$data, function(x) nrow(x))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] 12 12 12 12 12 12 12 12 12 12&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There is also a shorthand formula syntax for this where the period &lt;code&gt;.&lt;/code&gt; represents the element of the list that is being processed:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;map_dbl(gm_nest[1:10,]$data, ~nrow(.))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] 12 12 12 12 12 12 12 12 12 12&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Defining our own function allows us to reach into the data frame and perform an operation, such as summarise one of the columns:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;map_dbl(gm_nest[1:10,]$data, ~round(mean(.$lifeExp),1))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] 37.5 68.4 59.0 37.9 69.1 74.7 73.1 65.6 49.8 73.6&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Importantly we can also do this at the level of the parent tibble and store the output in the data frame:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gm_nest %&amp;gt;% mutate(avg_lifeExp=map_dbl(data, ~round(mean(.$lifeExp),1)))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 142 x 4
+##        country continent              data avg_lifeExp
+##         &amp;lt;fctr&amp;gt;    &amp;lt;fctr&amp;gt;            &amp;lt;list&amp;gt;       &amp;lt;dbl&amp;gt;
+##  1 Afghanistan      Asia &amp;lt;tibble [12 x 4]&amp;gt;        37.5
+##  2     Albania    Europe &amp;lt;tibble [12 x 4]&amp;gt;        68.4
+##  3     Algeria    Africa &amp;lt;tibble [12 x 4]&amp;gt;        59.0
+##  4      Angola    Africa &amp;lt;tibble [12 x 4]&amp;gt;        37.9
+##  5   Argentina  Americas &amp;lt;tibble [12 x 4]&amp;gt;        69.1
+##  6   Australia   Oceania &amp;lt;tibble [12 x 4]&amp;gt;        74.7
+##  7     Austria    Europe &amp;lt;tibble [12 x 4]&amp;gt;        73.1
+##  8     Bahrain      Asia &amp;lt;tibble [12 x 4]&amp;gt;        65.6
+##  9  Bangladesh      Asia &amp;lt;tibble [12 x 4]&amp;gt;        49.8
+## 10     Belgium    Europe &amp;lt;tibble [12 x 4]&amp;gt;        73.6
+## # ... with 132 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-power-of-list-cols&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;The power of list-cols&lt;/h3&gt;
+&lt;p&gt;We could have summarised the gapminder data entirely in dplyr without worrying about list-cols and nested data frames:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gapminder %&amp;gt;%
+    group_by(country) %&amp;gt;%
+    summarise(avg_lifeExp=round(mean(lifeExp),1))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 142 x 2
+##        country avg_lifeExp
+##         &amp;lt;fctr&amp;gt;       &amp;lt;dbl&amp;gt;
+##  1 Afghanistan        37.5
+##  2     Albania        68.4
+##  3     Algeria        59.0
+##  4      Angola        37.9
+##  5   Argentina        69.1
+##  6   Australia        74.7
+##  7     Austria        73.1
+##  8     Bahrain        65.6
+##  9  Bangladesh        49.8
+## 10     Belgium        73.6
+## # ... with 132 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;However, by using &lt;code&gt;map&lt;/code&gt; rather than &lt;code&gt;map_dbl&lt;/code&gt; we can create new list-cols, which can contain lists of any object that we want. In the example below we create a plot for each country, then display the first plot for Afghanistan:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gm_plots &amp;lt;- gm_nest %&amp;gt;%
+    mutate(plot=map(data, ~qplot(x=year, y=lifeExp, data=.)))
+gm_plots&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 142 x 4
+##        country continent              data     plot
+##         &amp;lt;fctr&amp;gt;    &amp;lt;fctr&amp;gt;            &amp;lt;list&amp;gt;   &amp;lt;list&amp;gt;
+##  1 Afghanistan      Asia &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: gg&amp;gt;
+##  2     Albania    Europe &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: gg&amp;gt;
+##  3     Algeria    Africa &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: gg&amp;gt;
+##  4      Angola    Africa &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: gg&amp;gt;
+##  5   Argentina  Americas &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: gg&amp;gt;
+##  6   Australia   Oceania &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: gg&amp;gt;
+##  7     Austria    Europe &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: gg&amp;gt;
+##  8     Bahrain      Asia &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: gg&amp;gt;
+##  9  Bangladesh      Asia &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: gg&amp;gt;
+## 10     Belgium    Europe &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: gg&amp;gt;
+## # ... with 132 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gm_plots$plot[[1]]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-02-21-bioinformatics-in-tidyverse_files/figure-html/unnamed-chunk-17-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;a-complete-example&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;A complete example&lt;/h3&gt;
+&lt;p&gt;In this example we combine the approaches described so far to:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Nest the data&lt;/li&gt;
+&lt;li&gt;Fit a linear regression model for each country&lt;/li&gt;
+&lt;li&gt;Extract the slope and r2 value for each country&lt;/li&gt;
+&lt;li&gt;Plot all countries together&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gapminder_analysis &amp;lt;- gapminder %&amp;gt;%
+    group_by(country, continent) %&amp;gt;%
+    nest() %&amp;gt;%
+    mutate(model=map(data, ~lm(lifeExp ~ year, data=.)),
+           slope=map_dbl(model, ~coef(.)[&amp;#39;year&amp;#39;]),
+           r2=map_dbl(model, ~broom::glance(.)$`r.squared`))
+gapminder_analysis&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 142 x 6
+##        country continent              data    model     slope        r2
+##         &amp;lt;fctr&amp;gt;    &amp;lt;fctr&amp;gt;            &amp;lt;list&amp;gt;   &amp;lt;list&amp;gt;     &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt;
+##  1 Afghanistan      Asia &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: lm&amp;gt; 0.2753287 0.9477123
+##  2     Albania    Europe &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: lm&amp;gt; 0.3346832 0.9105778
+##  3     Algeria    Africa &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: lm&amp;gt; 0.5692797 0.9851172
+##  4      Angola    Africa &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: lm&amp;gt; 0.2093399 0.8878146
+##  5   Argentina  Americas &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: lm&amp;gt; 0.2317084 0.9955681
+##  6   Australia   Oceania &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: lm&amp;gt; 0.2277238 0.9796477
+##  7     Austria    Europe &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: lm&amp;gt; 0.2419923 0.9921340
+##  8     Bahrain      Asia &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: lm&amp;gt; 0.4675077 0.9667398
+##  9  Bangladesh      Asia &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: lm&amp;gt; 0.4981308 0.9893609
+## 10     Belgium    Europe &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: lm&amp;gt; 0.2090846 0.9945406
+## # ... with 132 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(gapminder_analysis, aes(y=slope, colour=r2, x=continent)) + 
+    geom_point(position=position_jitter(w=0.2)) +
+    theme_bw()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-02-21-bioinformatics-in-tidyverse_files/figure-html/unnamed-chunk-18-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that countries in Asia have has a faster increase in lifespan than those in Europe, whilst for Africa the picture is rather more mixed with some countries increasing and others staying the same or reducing and fitting more poorly to the linear regression model. Further analysis shows that the reasons for this include genocide and the HIV/AIDS epidemic.&lt;/p&gt;
+&lt;p&gt;This example demonstrates how powerful analyses can be carried out with very concise and non-repetitive code using tidyverse principles.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-tidyverse-for-bioinformatics&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The tidyverse for Bioinformatics&lt;/h2&gt;
+&lt;div id=&#34;what-is-bioconductor&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;What is Bioconductor?&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;http://bioconductor.org/&#34;&gt;Bioconductor&lt;/a&gt; is a suite of R packages and classes. This allows biological data to be analysed and stored in efficient and consistent ways. Analyses such as RNAseq analysis can also be controlled effectively using the list-cols framework.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;a-typical-rna-seq-workflow&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;A typical RNA-seq workflow&lt;/h3&gt;
+&lt;p&gt;RNA-sequencing is carried out to quantitate the amount of a gene present in a set of samples. This can be done for all genes in the human genome simulatenously through the power of DNA sequencing. We then ask which genes are &lt;em&gt;differentially expressed&lt;/em&gt; - ie are present in a different abundance in one set of samples (eg from a tumour) than another (eg normal). A typical RNA-seq experiment will have the following workflow:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Align and count reads to form a &lt;a href=&#34;https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html&#34;&gt;SummarizedExperiment&lt;/a&gt; object&lt;/li&gt;
+&lt;li&gt;Filter out genes with a low signal&lt;/li&gt;
+&lt;li&gt;Specify a design formula to do the differential expression&lt;/li&gt;
+&lt;li&gt;Specify a log2 fold change threshold to test for differentially expressed genes&lt;/li&gt;
+&lt;li&gt;Plot the results&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;an-rna-seq-analysis&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;An RNA-seq analysis&lt;/h3&gt;
+&lt;p&gt;First load the SummarizedExperiment object and explore it:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#adapted from https://f1000research.com/articles/4-1070/v2
+library(airway)
+library(DESeq2)
+data(airway)
+se &amp;lt;- airway
+se&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## class: RangedSummarizedExperiment 
+## dim: 64102 8 
+## metadata(1): &amp;#39;&amp;#39;
+## assays(1): counts
+## rownames(64102): ENSG00000000003 ENSG00000000005 ... LRG_98 LRG_99
+## rowData names(0):
+## colnames(8): SRR1039508 SRR1039509 ... SRR1039520 SRR1039521
+## colData names(9): SampleName cell ... Sample BioSample&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;colData(se)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## DataFrame with 8 rows and 9 columns
+##            SampleName     cell      dex    albut        Run avgLength
+##              &amp;lt;factor&amp;gt; &amp;lt;factor&amp;gt; &amp;lt;factor&amp;gt; &amp;lt;factor&amp;gt;   &amp;lt;factor&amp;gt; &amp;lt;integer&amp;gt;
+## SRR1039508 GSM1275862   N61311    untrt    untrt SRR1039508       126
+## SRR1039509 GSM1275863   N61311      trt    untrt SRR1039509       126
+## SRR1039512 GSM1275866  N052611    untrt    untrt SRR1039512       126
+## SRR1039513 GSM1275867  N052611      trt    untrt SRR1039513        87
+## SRR1039516 GSM1275870  N080611    untrt    untrt SRR1039516       120
+## SRR1039517 GSM1275871  N080611      trt    untrt SRR1039517       126
+## SRR1039520 GSM1275874  N061011    untrt    untrt SRR1039520       101
+## SRR1039521 GSM1275875  N061011      trt    untrt SRR1039521        98
+##            Experiment    Sample    BioSample
+##              &amp;lt;factor&amp;gt;  &amp;lt;factor&amp;gt;     &amp;lt;factor&amp;gt;
+## SRR1039508  SRX384345 SRS508568 SAMN02422669
+## SRR1039509  SRX384346 SRS508567 SAMN02422675
+## SRR1039512  SRX384349 SRS508571 SAMN02422678
+## SRR1039513  SRX384350 SRS508572 SAMN02422670
+## SRR1039516  SRX384353 SRS508575 SAMN02422682
+## SRR1039517  SRX384354 SRS508576 SAMN02422673
+## SRR1039520  SRX384357 SRS508579 SAMN02422683
+## SRR1039521  SRX384358 SRS508580 SAMN02422677&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;colnames(assay(se))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;SRR1039508&amp;quot; &amp;quot;SRR1039509&amp;quot; &amp;quot;SRR1039512&amp;quot; &amp;quot;SRR1039513&amp;quot; &amp;quot;SRR1039516&amp;quot;
+## [6] &amp;quot;SRR1039517&amp;quot; &amp;quot;SRR1039520&amp;quot; &amp;quot;SRR1039521&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rownames(assay(se))[1:10]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;ENSG00000000003&amp;quot; &amp;quot;ENSG00000000005&amp;quot; &amp;quot;ENSG00000000419&amp;quot;
+##  [4] &amp;quot;ENSG00000000457&amp;quot; &amp;quot;ENSG00000000460&amp;quot; &amp;quot;ENSG00000000938&amp;quot;
+##  [7] &amp;quot;ENSG00000000971&amp;quot; &amp;quot;ENSG00000001036&amp;quot; &amp;quot;ENSG00000001084&amp;quot;
+## [10] &amp;quot;ENSG00000001167&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;assay(se)[1:5,1:5]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##                 SRR1039508 SRR1039509 SRR1039512 SRR1039513 SRR1039516
+## ENSG00000000003        679        448        873        408       1138
+## ENSG00000000005          0          0          0          0          0
+## ENSG00000000419        467        515        621        365        587
+## ENSG00000000457        260        211        263        164        245
+## ENSG00000000460         60         55         40         35         78&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can count up the number of reads per sample using the &lt;code&gt;colSums&lt;/code&gt; function, or using &lt;code&gt;purrr&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;colSums(assay(se))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## SRR1039508 SRR1039509 SRR1039512 SRR1039513 SRR1039516 SRR1039517 
+##   20637971   18809481   25348649   15163415   24448408   30818215 
+## SRR1039520 SRR1039521 
+##   19126151   21164133&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;purrr::map_dbl(colnames(assay(se)), ~sum(assay(se)[,.]))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 20637971 18809481 25348649 15163415 24448408 30818215 19126151 21164133&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We then create a &lt;code&gt;DESeqDataSet&lt;/code&gt; object and set the design formula&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dds &amp;lt;- DESeqDataSet(se, design = ~ cell + dex)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Get rid of genes with few reads&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dds &amp;lt;- dds[ rowSums(counts(dds)) &amp;gt; 1, ]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Re-count the library size:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dds &amp;lt;- estimateSizeFactors(dds)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Do a Principal Compnent Analysis to understand the data structure:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rld &amp;lt;- vst(dds, blind=FALSE)
+pca_plot &amp;lt;- plotPCA(rld, intgroup = c(&amp;quot;dex&amp;quot;, &amp;quot;cell&amp;quot;))
+pca_plot&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-02-21-bioinformatics-in-tidyverse_files/figure-html/unnamed-chunk-24-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Do the differential expression analysis and extract the results:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dds &amp;lt;- DESeq(dds, quiet = TRUE)
+res &amp;lt;- results(dds, lfcThreshold=0, tidy = TRUE) %&amp;gt;% tbl_df()
+res&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 29,391 x 7
+##                row     baseMean log2FoldChange      lfcSE       stat
+##              &amp;lt;chr&amp;gt;        &amp;lt;dbl&amp;gt;          &amp;lt;dbl&amp;gt;      &amp;lt;dbl&amp;gt;      &amp;lt;dbl&amp;gt;
+##  1 ENSG00000000003  708.6021697     0.38125397 0.10065597  3.7876937
+##  2 ENSG00000000419  520.2979006    -0.20681259 0.11222180 -1.8428915
+##  3 ENSG00000000457  237.1630368    -0.03792034 0.14345322 -0.2643394
+##  4 ENSG00000000460   57.9326331     0.08816367 0.28716771  0.3070111
+##  5 ENSG00000000938    0.3180984     1.37822703 3.49987280  0.3937935
+##  6 ENSG00000000971 5817.3528677    -0.42640216 0.08831006 -4.8284666
+##  7 ENSG00000001036 1282.1063855     0.24107123 0.08871987  2.7172180
+##  8 ENSG00000001084  609.8920919     0.04761687 0.16665615  0.2857192
+##  9 ENSG00000001167  369.3428078     0.50036451 0.12088513  4.1391733
+## 10 ENSG00000001460  183.2376742     0.12389881 0.17991227  0.6886624
+## # ... with 29,381 more rows, and 2 more variables: pvalue &amp;lt;dbl&amp;gt;,
+## #   padj &amp;lt;dbl&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Plot the results as an MA plot with abundance of the gene on the x-axis and fold change on the y-axis. Colour represents significance of the statistical test.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ma_plot &amp;lt;- ggplot(res, aes(log2(baseMean), log2FoldChange, colour=padj&amp;lt;0.1)) + 
+    geom_point(size=rel(0.5), aes(text=row)) + theme_bw()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: Ignoring unknown aesthetics: text&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ma_plot&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-02-21-bioinformatics-in-tidyverse_files/figure-html/unnamed-chunk-26-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can look at the top differentially expressed gene to see that there is indeed a difference between treated and untreated:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;topGene &amp;lt;- res %&amp;gt;% dplyr::arrange(padj) %&amp;gt;% 
+    dplyr::slice(1) %&amp;gt;% dplyr::select(row) %&amp;gt;% unlist() %&amp;gt;% unname()
+plotCounts(dds, gene=topGene, intgroup=c(&amp;quot;dex&amp;quot;))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-02-21-bioinformatics-in-tidyverse_files/figure-html/unnamed-chunk-27-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;rna-seq-in-the-tidyverse&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;RNA-seq in the tidyverse&lt;/h3&gt;
+&lt;p&gt;In the workflow there were a number of parameters that we might wish to vary:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;the design formula&lt;/li&gt;
+&lt;li&gt;the log2 fold change threshold (&lt;code&gt;lfcThreshold&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;the minimum read count&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can set up a control data frame using the &lt;code&gt;tidyr::crossing&lt;/code&gt; function which contains 1 row per combination of parameters, and then add in the SummarizedExperiment object and a row number:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;control_df &amp;lt;- tidyr::crossing(formula=c(&amp;quot;~ cell + dex&amp;quot;, &amp;quot;~ dex&amp;quot;), 
+                       lfcThreshold=c(0,1),
+                       min_count=c(1,5))   
+control_df &amp;lt;- control_df %&amp;gt;% mutate(rn=row_number(),
+                                    se=map(rn, ~se)) 
+control_df&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 8 x 5
+##        formula lfcThreshold min_count    rn
+##          &amp;lt;chr&amp;gt;        &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;
+## 1 ~ cell + dex            0         1     1
+## 2 ~ cell + dex            0         5     2
+## 3 ~ cell + dex            1         1     3
+## 4 ~ cell + dex            1         5     4
+## 5        ~ dex            0         1     5
+## 6        ~ dex            0         5     6
+## 7        ~ dex            1         1     7
+## 8        ~ dex            1         5     8
+## # ... with 1 more variables: se &amp;lt;list&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Using &lt;code&gt;map2&lt;/code&gt; we can execute the &lt;code&gt;DESeqDataSet&lt;/code&gt; function for each row taking the design formula and SummarizedExperiment object as inputs:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;results_df &amp;lt;- control_df %&amp;gt;%
+    mutate(dds=map2(se, formula, ~DESeqDataSet(.x, design=as.formula(.y))))
+results_df&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 8 x 6
+##        formula lfcThreshold min_count    rn
+##          &amp;lt;chr&amp;gt;        &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;
+## 1 ~ cell + dex            0         1     1
+## 2 ~ cell + dex            0         5     2
+## 3 ~ cell + dex            1         1     3
+## 4 ~ cell + dex            1         5     4
+## 5        ~ dex            0         1     5
+## 6        ~ dex            0         5     6
+## 7        ~ dex            1         1     7
+## 8        ~ dex            1         5     8
+## # ... with 2 more variables: se &amp;lt;list&amp;gt;, dds &amp;lt;list&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;At this point it is worth sanity checking that we have done what we wanted to do by comparing the input formula with that extracted from the DESeqDataSet:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;results_df$formula&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;~ cell + dex&amp;quot; &amp;quot;~ cell + dex&amp;quot; &amp;quot;~ cell + dex&amp;quot; &amp;quot;~ cell + dex&amp;quot;
+## [5] &amp;quot;~ dex&amp;quot;        &amp;quot;~ dex&amp;quot;        &amp;quot;~ dex&amp;quot;        &amp;quot;~ dex&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;map_chr(results_df$dds, ~design(.) %&amp;gt;% as.character() %&amp;gt;% paste(collapse=&amp;#39; &amp;#39;))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;~ cell + dex&amp;quot; &amp;quot;~ cell + dex&amp;quot; &amp;quot;~ cell + dex&amp;quot; &amp;quot;~ cell + dex&amp;quot;
+## [5] &amp;quot;~ dex&amp;quot;        &amp;quot;~ dex&amp;quot;        &amp;quot;~ dex&amp;quot;        &amp;quot;~ dex&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then finish off preparing the DESeqDataset object by removing genes below a certain read count:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;results_df &amp;lt;- results_df %&amp;gt;%
+    mutate(dds=map2(dds, min_count, ~.x[ rowSums(counts(.x)) &amp;gt; .y , ]),
+           dds=map(dds, estimateSizeFactors))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And then doing the differential expression analysis itself and extracting the results:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;results_df &amp;lt;- results_df %&amp;gt;%
+    mutate(dds=map(dds, ~DESeq(., quiet=TRUE)),
+           res=map2(dds, lfcThreshold, ~results(.x, lfcThreshold=.y, tidy = TRUE) %&amp;gt;% tbl_df()))&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;viewing-the-results&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Viewing the results&lt;/h3&gt;
+&lt;p&gt;At this point we can add a plot object to the mix like we did for the gapminder example. We define a plotting function to make the analysis more readable:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#define a plot function
+my_plot &amp;lt;- function(df, pthresh) {
+    ggplot(df, aes(log2(baseMean), log2FoldChange, colour=padj&amp;lt;pthresh)) + 
+        geom_point(size=rel(0.5)) + 
+        theme_bw()
+}
+
+#make the plots
+plots_df &amp;lt;- results_df %&amp;gt;%
+    mutate(ma_plot=map2(res, rn, ~my_plot(.x, 0.1) + ggtitle(.y)))
+plots_df&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 8 x 8
+##        formula lfcThreshold min_count    rn
+##          &amp;lt;chr&amp;gt;        &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;
+## 1 ~ cell + dex            0         1     1
+## 2 ~ cell + dex            0         5     2
+## 3 ~ cell + dex            1         1     3
+## 4 ~ cell + dex            1         5     4
+## 5        ~ dex            0         1     5
+## 6        ~ dex            0         5     6
+## 7        ~ dex            1         1     7
+## 8        ~ dex            1         5     8
+## # ... with 4 more variables: se &amp;lt;list&amp;gt;, dds &amp;lt;list&amp;gt;, res &amp;lt;list&amp;gt;,
+## #   ma_plot &amp;lt;list&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can then display the plots from the ma_plot list-col:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cowplot::plot_grid(plotlist=plots_df$ma_plot[1:4])&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-02-21-bioinformatics-in-tidyverse_files/figure-html/unnamed-chunk-34-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Or we can filter the data frame and just show some plots, for example those where the minimum read count was 1:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plots_df %&amp;gt;% 
+    dplyr::filter(min_count==1) %&amp;gt;% 
+    dplyr::select(ma_plot) %&amp;gt;%
+    .$ma_plot %&amp;gt;%
+    cowplot::plot_grid(plotlist=.)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-02-21-bioinformatics-in-tidyverse_files/figure-html/unnamed-chunk-35-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;limitations&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Limitations&lt;/h2&gt;
+&lt;p&gt;Although the list-col approach provides useful framework for this type of analysis it does have some limitations:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;All of the data and results have to be held in the memory of one session.&lt;/li&gt;
+&lt;li&gt;Can end up with multiple copies of data and very large data frames - models and plots will often contain the same data within the R object.&lt;/li&gt;
+&lt;li&gt;Operations on a normal list can be easily parallelised using parallel::parLapply for example. This is more difficult using the list-col approach although one way is to split the tibble into a list of tibbles, and then parallelise across this.&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;It can also be hard to wrap your brain around the necessary levels of abstraction!&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusion&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Storing and manipulating objects in a data frame is a powerful and useful framework for an analysis since it keeps related things together and avoids code repetition and bloat. Analyses are parameterised which makes it very easy to add new values or change existing onces without copying and pasting big bits of code or having huge complicated functions. Although in this post it is applied to bioinformatics it could be applied to anything where work is done in specialised R object classes.&lt;/p&gt;
+&lt;p&gt;There is lots of work being done in the R community to extend these concepts, so keep an eye out for online presentations and tutorials!!&lt;/p&gt;
+&lt;/div&gt;
+</description>
     </item>
     
     <item>
@@ -46,8 +711,55 @@
       <pubDate>Sat, 14 Jan 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017/01/14/rstudioconf-highlights-day-4/</guid>
-      <description>Introduction I’ve been lucky enough to spend the last few days in sunny Florida at the RStudio::conf 2017. This was made possible by RStudio’s very generous academic discount scheme, so thanks to them for that! Whilst I’ve been tweeting a few of the key moments as they happened this series of posts expands further on these tweets and gives links to further information.
- RStudio::conf Highlights Days 1-2: shiny workshop RStudio::conf Highlights Day 3: the tidyverse RStudio::conf Highlights Day 3: the tidyverse   Applications of R Markdown Much of my day was spent listening to Yihue Xie talking us through an Advanced R Markdown tutorial as well as two conference presentations, one of which was on blogdown which I was excited about since it’s what I used to create this blog and has only been around a few months.</description>
+      <description>&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;I’ve been lucky enough to spend the last few days in sunny Florida at the &lt;a href=&#34;https://www.rstudio.com/conference/&#34;&gt;RStudio::conf 2017&lt;/a&gt;. This was made possible by RStudio’s very generous academic discount scheme, so thanks to them for that! Whilst I’ve been &lt;a href=&#34;https://twitter.com/search?f=tweets&amp;amp;vertical=default&amp;amp;q=chapmandu2%20%23rstudioconf&amp;amp;src=typd&#34;&gt;tweeting&lt;/a&gt; a few of the key moments as they happened this series of posts expands further on these tweets and gives links to further information.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;/post/2017-01-12-rstudio-conference-highlights-1/&#34;&gt;RStudio::conf Highlights Days 1-2: shiny workshop&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;/post/2017-01-13-rstudio-conference-highlights-2/&#34;&gt;RStudio::conf Highlights Day 3: the tidyverse&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;/post/2017-01-14-rstudio-conference-highlights-3/&#34;&gt;RStudio::conf Highlights Day 3: the tidyverse&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;applications-of-r-markdown&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Applications of R Markdown&lt;/h2&gt;
+&lt;p&gt;Much of my day was spent listening to Yihue Xie talking us through an &lt;a href=&#34;https://slides.yihui.name/2017-rstudio-conf-rmarkdown-Yihui-Xie.html#1&#34;&gt;Advanced R Markdown tutorial&lt;/a&gt; as well as two conference presentations, one of which was on &lt;a href=&#34;http://github.com/rstudio/blogdown/&#34;&gt;blogdown&lt;/a&gt; which I was excited about since it’s what I used to create this blog and has only been around a few months.&lt;/p&gt;
+&lt;p&gt;In his &lt;a href=&#34;https://slides.yihui.name/2017-rstudio-conf-blogdown-Yihui-Xie.html#1&#34;&gt;blogdown talk&lt;/a&gt; Yihue described an R Markdown based blogging package based on &lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt;, a fast and flexible static HTML page generator. The advantage of this approach is that it makes hosting very easy since nothing is dynamic, and that the user can visualise exactly what the website will look like locally. Interestingly it also includes some of the features of bookdown for captioning figures and writing math formulae. There are many different themes available for Hugo which can be easily modified for use with blogdown (documentation pending!).&lt;/p&gt;
+&lt;p&gt;The advanced R Markdown talk was a bit too advanced for me but did help to cement some core concepts in my head. Firstly was the R Markdown workflow: essentially R markdown is converted to markdown by knitr, and this markdown is the converted to any number of formats by the pandoc software. There are a variety of output formats eg &lt;code&gt;html_document()&lt;/code&gt; which essentially generates a list of parameters both for knitr and pandoc. These parameters can be customised either in the function call, or in the YAML header. Additional customisation is available through providing additional css code, or by writing user defined output format functions.&lt;/p&gt;
+&lt;p&gt;Yihue then discussed some &lt;a href=&#34;https://slides.yihui.name/2017-rstudio-conf-ext-rmd-Yihui-Xie.html#1&#34;&gt;packages based on rmarkdown&lt;/a&gt; including rticles for creating pdf articles in journal specific format, tufte to create articles based on the style of Edward Tufte’s books, bookdown for writing books including Hadley’s R for Data Science, and xaringan for creating HTML5 presentations. All of these packages really increase my motivation for using R Markdown more extensively in my own work.&lt;/p&gt;
+&lt;p&gt;Finally Jonathan McPherson presented some detail on R Markdown Notebooks which provide an improved workflow for analysts using R markdown since the entire analysis doesn’t have to be rendered from scratch every time but can be rendered in chunks, and also allow code to be extracted from the document from the output html. I’m still a little unsure how well this will work for more complex analyses, but certainly the ability to combine analysis documentation and code in a single file is very attractive.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;stories-and-opinions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Stories and opinions&lt;/h2&gt;
+&lt;p&gt;In his keynote &lt;a href=&#34;https://twitter.com/andrewflowers&#34;&gt;Andrew Flowers&lt;/a&gt;, previously of &lt;a href=&#34;https://fivethirtyeight.com/&#34;&gt;FiveThirtyEight&lt;/a&gt;, described data journalism and the six types of data stories:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Novelty: analysis of new datasets eg Uber vs taxis in NYC&lt;/li&gt;
+&lt;li&gt;Outlier: focus on a surprising result eg most valuable sportspeople&lt;/li&gt;
+&lt;li&gt;Archetype: story about the most typical thing eg common names in America&lt;/li&gt;
+&lt;li&gt;Trends: changes over time eg deaths from terrorism&lt;/li&gt;
+&lt;li&gt;Debunking: attacking a misconception&lt;/li&gt;
+&lt;li&gt;Forecast: election results&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;For each story type Andrew highlighted the pitfalls and potential solutions. For example, the pitfal of a trend story is variance, where an apparent trend is just noise. The solution is to be conservative and explore variance correctly. Interestingly as well as the &lt;a href=&#34;https://github.com/fivethirtyeight&#34;&gt;FiveThirtyEight GitHub repo&lt;/a&gt; containing data and code, there is now also a &lt;a href=&#34;https://cran.r-project.org/package=fivethirtyeight&#34;&gt;FiveThirtyEight R package&lt;/a&gt; containing the curated data.&lt;/p&gt;
+&lt;p&gt;Switching gears &lt;a href=&#34;https://twitter.com/hspter&#34;&gt;Hilary Parker&lt;/a&gt; discussed opinionated data analysis and the concept of &lt;a href=&#34;https://codeascraft.com/2012/05/22/blameless-postmortems/&#34;&gt;blameless post mortems&lt;/a&gt;. The idea here is that we might have opinions on the best way to do data analysis, but how do we encourage best practice in a positive way rather than just beat people with a stick.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;qa-session&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Q&amp;amp;A Session&lt;/h2&gt;
+&lt;p&gt;Finally there was a Q&amp;amp;A session with JJ Allaire, &lt;a href=&#34;https://twitter.com/hadleywickham&#34;&gt;Hadley Wickham&lt;/a&gt; and &lt;a href=&#34;https://twitter.com/hadleywickham&#34;&gt;Joe Cheng&lt;/a&gt; discussing various topics in the R and data science universe. There was too much covered to present here but what struck me was how committed and enthusiasic the panellists were to helping people do great data science and how the medium of open source software really encouraged this since open source software is not dependent on one company.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;links-to-other-summaries&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Links to other summaries&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.rstudio.com/conference/&#34;&gt;RStudio conference page where recordings will appear&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.computerworld.com/article/3157004/data-analytics/best-tips-and-takeaways-from-rstudio-conference.html&#34;&gt;Computerworld best tips and tricks&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/kbroman/RStudioConf2017Slides&#34;&gt;KBroman github repo of slide links&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.gettinggeneticsdone.com/2017/01/rstudio-conference-2017-recap.html&#34;&gt;Getting genetics done blog summary&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusion&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;RStudio put on a terrific conference with a good balance of tutorial/workshop and information. My metric of a conference like this is how much of what I learnt could I have learnt just by staying at home and working through tutorials and blog posts myself, and I definitely learnt a lot more. There is no substitute for being able to interact with and ask questions of the creators of the software that I use on a daily basis, as well as talking to fellow users about common experiences. It also struck me how different the conference was to user group meetings of commercial software, which seems far more about trying to sell you something than helping you to get the most out of what’s available. Thanks RStudio!!&lt;/p&gt;
+&lt;/div&gt;
+</description>
     </item>
     
     <item>
@@ -56,8 +768,38 @@
       <pubDate>Fri, 13 Jan 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017/01/13/rstudioconf-highlights-day-3/</guid>
-      <description>Introduction I’ve been lucky enough to spend the last few days in sunny Florida at the RStudio::conf 2017. This was made possible by RStudio’s very generous academic discount scheme, so thanks to them for that! Whilst I’ve been tweeting a few of the key moments as they happened this series of posts expands further on these tweets and gives links to further information.
- RStudio::conf Highlights Days 1-2: shiny workshop RStudio::conf Highlights Day 3: the tidyverse RStudio::conf Highlights Day 3: the tidyverse   The tidyverse Inevitably a big theme of the first day was the tidyverse and Hadley Wickham kicked the conference off with an overview of his latest thinking and developments in the suite of packages.</description>
+      <description>&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;I’ve been lucky enough to spend the last few days in sunny Florida at the &lt;a href=&#34;https://www.rstudio.com/conference/&#34;&gt;RStudio::conf 2017&lt;/a&gt;. This was made possible by RStudio’s very generous academic discount scheme, so thanks to them for that! Whilst I’ve been &lt;a href=&#34;https://twitter.com/search?f=tweets&amp;amp;vertical=default&amp;amp;q=chapmandu2%20%23rstudioconf&amp;amp;src=typd&#34;&gt;tweeting&lt;/a&gt; a few of the key moments as they happened this series of posts expands further on these tweets and gives links to further information.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;/post/2017-01-12-rstudio-conference-highlights-1/&#34;&gt;RStudio::conf Highlights Days 1-2: shiny workshop&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;/post/2017-01-13-rstudio-conference-highlights-2/&#34;&gt;RStudio::conf Highlights Day 3: the tidyverse&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;/post/2017-01-14-rstudio-conference-highlights-3/&#34;&gt;RStudio::conf Highlights Day 3: the tidyverse&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-tidyverse&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The tidyverse&lt;/h2&gt;
+&lt;p&gt;Inevitably a big theme of the first day was the &lt;a href=&#34;http://www.tidyverse.org&#34;&gt;tidyverse&lt;/a&gt; and Hadley Wickham kicked the conference off with an overview of his latest thinking and developments in the suite of packages. Hadley seems to be really driving the concept on now that he’s successfully convinced the R community to stop embarassing him by referring to it as the Hadleyverse. I like his ‘pit of success’ analogy - make it easy to do things well - although Stephen Turner raised an issue that I come across on a daily basis which is the messiness that can happen when trying to combine tidy approaches withing the &lt;a href=&#34;http://www.bioconductor.org&#34;&gt;Bioconductor&lt;/a&gt; ecosystem of packages.&lt;/p&gt;
+&lt;p&gt;Next up was Charlotte Wickham, Hadley’s sister, giving a tutorial on the use of the &lt;a href=&#34;https://cran.r-project.org/web/packages/purrr/index.html&#34;&gt;purrr&lt;/a&gt; package. This package provides some great functional programming tools for working with lists that provide an alternative to working with &lt;code&gt;apply&lt;/code&gt; in base R. In particular the &lt;code&gt;map&lt;/code&gt; family of functions allows iterating through a list with the guarantee that the result will be of a particular type. The &lt;code&gt;walk&lt;/code&gt; functions do not return anything so are used for their side-effects - ie plotting or writing to files.&lt;/p&gt;
+&lt;p&gt;In the afternoon &lt;a href=&#34;https://twitter.com/hrbrmstr&#34;&gt;Bob Rudis&lt;/a&gt; gave a &lt;a href=&#34;https://github.com/hrbrmstr/rstudioconf2017&#34;&gt;brilliant talk&lt;/a&gt; on writing readable code using pipes which really helped cement some concepts in my head, before &lt;a href=&#34;https://twitter.com/JennyBryan&#34;&gt;Jenny Bryan&lt;/a&gt; followed on with an equally excellent talk discussing the use of list-cols in tibbles. The idea here is that just as data frames keep vectors of data together, they can also keep lists of data together. So a row could, for example, contain some data as a nested data frame, a model, an r-squared value, and a plot. This avoids the use of disconnected lists in an analysis which, as in Excel, can fall prey to unintended mixing up. In particular, the combination of &lt;code&gt;purrr::map&lt;/code&gt; and &lt;code&gt;dplyr::mutate&lt;/code&gt; can allow list-cols to be manipulated in situ in very powerful ways. I’m using this approach to store various Bioconductor objects in data frames to make my analysis code more concise with some success. Jenny’s slides were based on a &lt;a href=&#34;http://jennybc.github.io/purrr-tutorial/&#34;&gt;tutorial on GitHub&lt;/a&gt; and Hadley described the principles in this &lt;a href=&#34;https://www.youtube.com/watch?v=rz3_FDVt9eg&#34;&gt;YouTube video&lt;/a&gt; and a chapter in &lt;a href=&#34;http://r4ds.had.co.nz/many-models.html&#34;&gt;R for Data Science&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;getting-data-into-r&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Getting data into R&lt;/h2&gt;
+&lt;p&gt;Jim Hester from RStudio presented a completely rewritten version of the RODBC package called &lt;a href=&#34;https://github.com/rstats-db/odbc&#34;&gt;odbc&lt;/a&gt; which is faster, more robust and more secure. It includes drivers for a variety of databases and will be really helpful for anyone wanting to interact with databases in their analysis or shiny apps. In addition, SQL chunks can now be included in RMarkdown documents which are then executed and the result depicted as a data table when the RMarkdown is rendered. Finally the &lt;a href=&#34;https://github.com/rstudio/pool&#34;&gt;pool&lt;/a&gt; package is also being developed which helps manage database connections better.&lt;/p&gt;
+&lt;p&gt;Amanda Gadrow, also from Rstudio, presented some of her work &lt;a href=&#34;https://github.com/ajmcoqui/webAPIsR&#34;&gt;analysing data from web API’s&lt;/a&gt; using &lt;code&gt;httr&lt;/code&gt;, &lt;code&gt;jsonlite&lt;/code&gt;, &lt;code&gt;dplyr&lt;/code&gt;, &lt;code&gt;ggplot2&lt;/code&gt; etc. The primary motivation was to analyse RStudio’s support tickets, apparently they get more in the afternoon USA eastern time which means in the UK we should get an instant response, and that RStudio’s next support hire will be on the US West Coast!&lt;/p&gt;
+&lt;p&gt;Karthik Ram from ropensci.org also presented some useful packages in a &lt;a href=&#34;http://inundata.org/talks/rc17/&#34;&gt;lightning talk&lt;/a&gt;: magick for image processing, hunspell for spell checking, and tesseract for OCR.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;miscellaneous&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Miscellaneous&lt;/h2&gt;
+&lt;p&gt;I also enjoyed &lt;a href=&#34;https://twitter.com/juliasilge&#34;&gt;Julia Silge’s&lt;/a&gt; presentation on the &lt;a href=&#34;http://www.tidytextmining.org&#34;&gt;tidytext&lt;/a&gt; package whose uses, amongst other things, included an analysis of Donald Trump’s tweets! The basic concept is to generate a tidy data frame with one row per word for a dataset whilst retaining contextual information (chapter, line, book). Examples included sentiment analysis of Jane Austen, and also &lt;a href=&#34;https://en.wikipedia.org/wiki/Tf%E2%80%93idf&#34;&gt;TF-IDF&lt;/a&gt; analysis of some NASA datasets. It would be interesting to try this package for text mining biomedical literature.&lt;/p&gt;
+&lt;p&gt;Meanwhile Jonathan Sidi presented a short talk on &lt;a href=&#34;https://github.com/yonicd/ggedit&#34;&gt;ggedit&lt;/a&gt; which allows interactive editing of ggplots, before returning the code to make the new plot. This looks like a really useful tool for both new and advanced users of ggplot2 - there’s an article with videos &lt;a href=&#34;https://t.co/m7VlmjI5SV&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Finally, Chester Ismay &lt;a href=&#34;http://ismayc.github.io/rsconf/slides.html&#34;&gt;talked about&lt;/a&gt; how he has developed &lt;a href=&#34;http://moderndive.com/&#34;&gt;teaching materials&lt;/a&gt; for introductory stats using bookdown, shiny and the tidyverse. Even now stats is taught with calculators and worksheets of t-distributions and Z-scores, so using R both made the course more interesting for students, and also gave them experience in programming.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusion&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Having spent the previous 2 days in a shiny workshop I opted to avoid the shiny talks today, but there was a lot of buzz coming out of those sessions especially about &lt;a href=&#34;https://www.rstudio.com/products/connect/&#34;&gt;RStudio Connect&lt;/a&gt; and the &lt;a href=&#34;https://github.com/rstudio/shinytest&#34;&gt;shinytest&lt;/a&gt; package for testing shiny apps. RStudio have recorded all of the sessions so I’m looking forward to watching what I’ve missed when it’s available! Tomorrow I’m looking forward to the RMarkdown sessions, and hoping that blogdown will get a mention!!&lt;/p&gt;
+&lt;/div&gt;
+</description>
     </item>
     
     <item>
@@ -66,8 +808,71 @@
       <pubDate>Thu, 12 Jan 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017/01/12/rstudioconf-highlights-days-1-2/</guid>
-      <description>Introduction I’ve been lucky enough to spend the last few days in sunny Florida at the RStudio::conf 2017. This was made possible by RStudio’s very generous academic discount scheme, so thanks to them for that! Whilst I’ve been tweeting a few of the key moments as they happened this series of posts expands further on these tweets and gives links to further information.
- RStudio::conf Highlights Days 1-2: shiny workshop RStudio::conf Highlights Day 3: the tidyverse RStudio::conf Highlights Day 3: the tidyverse   Shiny The first two days was the Intermediate Shiny Workshop run by Joe Cheng - creator of shiny.</description>
+      <description>&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;I’ve been lucky enough to spend the last few days in sunny Florida at the &lt;a href=&#34;https://www.rstudio.com/conference/&#34;&gt;RStudio::conf 2017&lt;/a&gt;. This was made possible by RStudio’s very generous academic discount scheme, so thanks to them for that! Whilst I’ve been &lt;a href=&#34;https://twitter.com/search?f=tweets&amp;amp;vertical=default&amp;amp;q=chapmandu2%20%23rstudioconf&amp;amp;src=typd&#34;&gt;tweeting&lt;/a&gt; a few of the key moments as they happened this series of posts expands further on these tweets and gives links to further information.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;/post/2017-01-12-rstudio-conference-highlights-1/&#34;&gt;RStudio::conf Highlights Days 1-2: shiny workshop&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;/post/2017-01-13-rstudio-conference-highlights-2/&#34;&gt;RStudio::conf Highlights Day 3: the tidyverse&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;/post/2017-01-14-rstudio-conference-highlights-3/&#34;&gt;RStudio::conf Highlights Day 3: the tidyverse&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;shiny&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Shiny&lt;/h2&gt;
+&lt;p&gt;The first two days was the Intermediate Shiny Workshop run by &lt;a href=&#34;https://twitter.com/jcheng&#34;&gt;Joe Cheng&lt;/a&gt; - creator of shiny. The slides and examples from the workshop are &lt;a href=&#34;https://github.com/jcheng5/rstudio2017-shiny-workshop&#34;&gt;available on github&lt;/a&gt; and are definitely worth a look. It’s impossible to do any sort of justice to what was covered in a brief blog post but here are some of my key take home points.&lt;/p&gt;
+&lt;div id=&#34;reactivity-graphs&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reactivity graphs&lt;/h3&gt;
+&lt;p&gt;Reactivity is a key concept to understand in shiny. Joe advised us to watch his &lt;a href=&#34;https://www.rstudio.com/resources/webinars/shiny-developer-conference/&#34;&gt;talks from the 2016 Shiny Dev Conference&lt;/a&gt; for more information but one really useful feature we learnt about was the ability to view reactivity graphs while the app is running. This allows the shiny developer to really see the sequence of events and links between the various components of the shiny app. To do this set &lt;code&gt;options(shiny.reactlog=TRUE)&lt;/code&gt; before running your app, then hit Command-F3 on the mac. See &lt;code&gt;?showReactLog&lt;/code&gt; for more information.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;events-and-reactives&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Events and reactives&lt;/h3&gt;
+&lt;p&gt;The concept of clicking on buttons (event) to update shiny apps is fundamental, but the innards of shiny and how to do this has changed a bit. There are now &lt;code&gt;observeEvent&lt;/code&gt; and &lt;code&gt;eventReactive&lt;/code&gt; functions which make this much simpler. In brief the difference is that you use &lt;code&gt;observeEvent&lt;/code&gt; when you want something to be &lt;em&gt;done&lt;/em&gt; when an event occurs, whereas you use &lt;code&gt;eventReactive&lt;/code&gt; when you want something to be &lt;em&gt;calculated&lt;/em&gt;. Want to write out a csv, use &lt;code&gt;observeEvent&lt;/code&gt;, want to filter a data frame, use &lt;code&gt;eventReactive&lt;/code&gt;. Crucially this replaces this code:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;observe({
+  # Take a reactive dependency on input$save_button
+  input$save_button
+  isolate({
+    write.csv(movies_subset(), &amp;quot;movies.csv&amp;quot;)
+  })
+})&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;with this:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;observeEvent(input$save_button, {
+  write.csv(movies_subset(), &amp;quot;movies.csv&amp;quot;)
+})&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;reactivevalues&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;reactiveValues&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;reactiveValues&lt;/code&gt; are something you should only rarely need to use according to Joe, and this is most often when you need to preserve the history of the state of the shiny app. The best example of this was a simple app that incremented or decremented a value when a button was clicked.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;checking-preconditions-with-req&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Checking preconditions with req&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;req&lt;/code&gt; is an incredibly useful little function that is a bit like &lt;code&gt;stopifnot&lt;/code&gt; but plays more nicely with shinyapps. Rather than getting an ugly error message, a NULL is returned and downstream components of the shiny app are told not to run either. A really useful application of this is a shiny app that requires a file to be uploaded. &lt;code&gt;req&lt;/code&gt; can be used to stop the shiny app from doing anything until there is some data to work from.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;invalidatelater-reactivepoll-reactivefilereader&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;invalidateLater, reactivePoll, reactiveFileReader&lt;/h3&gt;
+&lt;p&gt;These functions allow time or changes to datasources to be used as reactives. &lt;code&gt;invalidateLater&lt;/code&gt; causes a reactive to invalidate itself automatically after a certain time period, and so can be used to automatically update data at set intervals. &lt;code&gt;reactivePoll&lt;/code&gt; uses a check function to monitor a data source (eg the length of a database table) and update itself when the data changes. &lt;code&gt;reactiveFileReader&lt;/code&gt; is a specific case of &lt;code&gt;reactivePoll&lt;/code&gt; which can monitor the timestamps of files for changes.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;modules&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Modules&lt;/h3&gt;
+&lt;p&gt;We spent a very challenging afternoon on modules, but I ended up being convinced by their utilty. The problem in shiny is that UI and server components rely on uniquely named HTML elements, and so using a normal function to package up a commonly used bit of code for re-use risks inadvertantly using the same id as another element. To circumvent this modules are pairs of ui and server code which are constructed in such a way that they have their own namespace. This approach reduces duplication of code and makes shiny apps more streamlined and robust. &lt;em&gt;Modules are functions that are UI aware&lt;/em&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;htmltoolsbrowsable&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;htmltools::browsable&lt;/h3&gt;
+&lt;p&gt;This is a useful little function which helps check out and debug elements of UI. Use as follows: &lt;code&gt;htmltools::browsable(my_app_ui)&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;debounce-and-throttle&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;debounce and throttle&lt;/h3&gt;
+&lt;p&gt;These functions can be used to prevent apps from updating too frequently either. &lt;code&gt;throttle&lt;/code&gt; creates a reactive that updates no more than every &lt;em&gt;N&lt;/em&gt; seconds, whereas &lt;code&gt;debounce&lt;/code&gt; creates a reactive that updates once an input has stopped updating for at least &lt;em&gt;N&lt;/em&gt; seconds.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusion&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Whilst RStudio do a great job of recording webinars and writing fantastic documentation, hearing personally from shiny’s creator Joe Cheng and sitting in a room full of shiny developers was a great experience!&lt;/p&gt;
+&lt;div id=&#34;footnote-on-this-blog&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Footnote on this blog&lt;/h3&gt;
+&lt;p&gt;I’ve recently moved my blog over to Yihui Xie’s &lt;a href=&#34;https://github.com/rstudio/blogdown&#34;&gt;blogdown&lt;/a&gt; package which is fantastic if you want to write blogs in RMarkdown and joins the family of RMarkdown packages including packagedown, bookdown etc. I do still need to iron out a few glitches and choose a theme, so unfortunately Disqus isn’t working just now - sorry!!&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
     </item>
     
     <item>
@@ -76,7 +881,52 @@
       <pubDate>Wed, 07 Dec 2016 00:00:00 +0000</pubDate>
       
       <guid>/post/2016/12/07/rnaseq-in-preclinical-drug-discovery-1/</guid>
-      <description>Introduction In the summer, James Hadfield from the Cancer Research UK Cambridge Institute and author of the Core Genomics blog wrote an excellent blog post where he described experimental considerations when carrying out RNA-seq experiments. He advocated generating 10-20M 50bp single end reads for a standard ‘microarray substitute’ differential gene expression experiment. Mick Watson of Opinionomics then raised the findings from a paper published by his group (Robert &amp;amp; Watson Genome Biology 2015) that some genes couldn’t be accurately quantitated due to the issue of multi-mapping: regions of similarity between closely related genes just can’t be differentiated between with shorter reads.</description>
+      <description>&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;In the summer, James Hadfield from the Cancer Research UK Cambridge Institute and author of the &lt;a href=&#34;http://core-genomics.blogspot.co.uk/&#34;&gt;Core Genomics&lt;/a&gt; blog wrote an excellent &lt;a href=&#34;http://core-genomics.blogspot.co.uk/2016/07/rna-seq-advice-from-illumina.html&#34;&gt;blog post&lt;/a&gt; where he described experimental considerations when carrying out RNA-seq experiments. He advocated generating 10-20M 50bp single end reads for a standard ‘microarray substitute’ differential gene expression experiment. Mick Watson of &lt;a href=&#34;http://www.opiniomics.org/&#34;&gt;Opinionomics&lt;/a&gt; then raised the findings from a paper published by his group (&lt;a href=&#34;https://genomebiology.biomedcentral.com/articles/10.1186/s13059-015-0734-x&#34;&gt;Robert &amp;amp; Watson Genome Biology 2015&lt;/a&gt;) that some genes couldn’t be accurately quantitated due to the issue of multi-mapping: regions of similarity between closely related genes just can’t be differentiated between with shorter reads. He felt that using short single end reads would only make this problem worse. There then following a twitter discussion about the various considerations when designing RNA-seq experiments. I came back to this topic after being invited to give a presentation to the Cambridge RNA club so I thought it would make an interesting blog post. I’ll include some more technical detail in a follow-up post, here I’ll just focus on the general principles.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;background&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Background&lt;/h2&gt;
+&lt;p&gt;I work for the &lt;a href=&#34;http://www.cruk.manchester.ac.uk/Research/CRUK-MI-Groups/Drug-Discovery/Home&#34;&gt;Drug Discovery Unit&lt;/a&gt; at the Cancer Research UK Manchester Institue, and we use RNA-seq to characterise the biological activity in cancer models (such as cancer cell lines) of the novel compounds that our group develops (eg &lt;a href=&#34;http://pubs.acs.org/doi/abs/10.1021/acschembio.6b00609&#34;&gt;James et al 2016&lt;/a&gt;, &lt;a href=&#34;www.sciencedirect.com/science/article/pii/S0223523416300393&#34;&gt;Newton et al 2016&lt;/a&gt;). Two particularly useful outcomes are the identification of differentially expressed genes that can then be turned into a cell-based assay of compound activity, and a improving our understanding of the mechanism of action of novel compounds. When we design our experiments there are a range of factors that we have to consider.&lt;/p&gt;
+&lt;div id=&#34;which-compound&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Which compound?&lt;/h3&gt;
+&lt;p&gt;When we develop new drugs, the final compound that becomes a medicine is just one of many thousands of compounds that will be synthesised during the course of a drug discovery project. Our chemists will make many different modifications to a structure to find the compound with the best combination of potency, selectivity, physical and metabolic properties. Ideally we want to test not just a single inhibitor of a protein, but also an inactive but closely related compound as a negative control, as well as structurally unrelated compounds that also have activity. This allows us to differentiate between ‘on-target’ (intentional) and ‘off-target’ (unintentional) effects of our compounds.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;which-dose&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Which dose?&lt;/h3&gt;
+&lt;p&gt;How much compound should be dosed? Ideally any effects we see should be dose dependent, so it can be useful to include multiple doses with the expectation of seeing a bigger effect with higher dose. In addition, too high a dose is more likely to result in ‘off-target’ effects.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;which-timepoint&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Which timepoint?&lt;/h3&gt;
+&lt;p&gt;At what timepoint should we measure gene expression? Too soon after treatment and our compound may not have had time to take effect, too long and we may start seeing secondary effects - changes in gene expression due to apoptosis for example. This can often be the most difficult thing to decide.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;which-cell-linemodel&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Which cell line/model?&lt;/h3&gt;
+&lt;p&gt;The cancer cell line to be used in the experiment (for example) is an important consideration. We want to see the same effect in more than one model to have greater confidence in the biological effects that we see, or perhaps we expect our compound to only be active in a certain genetic background.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;how-many-replicates&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;How many replicates?&lt;/h3&gt;
+&lt;p&gt;This depends on the amount of variability in the system and the expected effect size. If we want to see small effects in a noisy model (mouse xenografts) then we will need more replicates than if we want to see large effects in a clean model (cell lines). There have been some excellent papers considering this in detail (&lt;a href=&#34;https://www.ncbi.nlm.nih.gov/pubmed/27022035&#34;&gt;Schurch &amp;amp; Barton RNA 2016&lt;/a&gt;)&lt;/p&gt;
+&lt;p&gt;We then get to the RNA-seq specific technical aspects of how we do the sequencing:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;how-many-reads&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;How many reads?&lt;/h3&gt;
+&lt;p&gt;In RNAseq (unlike microarrays) we generate more reads for long, highly expressed genes than we do for short, low expressed genes. This means that we will see more (poisson) variance and hence have less power to detect differential expression in the latter than the former. So the question really becomes: how interested are we in genes with low expression, and how many reads are we prepared to pay for in order to accomplish this?&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;what-type-of-reads&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;What type of reads?&lt;/h3&gt;
+&lt;p&gt;We can have a range of read lengths from 50 to 150bp (and longer) and also a choice of paired end or single end reads, with shorter single end reads being cheaper than longer paired end reads. This impacts how effectively we can determine which gene a given read came from, and feeds into our choice of which alignment method to use. Generally speaking longer reads can be aligned with more certainty, since there is more information, but the alignment problem becomes somewhat more difficult with longer reads since they tend to cross more exon-exon boundaries.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;experimental-design&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Experimental design&lt;/h2&gt;
+&lt;p&gt;As you can see there are a LOT of things to consider, all of which have an impact on the price of the experiment, and there usually there is a compromise to be made within the envelope of a fixed budget. In terms of sample number, if you only looked at two cell lines treated with two compounds at two doses over two timepoints with a group size of 3 you, end up with 2x2x2x2x3=48 samples. Whilst it may be true that longer, paired end reads are ‘better’ than shorter, single end reads in an absolute sense, it then has to be argued whether this benefit outweighs other factors in a relative sense. The choice becomes: should we include an extra timepoint or generate paired end reads? I’ve certainly done experiments where an effect was only seen in the latest timepoint, and had that been excluded there just wouldn’t have been an effect to detect in the remaining samples, however technically accurate the experiment might have been.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusion-purism-vs-pragmatism&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusion: Purism vs pragmatism&lt;/h2&gt;
+&lt;p&gt;The purist argument might be to always do the optimum experiment, but in my view this is unrealistic and it is usually the case that a project will be trying to obtain the maximum information it can from the budget it has available. An over-engineered RNA-seq experiment to answer one question will simply use up resources that could have been better used to carry out another experiment to answer a different question - a classic case of &lt;a href=&#34;https://en.wikipedia.org/wiki/Opportunity_cost&#34;&gt;opportunity cost&lt;/a&gt; . Of course the converse is also true, and a flawed experimental design can render a very expensive experiment completely useless. So, whilst methodological studies such as that by the Watson and Barton groups are extremely valuable to understand the difference between approaches and inform experimental design, they don’t provide an absolute answer applicable in all cases. It is legitimate to make an informed choice to use an inferior method if it allows the overall aim of the experiment to be delivered more effectively. We always do 75bp single end sequencing, because it is cheaper and so allows us to run bigger studies that cover more variables. Ultimately the answer lies in having absolute clarity as to the aim of the experiment, and then designing it accordingly, which is why it is so important that lab-based and computational biologists collaborate from the very start of any project.&lt;/p&gt;
+&lt;/div&gt;
+</description>
     </item>
     
     <item>
@@ -85,7 +935,276 @@
       <pubDate>Fri, 25 Nov 2016 00:00:00 +0000</pubDate>
       
       <guid>/post/2016/11/25/pharmacogenetics-using-pharmacogx/</guid>
-      <description>Introduction In this example we do some very simple modelling using cancer cell line screening data and associated genetic data. The purpose of this example is to demonstrate how data can be extracted from PharmacoSet objects and then be used to develop linear models of dose response vs genetic features. However, there are uncertainties around IC50 estimation and cell line genetic feature classification (and meaning) which aren’t carried through into the modelling.</description>
+      <description>&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;In this example we do some very simple modelling using cancer cell line screening data and associated genetic data. The purpose of this example is to demonstrate how data can be extracted from &lt;strong&gt;PharmacoSet&lt;/strong&gt; objects and then be used to develop linear models of dose response vs genetic features. However, there are uncertainties around IC50 estimation and cell line genetic feature classification (and meaning) which aren’t carried through into the modelling.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;get-the-data&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Get the data&lt;/h2&gt;
+&lt;p&gt;PharmacoSet objects can be downloaded as follows (commented out for speed of rendering):&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#ccle_pset &amp;lt;- downloadPSet(&amp;#39;CCLE&amp;#39;, saveDir=&amp;#39;~/BigData/PSets/&amp;#39;)
+#gdsc_pset &amp;lt;- downloadPSet(&amp;#39;GDSC&amp;#39;, saveDir=&amp;#39;~/BigData/PSets/&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And then loaded in the normal way:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;load(&amp;#39;~/BigData/PSets/GDSC.RData&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;explore-the-pharmacoset-objects&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Explore the PharmacoSet objects&lt;/h2&gt;
+&lt;p&gt;Objects have a show method so calling the name of the object reveals lots of useful information about it.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;GDSC&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Name:  GDSC 
+## Date Created:  Wed Dec 30 10:44:21 2015 
+## Number of cell lines:  1124 
+## Number of drug compounds:  139 
+## RNA: 
+##  Dim:  11833 789 
+## CNV: 
+##  Dim:  24960 936 
+## Drug pertubation: 
+##  Please look at pertNumber(pSet) to determine number of experiments for each drug-cell combination.
+## Drug sensitivity: 
+##  Number of Experiments:  79903 
+##  Please look at sensNumber(pSet) to determine number of experiments for each drug-cell combination.&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There are useful functions to show the elements of PharmacoSet object: drugs, cells and molecular data types:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;drugNames(GDSC)[1:10] &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;Erlotinib&amp;quot;    &amp;quot;AICAR&amp;quot;        &amp;quot;Camptothecin&amp;quot; &amp;quot;Vinblastine&amp;quot; 
+##  [5] &amp;quot;Cisplatin&amp;quot;    &amp;quot;Cytarabine&amp;quot;   &amp;quot;Docetaxel&amp;quot;    &amp;quot;Methotrexate&amp;quot;
+##  [9] &amp;quot;ATRA&amp;quot;         &amp;quot;Gefitinib&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cellNames(GDSC)[1:10]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;22RV1&amp;quot;    &amp;quot;23132-87&amp;quot; &amp;quot;380&amp;quot;      &amp;quot;5637&amp;quot;     &amp;quot;639-V&amp;quot;    &amp;quot;647-V&amp;quot;   
+##  [7] &amp;quot;697&amp;quot;      &amp;quot;769-P&amp;quot;    &amp;quot;786-0&amp;quot;    &amp;quot;8305C&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mDataNames(GDSC)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;rna&amp;quot;      &amp;quot;rna2&amp;quot;     &amp;quot;mutation&amp;quot; &amp;quot;fusion&amp;quot;   &amp;quot;cnv&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;dose-response-data&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Dose response data&lt;/h2&gt;
+&lt;p&gt;We can plot the dose response data for a cell line:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;drugDoseResponseCurve(drug=&amp;#39;Nutlin-3&amp;#39;, cellline=&amp;#39;697&amp;#39;, pSets=GDSC, plot.type=&amp;#39;Both&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2016-11-25-pharmacogenetics-using-pharmacogx_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;And get the sensitivity measure values for all cell lines for Nutlin-3 and Erlotinib:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sens_mat &amp;lt;- summarizeSensitivityProfiles(GDSC, sensitivity.measure = &amp;#39;ic50_published&amp;#39;, drugs = c(&amp;#39;Nutlin-3&amp;#39;, &amp;#39;Erlotinib&amp;#39;), verbose = FALSE) %&amp;gt;% t()
+sens_mat &amp;lt;- 9-log10(sens_mat)
+dim(sens_mat)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 1124    2&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Unfortunately there isn’t a convenience function to extract the dose response data itself, but this can be done as follows:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#get the information about the curve of interest
+drug_profiles &amp;lt;- GDSC@sensitivity$info %&amp;gt;% 
+    tibble::rownames_to_column(&amp;#39;curve_id&amp;#39;) %&amp;gt;%
+    dplyr::filter(drugid==&amp;#39;Nutlin-3&amp;#39;, cellid==&amp;#39;697&amp;#39;)
+drug_profiles&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##          curve_id cellid   drugid drug.name nbr.conc.tested min.Dose.uM
+## 1 drugid_1047_697    697 Nutlin-3  NUTLIN3A               9     0.03125
+##   max.Dose.uM duration_h
+## 1           8         72&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#the raw data is stored in a 3D matrix, can extract as follows:
+GDSC@sensitivity$raw[&amp;quot;drugid_1047_697&amp;quot;,,]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##        Dose      Viability         
+## doses1 &amp;quot;0.03125&amp;quot; &amp;quot;99.9083625051504&amp;quot;
+## doses2 &amp;quot;0.0625&amp;quot;  &amp;quot;110.360194300232&amp;quot;
+## doses3 &amp;quot;0.125&amp;quot;   &amp;quot;97.9893987166772&amp;quot;
+## doses4 &amp;quot;0.25&amp;quot;    &amp;quot;100.571670763227&amp;quot;
+## doses5 &amp;quot;0.5&amp;quot;     &amp;quot;91.7495404302393&amp;quot;
+## doses6 &amp;quot;1&amp;quot;       &amp;quot;87.6252737395088&amp;quot;
+## doses7 &amp;quot;2&amp;quot;       &amp;quot;56.7022780978287&amp;quot;
+## doses8 &amp;quot;4&amp;quot;       &amp;quot;14.4871092551858&amp;quot;
+## doses9 &amp;quot;8&amp;quot;       &amp;quot;4.04710864108274&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;molecular-profile-data&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Molecular profile data&lt;/h2&gt;
+&lt;p&gt;Feature names are symbols for the mutation data and a derivation of ensembl id’s for expression data. Gene name information can be obtained using EnsDb.Hsapiens.v75 package&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gene_info &amp;lt;- ensembldb::genes(EnsDb.Hsapiens.v75, filter=GenenameFilter(c(&amp;#39;TP53&amp;#39;, &amp;#39;EGFR&amp;#39;)), return.type=&amp;#39;data.frame&amp;#39;) %&amp;gt;%
+    dplyr::select(gene_id, gene_name) %&amp;gt;%
+    dplyr::mutate(probe_id=paste0(gene_id, &amp;#39;_at&amp;#39;))
+gene_info&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##           gene_id gene_name           probe_id
+## 1 ENSG00000141510      TP53 ENSG00000141510_at
+## 2 ENSG00000146648      EGFR ENSG00000146648_at&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Get the mutatation and expression data for TP53 and EGFR:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;genetic_mat &amp;lt;- summarizeMolecularProfiles(GDSC, mDataType = &amp;#39;mutation&amp;#39;, features = gene_info$gene_name, summary.stat=&amp;#39;and&amp;#39;, verbose=FALSE) %&amp;gt;% exprs() %&amp;gt;% t()
+dim(genetic_mat)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 1124    2&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;affy_mat &amp;lt;- summarizeMolecularProfiles(GDSC, mDataType = &amp;#39;rna&amp;#39;, features = gene_info$probe_id, summary.stat=&amp;#39;first&amp;#39;, verbose=FALSE) %&amp;gt;% exprs() %&amp;gt;% t()
+dim(affy_mat)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 1124    2&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Note that I have a half written package called &lt;code&gt;tidyMultiAssay&lt;/code&gt; that is available on &lt;a href=&#34;http://www.github.com/chapmandu2/tidyMultiAssay&#34;&gt;github&lt;/a&gt; which provides convenience functions for the extraction of data from PharmacoSet objects.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;integrated-data-analysis&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Integrated data analysis&lt;/h2&gt;
+&lt;p&gt;Combine data together and turn into a data frame&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#sensitivity data 
+sens_df &amp;lt;- sens_mat %&amp;gt;% as.data.frame() %&amp;gt;% tibble::rownames_to_column(&amp;#39;cell_line&amp;#39;)
+
+#mutation data
+colnames(genetic_mat) &amp;lt;- paste0(colnames(genetic_mat), &amp;#39;_mut&amp;#39; )
+genetic_df &amp;lt;- genetic_mat %&amp;gt;% as.data.frame() %&amp;gt;% tibble::rownames_to_column(&amp;#39;cell_line&amp;#39;)
+
+#affymetrix data
+colnames(affy_mat) &amp;lt;- paste0(colnames(affy_mat), &amp;#39;_affy&amp;#39; )
+affy_df &amp;lt;- affy_mat %&amp;gt;% as.data.frame() %&amp;gt;% tibble::rownames_to_column(&amp;#39;cell_line&amp;#39;)
+
+#combine into a single data frame
+combined_df &amp;lt;- sens_df %&amp;gt;% 
+    inner_join(genetic_df, by=&amp;#39;cell_line&amp;#39;) %&amp;gt;% 
+    inner_join(affy_df, by=&amp;#39;cell_line&amp;#39;)
+
+combined_df %&amp;gt;% tbl_df()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 1,124 x 7
+##    cell_line `Nutlin-3` Erlotinib TP53_mut EGFR_mut
+##        &amp;lt;chr&amp;gt;      &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt;   &amp;lt;fctr&amp;gt;   &amp;lt;fctr&amp;gt;
+##  1     22RV1   7.892590        NA        1        0
+##  2  23132-87   7.680031        NA        0        0
+##  3       380         NA        NA     &amp;lt;NA&amp;gt;     &amp;lt;NA&amp;gt;
+##  4      5637   6.214938        NA        1        0
+##  5     639-V   7.358565        NA        1        0
+##  6     647-V   6.072949        NA        1        0
+##  7       697   8.694393  8.576254        0        0
+##  8     769-P   7.176188        NA        0        0
+##  9     786-0   6.995861        NA        1        0
+## 10     8305C   6.225848        NA        1        0
+## # ... with 1,114 more rows, and 2 more variables:
+## #   ENSG00000141510_at_affy &amp;lt;dbl&amp;gt;, ENSG00000146648_at_affy &amp;lt;dbl&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now do some basic modelling. Nutlin-3 is more effective in TP53 wild type than mutant cell lines:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lm(`Nutlin-3`~TP53_mut, data=combined_df) %&amp;gt;% summary()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## Call:
+## lm(formula = `Nutlin-3` ~ TP53_mut, data = combined_df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1.84317 -0.45086 -0.04256  0.46663  2.12744 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&amp;gt;|t|)    
+## (Intercept)  7.69481    0.04444  173.16   &amp;lt;2e-16 ***
+## TP53_mut1   -1.07415    0.05490  -19.56   &amp;lt;2e-16 ***
+## ---
+## Signif. codes:  0 &amp;#39;***&amp;#39; 0.001 &amp;#39;**&amp;#39; 0.01 &amp;#39;*&amp;#39; 0.05 &amp;#39;.&amp;#39; 0.1 &amp;#39; &amp;#39; 1
+## 
+## Residual standard error: 0.671 on 659 degrees of freedom
+##   (463 observations deleted due to missingness)
+## Multiple R-squared:  0.3674, Adjusted R-squared:  0.3665 
+## F-statistic: 382.8 on 1 and 659 DF,  p-value: &amp;lt; 2.2e-16&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(combined_df, aes(y=`Nutlin-3`, x=TP53_mut)) + geom_violin() + geom_point()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: Removed 463 rows containing non-finite values (stat_ydensity).&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: Removed 463 rows containing missing values (geom_point).&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2016-11-25-pharmacogenetics-using-pharmacogx_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Whereas Erlotinib is more effective in cell lines with high levels of expression of its target, EGFR.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lm(Erlotinib~ENSG00000146648_at_affy, data=combined_df) %&amp;gt;% summary()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## Call:
+## lm(formula = Erlotinib ~ ENSG00000146648_at_affy, data = combined_df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2.1594 -0.4591 -0.1275  0.3527  3.1857 
+## 
+## Coefficients:
+##                         Estimate Std. Error t value Pr(&amp;gt;|t|)    
+## (Intercept)              4.99793    0.28864  17.315  &amp;lt; 2e-16 ***
+## ENSG00000146648_at_affy  0.38049    0.05188   7.335 2.32e-12 ***
+## ---
+## Signif. codes:  0 &amp;#39;***&amp;#39; 0.001 &amp;#39;**&amp;#39; 0.01 &amp;#39;*&amp;#39; 0.05 &amp;#39;.&amp;#39; 0.1 &amp;#39; &amp;#39; 1
+## 
+## Residual standard error: 0.6671 on 285 degrees of freedom
+##   (837 observations deleted due to missingness)
+## Multiple R-squared:  0.1588, Adjusted R-squared:  0.1558 
+## F-statistic:  53.8 on 1 and 285 DF,  p-value: 2.319e-12&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(combined_df, aes(y=Erlotinib, x=ENSG00000146648_at_affy)) + geom_point() + geom_smooth(method=&amp;#39;lm&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: Removed 837 rows containing non-finite values (stat_smooth).&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: Removed 837 rows containing missing values (geom_point).&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2016-11-25-pharmacogenetics-using-pharmacogx_files/figure-html/unnamed-chunk-12-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The extension of this is to treat tissue as a covariate since some tissues have higher expression than others or have a higher level of mutation.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-bayesian-bit&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The Bayesian bit&lt;/h2&gt;
+&lt;p&gt;There are several sources of uncertainty that are not accounted for by using a simple linear model:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;How accurate is the sensitivity measure estimate and how much information are we losing by converting the dose response curve to a single value?&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;Are we able to measure resistant and sensitive cell lines equally accurately?&lt;/li&gt;
+&lt;li&gt;How accurate is our classifcation of mutation status - might we have missed mutations in some cell lines, and erroneously called variants in others? How sure can we be of the functional signifance of a mutation?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Could a Bayesian framework allow us to calculate a posterior distribution of effect size of a genetic feature on response to compound?&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;session-info&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Session Info&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sessionInfo()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## R version 3.4.0 (2017-04-21)
+## Platform: x86_64-apple-darwin15.6.0 (64-bit)
+## Running under: macOS Sierra 10.12.6
+## 
+## Matrix products: default
+## BLAS: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_GB.UTF-8/en_GB.UTF-8/en_GB.UTF-8/C/en_GB.UTF-8/en_GB.UTF-8
+## 
+## attached base packages:
+## [1] stats4    parallel  methods   stats     graphics  grDevices utils    
+## [8] datasets  base     
+## 
+## other attached packages:
+##  [1] bindrcpp_0.2             EnsDb.Hsapiens.v75_2.1.0
+##  [3] ensembldb_2.0.4          AnnotationFilter_1.0.0  
+##  [5] GenomicFeatures_1.28.5   AnnotationDbi_1.38.2    
+##  [7] GenomicRanges_1.28.6     GenomeInfoDb_1.12.3     
+##  [9] IRanges_2.10.5           S4Vectors_0.14.7        
+## [11] ggplot2_2.2.1            Biobase_2.36.2          
+## [13] BiocGenerics_0.22.1      dplyr_0.7.4             
+## [15] PharmacoGx_1.6.1        
+## 
+## loaded via a namespace (and not attached):
+##  [1] lsa_0.73.1                    ProtGenerics_1.8.0           
+##  [3] bitops_1.0-6                  matrixStats_0.52.2           
+##  [5] bit64_0.9-7                   httr_1.3.1                   
+##  [7] RColorBrewer_1.1-2            rprojroot_1.2                
+##  [9] SnowballC_0.5.1               tools_3.4.0                  
+## [11] backports_1.1.1               R6_2.2.2                     
+## [13] KernSmooth_2.23-15            sm_2.2-5.4                   
+## [15] DBI_0.7                       lazyeval_0.2.1               
+## [17] colorspace_1.3-2              gridExtra_2.3                
+## [19] curl_3.0                      bit_1.1-12                   
+## [21] compiler_3.4.0                DelayedArray_0.2.7           
+## [23] labeling_0.3                  rtracklayer_1.36.6           
+## [25] bookdown_0.5                  slam_0.1-40                  
+## [27] caTools_1.17.1                scales_0.5.0                 
+## [29] relations_0.6-7               quadprog_1.5-5               
+## [31] stringr_1.2.0                 digest_0.6.12                
+## [33] Rsamtools_1.28.0              rmarkdown_1.6                
+## [35] XVector_0.16.0                pkgconfig_2.0.1              
+## [37] htmltools_0.3.6               plotrix_3.6-6                
+## [39] limma_3.32.10                 maps_3.2.0                   
+## [41] rlang_0.1.6                   RSQLite_2.0                  
+## [43] BiocInstaller_1.26.1          shiny_1.0.5                  
+## [45] bindr_0.1                     BiocParallel_1.10.1          
+## [47] gtools_3.5.0                  RCurl_1.95-4.8               
+## [49] magrittr_1.5                  GenomeInfoDbData_0.99.0      
+## [51] Matrix_1.2-11                 Rcpp_0.12.14                 
+## [53] celestial_1.4.1               munsell_0.4.3                
+## [55] piano_1.16.4                  stringi_1.1.5                
+## [57] yaml_2.1.16                   MASS_7.3-47                  
+## [59] SummarizedExperiment_1.6.5    zlibbioc_1.22.0              
+## [61] AnnotationHub_2.8.3           gplots_3.0.1                 
+## [63] plyr_1.8.4                    grid_3.4.0                   
+## [65] blob_1.1.0                    gdata_2.18.0                 
+## [67] lattice_0.20-35               Biostrings_2.44.2            
+## [69] mapproj_1.2-5                 knitr_1.17                   
+## [71] fgsea_1.2.1                   igraph_1.1.2                 
+## [73] reshape2_1.4.2                marray_1.54.0                
+## [75] biomaRt_2.32.1                fastmatch_1.1-0              
+## [77] NISTunits_1.0.1               XML_3.98-1.9                 
+## [79] glue_1.2.0                    evaluate_0.10.1              
+## [81] blogdown_0.2                  downloader_0.4               
+## [83] data.table_1.10.4-3           httpuv_1.3.5                 
+## [85] gtable_0.2.0                  RANN_2.5.1                   
+## [87] assertthat_0.2.0              mime_0.5                     
+## [89] xtable_1.8-2                  pracma_2.0.7                 
+## [91] tibble_1.3.4                  GenomicAlignments_1.12.2     
+## [93] memoise_1.1.0                 sets_1.0-17                  
+## [95] cluster_2.0.6                 interactiveDisplayBase_1.14.0
+## [97] magicaxis_2.0.3&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
     </item>
     
   </channel>

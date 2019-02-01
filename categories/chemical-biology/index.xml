@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Chemical biology on Phil Chapman&#39;s Blog</title>
-    <link>/categories/chemical-biology/</link>
-    <description>Recent content in Chemical biology on Phil Chapman&#39;s Blog</description>
+    <title>chemical-biology on Phil Chapman&#39;s Blog</title>
+    <link>/categories/chemical-biology/index.xml</link>
+    <description>Recent content in chemical-biology on Phil Chapman&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 07 Dec 2016 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="/categories/chemical-biology/index.xml" rel="self" type="application/rss+xml" />
-    
+    <atom:link href="/categories/chemical-biology/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>RNAseq in preclinical drug discovery 1</title>
@@ -17,7 +14,52 @@
       <pubDate>Wed, 07 Dec 2016 00:00:00 +0000</pubDate>
       
       <guid>/post/2016/12/07/rnaseq-in-preclinical-drug-discovery-1/</guid>
-      <description>Introduction In the summer, James Hadfield from the Cancer Research UK Cambridge Institute and author of the Core Genomics blog wrote an excellent blog post where he described experimental considerations when carrying out RNA-seq experiments. He advocated generating 10-20M 50bp single end reads for a standard ‘microarray substitute’ differential gene expression experiment. Mick Watson of Opinionomics then raised the findings from a paper published by his group (Robert &amp;amp; Watson Genome Biology 2015) that some genes couldn’t be accurately quantitated due to the issue of multi-mapping: regions of similarity between closely related genes just can’t be differentiated between with shorter reads.</description>
+      <description>&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;In the summer, James Hadfield from the Cancer Research UK Cambridge Institute and author of the &lt;a href=&#34;http://core-genomics.blogspot.co.uk/&#34;&gt;Core Genomics&lt;/a&gt; blog wrote an excellent &lt;a href=&#34;http://core-genomics.blogspot.co.uk/2016/07/rna-seq-advice-from-illumina.html&#34;&gt;blog post&lt;/a&gt; where he described experimental considerations when carrying out RNA-seq experiments. He advocated generating 10-20M 50bp single end reads for a standard ‘microarray substitute’ differential gene expression experiment. Mick Watson of &lt;a href=&#34;http://www.opiniomics.org/&#34;&gt;Opinionomics&lt;/a&gt; then raised the findings from a paper published by his group (&lt;a href=&#34;https://genomebiology.biomedcentral.com/articles/10.1186/s13059-015-0734-x&#34;&gt;Robert &amp;amp; Watson Genome Biology 2015&lt;/a&gt;) that some genes couldn’t be accurately quantitated due to the issue of multi-mapping: regions of similarity between closely related genes just can’t be differentiated between with shorter reads. He felt that using short single end reads would only make this problem worse. There then following a twitter discussion about the various considerations when designing RNA-seq experiments. I came back to this topic after being invited to give a presentation to the Cambridge RNA club so I thought it would make an interesting blog post. I’ll include some more technical detail in a follow-up post, here I’ll just focus on the general principles.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;background&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Background&lt;/h2&gt;
+&lt;p&gt;I work for the &lt;a href=&#34;http://www.cruk.manchester.ac.uk/Research/CRUK-MI-Groups/Drug-Discovery/Home&#34;&gt;Drug Discovery Unit&lt;/a&gt; at the Cancer Research UK Manchester Institue, and we use RNA-seq to characterise the biological activity in cancer models (such as cancer cell lines) of the novel compounds that our group develops (eg &lt;a href=&#34;http://pubs.acs.org/doi/abs/10.1021/acschembio.6b00609&#34;&gt;James et al 2016&lt;/a&gt;, &lt;a href=&#34;www.sciencedirect.com/science/article/pii/S0223523416300393&#34;&gt;Newton et al 2016&lt;/a&gt;). Two particularly useful outcomes are the identification of differentially expressed genes that can then be turned into a cell-based assay of compound activity, and a improving our understanding of the mechanism of action of novel compounds. When we design our experiments there are a range of factors that we have to consider.&lt;/p&gt;
+&lt;div id=&#34;which-compound&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Which compound?&lt;/h3&gt;
+&lt;p&gt;When we develop new drugs, the final compound that becomes a medicine is just one of many thousands of compounds that will be synthesised during the course of a drug discovery project. Our chemists will make many different modifications to a structure to find the compound with the best combination of potency, selectivity, physical and metabolic properties. Ideally we want to test not just a single inhibitor of a protein, but also an inactive but closely related compound as a negative control, as well as structurally unrelated compounds that also have activity. This allows us to differentiate between ‘on-target’ (intentional) and ‘off-target’ (unintentional) effects of our compounds.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;which-dose&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Which dose?&lt;/h3&gt;
+&lt;p&gt;How much compound should be dosed? Ideally any effects we see should be dose dependent, so it can be useful to include multiple doses with the expectation of seeing a bigger effect with higher dose. In addition, too high a dose is more likely to result in ‘off-target’ effects.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;which-timepoint&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Which timepoint?&lt;/h3&gt;
+&lt;p&gt;At what timepoint should we measure gene expression? Too soon after treatment and our compound may not have had time to take effect, too long and we may start seeing secondary effects - changes in gene expression due to apoptosis for example. This can often be the most difficult thing to decide.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;which-cell-linemodel&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Which cell line/model?&lt;/h3&gt;
+&lt;p&gt;The cancer cell line to be used in the experiment (for example) is an important consideration. We want to see the same effect in more than one model to have greater confidence in the biological effects that we see, or perhaps we expect our compound to only be active in a certain genetic background.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;how-many-replicates&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;How many replicates?&lt;/h3&gt;
+&lt;p&gt;This depends on the amount of variability in the system and the expected effect size. If we want to see small effects in a noisy model (mouse xenografts) then we will need more replicates than if we want to see large effects in a clean model (cell lines). There have been some excellent papers considering this in detail (&lt;a href=&#34;https://www.ncbi.nlm.nih.gov/pubmed/27022035&#34;&gt;Schurch &amp;amp; Barton RNA 2016&lt;/a&gt;)&lt;/p&gt;
+&lt;p&gt;We then get to the RNA-seq specific technical aspects of how we do the sequencing:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;how-many-reads&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;How many reads?&lt;/h3&gt;
+&lt;p&gt;In RNAseq (unlike microarrays) we generate more reads for long, highly expressed genes than we do for short, low expressed genes. This means that we will see more (poisson) variance and hence have less power to detect differential expression in the latter than the former. So the question really becomes: how interested are we in genes with low expression, and how many reads are we prepared to pay for in order to accomplish this?&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;what-type-of-reads&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;What type of reads?&lt;/h3&gt;
+&lt;p&gt;We can have a range of read lengths from 50 to 150bp (and longer) and also a choice of paired end or single end reads, with shorter single end reads being cheaper than longer paired end reads. This impacts how effectively we can determine which gene a given read came from, and feeds into our choice of which alignment method to use. Generally speaking longer reads can be aligned with more certainty, since there is more information, but the alignment problem becomes somewhat more difficult with longer reads since they tend to cross more exon-exon boundaries.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;experimental-design&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Experimental design&lt;/h2&gt;
+&lt;p&gt;As you can see there are a LOT of things to consider, all of which have an impact on the price of the experiment, and there usually there is a compromise to be made within the envelope of a fixed budget. In terms of sample number, if you only looked at two cell lines treated with two compounds at two doses over two timepoints with a group size of 3 you, end up with 2x2x2x2x3=48 samples. Whilst it may be true that longer, paired end reads are ‘better’ than shorter, single end reads in an absolute sense, it then has to be argued whether this benefit outweighs other factors in a relative sense. The choice becomes: should we include an extra timepoint or generate paired end reads? I’ve certainly done experiments where an effect was only seen in the latest timepoint, and had that been excluded there just wouldn’t have been an effect to detect in the remaining samples, however technically accurate the experiment might have been.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusion-purism-vs-pragmatism&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusion: Purism vs pragmatism&lt;/h2&gt;
+&lt;p&gt;The purist argument might be to always do the optimum experiment, but in my view this is unrealistic and it is usually the case that a project will be trying to obtain the maximum information it can from the budget it has available. An over-engineered RNA-seq experiment to answer one question will simply use up resources that could have been better used to carry out another experiment to answer a different question - a classic case of &lt;a href=&#34;https://en.wikipedia.org/wiki/Opportunity_cost&#34;&gt;opportunity cost&lt;/a&gt; . Of course the converse is also true, and a flawed experimental design can render a very expensive experiment completely useless. So, whilst methodological studies such as that by the Watson and Barton groups are extremely valuable to understand the difference between approaches and inform experimental design, they don’t provide an absolute answer applicable in all cases. It is legitimate to make an informed choice to use an inferior method if it allows the overall aim of the experiment to be delivered more effectively. We always do 75bp single end sequencing, because it is cheaper and so allows us to run bigger studies that cover more variables. Ultimately the answer lies in having absolute clarity as to the aim of the experiment, and then designing it accordingly, which is why it is so important that lab-based and computational biologists collaborate from the very start of any project.&lt;/p&gt;
+&lt;/div&gt;
+</description>
     </item>
     
     <item>
@@ -26,7 +68,276 @@
       <pubDate>Fri, 25 Nov 2016 00:00:00 +0000</pubDate>
       
       <guid>/post/2016/11/25/pharmacogenetics-using-pharmacogx/</guid>
-      <description>Introduction In this example we do some very simple modelling using cancer cell line screening data and associated genetic data. The purpose of this example is to demonstrate how data can be extracted from PharmacoSet objects and then be used to develop linear models of dose response vs genetic features. However, there are uncertainties around IC50 estimation and cell line genetic feature classification (and meaning) which aren’t carried through into the modelling.</description>
+      <description>&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;In this example we do some very simple modelling using cancer cell line screening data and associated genetic data. The purpose of this example is to demonstrate how data can be extracted from &lt;strong&gt;PharmacoSet&lt;/strong&gt; objects and then be used to develop linear models of dose response vs genetic features. However, there are uncertainties around IC50 estimation and cell line genetic feature classification (and meaning) which aren’t carried through into the modelling.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;get-the-data&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Get the data&lt;/h2&gt;
+&lt;p&gt;PharmacoSet objects can be downloaded as follows (commented out for speed of rendering):&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#ccle_pset &amp;lt;- downloadPSet(&amp;#39;CCLE&amp;#39;, saveDir=&amp;#39;~/BigData/PSets/&amp;#39;)
+#gdsc_pset &amp;lt;- downloadPSet(&amp;#39;GDSC&amp;#39;, saveDir=&amp;#39;~/BigData/PSets/&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And then loaded in the normal way:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;load(&amp;#39;~/BigData/PSets/GDSC.RData&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;explore-the-pharmacoset-objects&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Explore the PharmacoSet objects&lt;/h2&gt;
+&lt;p&gt;Objects have a show method so calling the name of the object reveals lots of useful information about it.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;GDSC&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Name:  GDSC 
+## Date Created:  Wed Dec 30 10:44:21 2015 
+## Number of cell lines:  1124 
+## Number of drug compounds:  139 
+## RNA: 
+##  Dim:  11833 789 
+## CNV: 
+##  Dim:  24960 936 
+## Drug pertubation: 
+##  Please look at pertNumber(pSet) to determine number of experiments for each drug-cell combination.
+## Drug sensitivity: 
+##  Number of Experiments:  79903 
+##  Please look at sensNumber(pSet) to determine number of experiments for each drug-cell combination.&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There are useful functions to show the elements of PharmacoSet object: drugs, cells and molecular data types:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;drugNames(GDSC)[1:10] &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;Erlotinib&amp;quot;    &amp;quot;AICAR&amp;quot;        &amp;quot;Camptothecin&amp;quot; &amp;quot;Vinblastine&amp;quot; 
+##  [5] &amp;quot;Cisplatin&amp;quot;    &amp;quot;Cytarabine&amp;quot;   &amp;quot;Docetaxel&amp;quot;    &amp;quot;Methotrexate&amp;quot;
+##  [9] &amp;quot;ATRA&amp;quot;         &amp;quot;Gefitinib&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cellNames(GDSC)[1:10]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;22RV1&amp;quot;    &amp;quot;23132-87&amp;quot; &amp;quot;380&amp;quot;      &amp;quot;5637&amp;quot;     &amp;quot;639-V&amp;quot;    &amp;quot;647-V&amp;quot;   
+##  [7] &amp;quot;697&amp;quot;      &amp;quot;769-P&amp;quot;    &amp;quot;786-0&amp;quot;    &amp;quot;8305C&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mDataNames(GDSC)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;rna&amp;quot;      &amp;quot;rna2&amp;quot;     &amp;quot;mutation&amp;quot; &amp;quot;fusion&amp;quot;   &amp;quot;cnv&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;dose-response-data&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Dose response data&lt;/h2&gt;
+&lt;p&gt;We can plot the dose response data for a cell line:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;drugDoseResponseCurve(drug=&amp;#39;Nutlin-3&amp;#39;, cellline=&amp;#39;697&amp;#39;, pSets=GDSC, plot.type=&amp;#39;Both&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2016-11-25-pharmacogenetics-using-pharmacogx_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;And get the sensitivity measure values for all cell lines for Nutlin-3 and Erlotinib:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sens_mat &amp;lt;- summarizeSensitivityProfiles(GDSC, sensitivity.measure = &amp;#39;ic50_published&amp;#39;, drugs = c(&amp;#39;Nutlin-3&amp;#39;, &amp;#39;Erlotinib&amp;#39;), verbose = FALSE) %&amp;gt;% t()
+sens_mat &amp;lt;- 9-log10(sens_mat)
+dim(sens_mat)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 1124    2&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Unfortunately there isn’t a convenience function to extract the dose response data itself, but this can be done as follows:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#get the information about the curve of interest
+drug_profiles &amp;lt;- GDSC@sensitivity$info %&amp;gt;% 
+    tibble::rownames_to_column(&amp;#39;curve_id&amp;#39;) %&amp;gt;%
+    dplyr::filter(drugid==&amp;#39;Nutlin-3&amp;#39;, cellid==&amp;#39;697&amp;#39;)
+drug_profiles&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##          curve_id cellid   drugid drug.name nbr.conc.tested min.Dose.uM
+## 1 drugid_1047_697    697 Nutlin-3  NUTLIN3A               9     0.03125
+##   max.Dose.uM duration_h
+## 1           8         72&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#the raw data is stored in a 3D matrix, can extract as follows:
+GDSC@sensitivity$raw[&amp;quot;drugid_1047_697&amp;quot;,,]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##        Dose      Viability         
+## doses1 &amp;quot;0.03125&amp;quot; &amp;quot;99.9083625051504&amp;quot;
+## doses2 &amp;quot;0.0625&amp;quot;  &amp;quot;110.360194300232&amp;quot;
+## doses3 &amp;quot;0.125&amp;quot;   &amp;quot;97.9893987166772&amp;quot;
+## doses4 &amp;quot;0.25&amp;quot;    &amp;quot;100.571670763227&amp;quot;
+## doses5 &amp;quot;0.5&amp;quot;     &amp;quot;91.7495404302393&amp;quot;
+## doses6 &amp;quot;1&amp;quot;       &amp;quot;87.6252737395088&amp;quot;
+## doses7 &amp;quot;2&amp;quot;       &amp;quot;56.7022780978287&amp;quot;
+## doses8 &amp;quot;4&amp;quot;       &amp;quot;14.4871092551858&amp;quot;
+## doses9 &amp;quot;8&amp;quot;       &amp;quot;4.04710864108274&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;molecular-profile-data&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Molecular profile data&lt;/h2&gt;
+&lt;p&gt;Feature names are symbols for the mutation data and a derivation of ensembl id’s for expression data. Gene name information can be obtained using EnsDb.Hsapiens.v75 package&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gene_info &amp;lt;- ensembldb::genes(EnsDb.Hsapiens.v75, filter=GenenameFilter(c(&amp;#39;TP53&amp;#39;, &amp;#39;EGFR&amp;#39;)), return.type=&amp;#39;data.frame&amp;#39;) %&amp;gt;%
+    dplyr::select(gene_id, gene_name) %&amp;gt;%
+    dplyr::mutate(probe_id=paste0(gene_id, &amp;#39;_at&amp;#39;))
+gene_info&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##           gene_id gene_name           probe_id
+## 1 ENSG00000141510      TP53 ENSG00000141510_at
+## 2 ENSG00000146648      EGFR ENSG00000146648_at&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Get the mutatation and expression data for TP53 and EGFR:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;genetic_mat &amp;lt;- summarizeMolecularProfiles(GDSC, mDataType = &amp;#39;mutation&amp;#39;, features = gene_info$gene_name, summary.stat=&amp;#39;and&amp;#39;, verbose=FALSE) %&amp;gt;% exprs() %&amp;gt;% t()
+dim(genetic_mat)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 1124    2&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;affy_mat &amp;lt;- summarizeMolecularProfiles(GDSC, mDataType = &amp;#39;rna&amp;#39;, features = gene_info$probe_id, summary.stat=&amp;#39;first&amp;#39;, verbose=FALSE) %&amp;gt;% exprs() %&amp;gt;% t()
+dim(affy_mat)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 1124    2&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Note that I have a half written package called &lt;code&gt;tidyMultiAssay&lt;/code&gt; that is available on &lt;a href=&#34;http://www.github.com/chapmandu2/tidyMultiAssay&#34;&gt;github&lt;/a&gt; which provides convenience functions for the extraction of data from PharmacoSet objects.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;integrated-data-analysis&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Integrated data analysis&lt;/h2&gt;
+&lt;p&gt;Combine data together and turn into a data frame&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#sensitivity data 
+sens_df &amp;lt;- sens_mat %&amp;gt;% as.data.frame() %&amp;gt;% tibble::rownames_to_column(&amp;#39;cell_line&amp;#39;)
+
+#mutation data
+colnames(genetic_mat) &amp;lt;- paste0(colnames(genetic_mat), &amp;#39;_mut&amp;#39; )
+genetic_df &amp;lt;- genetic_mat %&amp;gt;% as.data.frame() %&amp;gt;% tibble::rownames_to_column(&amp;#39;cell_line&amp;#39;)
+
+#affymetrix data
+colnames(affy_mat) &amp;lt;- paste0(colnames(affy_mat), &amp;#39;_affy&amp;#39; )
+affy_df &amp;lt;- affy_mat %&amp;gt;% as.data.frame() %&amp;gt;% tibble::rownames_to_column(&amp;#39;cell_line&amp;#39;)
+
+#combine into a single data frame
+combined_df &amp;lt;- sens_df %&amp;gt;% 
+    inner_join(genetic_df, by=&amp;#39;cell_line&amp;#39;) %&amp;gt;% 
+    inner_join(affy_df, by=&amp;#39;cell_line&amp;#39;)
+
+combined_df %&amp;gt;% tbl_df()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 1,124 x 7
+##    cell_line `Nutlin-3` Erlotinib TP53_mut EGFR_mut
+##        &amp;lt;chr&amp;gt;      &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt;   &amp;lt;fctr&amp;gt;   &amp;lt;fctr&amp;gt;
+##  1     22RV1   7.892590        NA        1        0
+##  2  23132-87   7.680031        NA        0        0
+##  3       380         NA        NA     &amp;lt;NA&amp;gt;     &amp;lt;NA&amp;gt;
+##  4      5637   6.214938        NA        1        0
+##  5     639-V   7.358565        NA        1        0
+##  6     647-V   6.072949        NA        1        0
+##  7       697   8.694393  8.576254        0        0
+##  8     769-P   7.176188        NA        0        0
+##  9     786-0   6.995861        NA        1        0
+## 10     8305C   6.225848        NA        1        0
+## # ... with 1,114 more rows, and 2 more variables:
+## #   ENSG00000141510_at_affy &amp;lt;dbl&amp;gt;, ENSG00000146648_at_affy &amp;lt;dbl&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now do some basic modelling. Nutlin-3 is more effective in TP53 wild type than mutant cell lines:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lm(`Nutlin-3`~TP53_mut, data=combined_df) %&amp;gt;% summary()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## Call:
+## lm(formula = `Nutlin-3` ~ TP53_mut, data = combined_df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1.84317 -0.45086 -0.04256  0.46663  2.12744 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&amp;gt;|t|)    
+## (Intercept)  7.69481    0.04444  173.16   &amp;lt;2e-16 ***
+## TP53_mut1   -1.07415    0.05490  -19.56   &amp;lt;2e-16 ***
+## ---
+## Signif. codes:  0 &amp;#39;***&amp;#39; 0.001 &amp;#39;**&amp;#39; 0.01 &amp;#39;*&amp;#39; 0.05 &amp;#39;.&amp;#39; 0.1 &amp;#39; &amp;#39; 1
+## 
+## Residual standard error: 0.671 on 659 degrees of freedom
+##   (463 observations deleted due to missingness)
+## Multiple R-squared:  0.3674, Adjusted R-squared:  0.3665 
+## F-statistic: 382.8 on 1 and 659 DF,  p-value: &amp;lt; 2.2e-16&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(combined_df, aes(y=`Nutlin-3`, x=TP53_mut)) + geom_violin() + geom_point()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: Removed 463 rows containing non-finite values (stat_ydensity).&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: Removed 463 rows containing missing values (geom_point).&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2016-11-25-pharmacogenetics-using-pharmacogx_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Whereas Erlotinib is more effective in cell lines with high levels of expression of its target, EGFR.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lm(Erlotinib~ENSG00000146648_at_affy, data=combined_df) %&amp;gt;% summary()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## Call:
+## lm(formula = Erlotinib ~ ENSG00000146648_at_affy, data = combined_df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2.1594 -0.4591 -0.1275  0.3527  3.1857 
+## 
+## Coefficients:
+##                         Estimate Std. Error t value Pr(&amp;gt;|t|)    
+## (Intercept)              4.99793    0.28864  17.315  &amp;lt; 2e-16 ***
+## ENSG00000146648_at_affy  0.38049    0.05188   7.335 2.32e-12 ***
+## ---
+## Signif. codes:  0 &amp;#39;***&amp;#39; 0.001 &amp;#39;**&amp;#39; 0.01 &amp;#39;*&amp;#39; 0.05 &amp;#39;.&amp;#39; 0.1 &amp;#39; &amp;#39; 1
+## 
+## Residual standard error: 0.6671 on 285 degrees of freedom
+##   (837 observations deleted due to missingness)
+## Multiple R-squared:  0.1588, Adjusted R-squared:  0.1558 
+## F-statistic:  53.8 on 1 and 285 DF,  p-value: 2.319e-12&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(combined_df, aes(y=Erlotinib, x=ENSG00000146648_at_affy)) + geom_point() + geom_smooth(method=&amp;#39;lm&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: Removed 837 rows containing non-finite values (stat_smooth).&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: Removed 837 rows containing missing values (geom_point).&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2016-11-25-pharmacogenetics-using-pharmacogx_files/figure-html/unnamed-chunk-12-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The extension of this is to treat tissue as a covariate since some tissues have higher expression than others or have a higher level of mutation.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-bayesian-bit&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The Bayesian bit&lt;/h2&gt;
+&lt;p&gt;There are several sources of uncertainty that are not accounted for by using a simple linear model:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;How accurate is the sensitivity measure estimate and how much information are we losing by converting the dose response curve to a single value?&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;Are we able to measure resistant and sensitive cell lines equally accurately?&lt;/li&gt;
+&lt;li&gt;How accurate is our classifcation of mutation status - might we have missed mutations in some cell lines, and erroneously called variants in others? How sure can we be of the functional signifance of a mutation?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Could a Bayesian framework allow us to calculate a posterior distribution of effect size of a genetic feature on response to compound?&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;session-info&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Session Info&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sessionInfo()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## R version 3.4.0 (2017-04-21)
+## Platform: x86_64-apple-darwin15.6.0 (64-bit)
+## Running under: macOS Sierra 10.12.6
+## 
+## Matrix products: default
+## BLAS: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_GB.UTF-8/en_GB.UTF-8/en_GB.UTF-8/C/en_GB.UTF-8/en_GB.UTF-8
+## 
+## attached base packages:
+## [1] stats4    parallel  methods   stats     graphics  grDevices utils    
+## [8] datasets  base     
+## 
+## other attached packages:
+##  [1] bindrcpp_0.2             EnsDb.Hsapiens.v75_2.1.0
+##  [3] ensembldb_2.0.4          AnnotationFilter_1.0.0  
+##  [5] GenomicFeatures_1.28.5   AnnotationDbi_1.38.2    
+##  [7] GenomicRanges_1.28.6     GenomeInfoDb_1.12.3     
+##  [9] IRanges_2.10.5           S4Vectors_0.14.7        
+## [11] ggplot2_2.2.1            Biobase_2.36.2          
+## [13] BiocGenerics_0.22.1      dplyr_0.7.4             
+## [15] PharmacoGx_1.6.1        
+## 
+## loaded via a namespace (and not attached):
+##  [1] lsa_0.73.1                    ProtGenerics_1.8.0           
+##  [3] bitops_1.0-6                  matrixStats_0.52.2           
+##  [5] bit64_0.9-7                   httr_1.3.1                   
+##  [7] RColorBrewer_1.1-2            rprojroot_1.2                
+##  [9] SnowballC_0.5.1               tools_3.4.0                  
+## [11] backports_1.1.1               R6_2.2.2                     
+## [13] KernSmooth_2.23-15            sm_2.2-5.4                   
+## [15] DBI_0.7                       lazyeval_0.2.1               
+## [17] colorspace_1.3-2              gridExtra_2.3                
+## [19] curl_3.0                      bit_1.1-12                   
+## [21] compiler_3.4.0                DelayedArray_0.2.7           
+## [23] labeling_0.3                  rtracklayer_1.36.6           
+## [25] bookdown_0.5                  slam_0.1-40                  
+## [27] caTools_1.17.1                scales_0.5.0                 
+## [29] relations_0.6-7               quadprog_1.5-5               
+## [31] stringr_1.2.0                 digest_0.6.12                
+## [33] Rsamtools_1.28.0              rmarkdown_1.6                
+## [35] XVector_0.16.0                pkgconfig_2.0.1              
+## [37] htmltools_0.3.6               plotrix_3.6-6                
+## [39] limma_3.32.10                 maps_3.2.0                   
+## [41] rlang_0.1.6                   RSQLite_2.0                  
+## [43] BiocInstaller_1.26.1          shiny_1.0.5                  
+## [45] bindr_0.1                     BiocParallel_1.10.1          
+## [47] gtools_3.5.0                  RCurl_1.95-4.8               
+## [49] magrittr_1.5                  GenomeInfoDbData_0.99.0      
+## [51] Matrix_1.2-11                 Rcpp_0.12.14                 
+## [53] celestial_1.4.1               munsell_0.4.3                
+## [55] piano_1.16.4                  stringi_1.1.5                
+## [57] yaml_2.1.16                   MASS_7.3-47                  
+## [59] SummarizedExperiment_1.6.5    zlibbioc_1.22.0              
+## [61] AnnotationHub_2.8.3           gplots_3.0.1                 
+## [63] plyr_1.8.4                    grid_3.4.0                   
+## [65] blob_1.1.0                    gdata_2.18.0                 
+## [67] lattice_0.20-35               Biostrings_2.44.2            
+## [69] mapproj_1.2-5                 knitr_1.17                   
+## [71] fgsea_1.2.1                   igraph_1.1.2                 
+## [73] reshape2_1.4.2                marray_1.54.0                
+## [75] biomaRt_2.32.1                fastmatch_1.1-0              
+## [77] NISTunits_1.0.1               XML_3.98-1.9                 
+## [79] glue_1.2.0                    evaluate_0.10.1              
+## [81] blogdown_0.2                  downloader_0.4               
+## [83] data.table_1.10.4-3           httpuv_1.3.5                 
+## [85] gtable_0.2.0                  RANN_2.5.1                   
+## [87] assertthat_0.2.0              mime_0.5                     
+## [89] xtable_1.8-2                  pracma_2.0.7                 
+## [91] tibble_1.3.4                  GenomicAlignments_1.12.2     
+## [93] memoise_1.1.0                 sets_1.0-17                  
+## [95] cluster_2.0.6                 interactiveDisplayBase_1.14.0
+## [97] magicaxis_2.0.3&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
     </item>
     
   </channel>

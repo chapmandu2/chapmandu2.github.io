@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tidyverse on Phil Chapman&#39;s Blog</title>
-    <link>/categories/tidyverse/</link>
-    <description>Recent content in Tidyverse on Phil Chapman&#39;s Blog</description>
+    <title>tidyverse on Phil Chapman&#39;s Blog</title>
+    <link>/categories/tidyverse/index.xml</link>
+    <description>Recent content in tidyverse on Phil Chapman&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 21 Feb 2017 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="/categories/tidyverse/index.xml" rel="self" type="application/rss+xml" />
-    
+    <atom:link href="/categories/tidyverse/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Bioinformatics in the Tidyverse</title>
@@ -17,8 +14,518 @@
       <pubDate>Tue, 21 Feb 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017/02/21/bioinformatics-in-the-tidyverse/</guid>
-      <description>Introduction This is a blog post to expand on a talk I gave at the Manchester R Users Group on 21st February 2017. In it I give a brief overview of the tidyverse and its core concepts, before going on to discuss how the same concepts can be applied to bioinformatics analysis using Bioconductor classes and packages.
- What is the tidyverse? The tidyverse is a suite of tools primarily developed by Hadley Wickham and collaborators at RStudio.</description>
+      <description>&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;This is a blog post to expand on a talk I gave at the &lt;a href=&#34;http://www.rmanchester.org/&#34;&gt;Manchester R Users Group&lt;/a&gt; on 21st February 2017. In it I give a brief overview of the &lt;a href=&#34;http://tidyverse.org/&#34;&gt;tidyverse&lt;/a&gt; and its core concepts, before going on to discuss how the same concepts can be applied to bioinformatics analysis using &lt;a href=&#34;http://bioconductor.org/&#34;&gt;Bioconductor&lt;/a&gt; classes and packages.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;what-is-the-tidyverse&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;What is the tidyverse?&lt;/h2&gt;
+&lt;p&gt;The tidyverse is a suite of tools primarily developed by &lt;a href=&#34;https://twitter.com/hadleywickham&#34;&gt;Hadley Wickham&lt;/a&gt; and collaborators at &lt;a href=&#34;http://rstudio.com/&#34;&gt;RStudio&lt;/a&gt;. The suite of packages can be conveniently installed as follows:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;install.packages(&amp;#39;tidyverse&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There are many talks and resources that go into much greater depth than I do here including:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.youtube.com/watch?v=rz3_FDVt9eg&#34;&gt;Managing many models&lt;/a&gt; talk on YouTube by Hadley Wickham&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://r4ds.had.co.nz/&#34;&gt;R for Data Science&lt;/a&gt; book and website&lt;/li&gt;
+&lt;li&gt;Recorded tutorials and presentations from &lt;a href=&#34;https://www.rstudio.com/conference/&#34;&gt;RStudio::conf 2017&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.rstudio.com/resources/webinars/&#34;&gt;Webinars&lt;/a&gt; on RStudio website&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.datacamp.com/&#34;&gt;DataCamp&lt;/a&gt; courses on dplyr and the tidyverse&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;key-concepts-in-the-tidyverse&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Key concepts in the tidyverse&lt;/h2&gt;
+&lt;div id=&#34;tidy-data&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Tidy data&lt;/h3&gt;
+&lt;p&gt;They key concept of the tidyverse is that of &lt;a href=&#34;http://r4ds.had.co.nz/tidy-data.html&#34;&gt;tidy data&lt;/a&gt;. If you’re from a database background then think of this as normalised data. For example, the table below is NOT tidy data since the year variable is encoded as a column name:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+table4a&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 3 x 3
+##       country `1999` `2000`
+## *       &amp;lt;chr&amp;gt;  &amp;lt;int&amp;gt;  &amp;lt;int&amp;gt;
+## 1 Afghanistan    745   2666
+## 2      Brazil  37737  80488
+## 3       China 212258 213766&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To turn this into tidy data with one observation per row, we can use the &lt;code&gt;tidyr&lt;/code&gt; package:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df &amp;lt;- gather(table4a, year, cases, -country)
+df&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 6 x 3
+##       country  year  cases
+##         &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt;  &amp;lt;int&amp;gt;
+## 1 Afghanistan  1999    745
+## 2      Brazil  1999  37737
+## 3       China  1999 212258
+## 4 Afghanistan  2000   2666
+## 5      Brazil  2000  80488
+## 6       China  2000 213766&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;tibbles&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Tibbles&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;http://r4ds.had.co.nz/tibbles.html&#34;&gt;Tibbles&lt;/a&gt; are an alternative to the data frame. The key differences are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Subsetting a tibble will always produce another tibble.&lt;/li&gt;
+&lt;li&gt;A tibble will only print to screen - no more pages of output…&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dplyr::filter(df, cases == &amp;#39;Nigeria&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 0 x 3
+## # ... with 3 variables: country &amp;lt;chr&amp;gt;, year &amp;lt;chr&amp;gt;, cases &amp;lt;int&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dplyr::select(df, country)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 6 x 1
+##       country
+##         &amp;lt;chr&amp;gt;
+## 1 Afghanistan
+## 2      Brazil
+## 3       China
+## 4 Afghanistan
+## 5      Brazil
+## 6       China&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(gapminder)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: package &amp;#39;gapminder&amp;#39; was built under R version 3.4.2&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gapminder&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 1,704 x 6
+##        country continent  year lifeExp      pop gdpPercap
+##         &amp;lt;fctr&amp;gt;    &amp;lt;fctr&amp;gt; &amp;lt;int&amp;gt;   &amp;lt;dbl&amp;gt;    &amp;lt;int&amp;gt;     &amp;lt;dbl&amp;gt;
+##  1 Afghanistan      Asia  1952  28.801  8425333  779.4453
+##  2 Afghanistan      Asia  1957  30.332  9240934  820.8530
+##  3 Afghanistan      Asia  1962  31.997 10267083  853.1007
+##  4 Afghanistan      Asia  1967  34.020 11537966  836.1971
+##  5 Afghanistan      Asia  1972  36.088 13079460  739.9811
+##  6 Afghanistan      Asia  1977  38.438 14880372  786.1134
+##  7 Afghanistan      Asia  1982  39.854 12881816  978.0114
+##  8 Afghanistan      Asia  1987  40.822 13867957  852.3959
+##  9 Afghanistan      Asia  1992  41.674 16317921  649.3414
+## 10 Afghanistan      Asia  1997  41.763 22227415  635.3414
+## # ... with 1,694 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;dplyr-and-the-pipe--&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;dplyr and the pipe - %&amp;gt;%&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;dplyr&lt;/code&gt; package provides an intuitive way of manipulating data frames that will come naturally to people from a database background who are used to SQL. Furthermore, the pipe operator allows function calls to be strung together sequentially rather than nested which improves readability. For example, the statements below:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# base r
+gapminder[gapminder$country==&amp;#39;China&amp;#39;, c(&amp;#39;country&amp;#39;, &amp;#39;continent&amp;#39;, &amp;#39;year&amp;#39;, &amp;#39;lifeExp&amp;#39;)]
+
+# dplyr
+dplyr::select(dplyr::filter(gapminder, country==&amp;#39;China&amp;#39;), country, continent, year, lifeExp)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Give the same output as this:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# pipe and dplyr
+gapminder %&amp;gt;% 
+    dplyr::filter(country==&amp;#39;China&amp;#39;) %&amp;gt;% 
+    dplyr::select(country, continent, year, lifeExp)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 12 x 4
+##    country continent  year  lifeExp
+##     &amp;lt;fctr&amp;gt;    &amp;lt;fctr&amp;gt; &amp;lt;int&amp;gt;    &amp;lt;dbl&amp;gt;
+##  1   China      Asia  1952 44.00000
+##  2   China      Asia  1957 50.54896
+##  3   China      Asia  1962 44.50136
+##  4   China      Asia  1967 58.38112
+##  5   China      Asia  1972 63.11888
+##  6   China      Asia  1977 63.96736
+##  7   China      Asia  1982 65.52500
+##  8   China      Asia  1987 67.27400
+##  9   China      Asia  1992 68.69000
+## 10   China      Asia  1997 70.42600
+## 11   China      Asia  2002 72.02800
+## 12   China      Asia  2007 72.96100&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;a href=&#34;https://www.rstudio.com/resources/cheatsheets/&#34;&gt;RStudio Data Wrangling cheatsheet&lt;/a&gt; provides a useful resource for getting to know dplyr.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;purrr-and-its-map-function&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;purrr and its map function&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;purrr&lt;/code&gt; package provides a number of functions to make R more consistent and programming friendly than the equivalent base R functions. At first it’s &lt;code&gt;map&lt;/code&gt; function seems like a reimplementation of &lt;code&gt;apply&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;map(c(4, 9, 16), sqrt)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [[1]]
+## [1] 2
+## 
+## [[2]]
+## [1] 3
+## 
+## [[3]]
+## [1] 4&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;But &lt;code&gt;map&lt;/code&gt; will &lt;em&gt;always&lt;/em&gt; return a list, and there are other members of the &lt;code&gt;map_&lt;/code&gt; family which will always return a certain data type:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;map_dbl(c(4, 9, 16), sqrt)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 2 3 4&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;map_chr(c(4, 9, 16), sqrt)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;2.000000&amp;quot; &amp;quot;3.000000&amp;quot; &amp;quot;4.000000&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;list-cols-in-data-frames&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;List-cols in data frames&lt;/h3&gt;
+&lt;p&gt;List-cols are a powerful concept that underpin the later part of this tutorial. If data frames are explained as a way to keep character and number vectors together, then list-cols in tibbles takes this a step further and allow lists of any object to be kept together. For example, we can create nested data frames where we have a data frame within a data frame:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gm_nest &amp;lt;- gapminder %&amp;gt;% group_by(country, continent) %&amp;gt;% nest()
+gm_nest&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 142 x 3
+##        country continent              data
+##         &amp;lt;fctr&amp;gt;    &amp;lt;fctr&amp;gt;            &amp;lt;list&amp;gt;
+##  1 Afghanistan      Asia &amp;lt;tibble [12 x 4]&amp;gt;
+##  2     Albania    Europe &amp;lt;tibble [12 x 4]&amp;gt;
+##  3     Algeria    Africa &amp;lt;tibble [12 x 4]&amp;gt;
+##  4      Angola    Africa &amp;lt;tibble [12 x 4]&amp;gt;
+##  5   Argentina  Americas &amp;lt;tibble [12 x 4]&amp;gt;
+##  6   Australia   Oceania &amp;lt;tibble [12 x 4]&amp;gt;
+##  7     Austria    Europe &amp;lt;tibble [12 x 4]&amp;gt;
+##  8     Bahrain      Asia &amp;lt;tibble [12 x 4]&amp;gt;
+##  9  Bangladesh      Asia &amp;lt;tibble [12 x 4]&amp;gt;
+## 10     Belgium    Europe &amp;lt;tibble [12 x 4]&amp;gt;
+## # ... with 132 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Since the data column is a list column (list-col) we can access it as we would expect from a list. For example, to get the data for the second row, Albania:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gm_nest$data[[2]]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 12 x 4
+##     year lifeExp     pop gdpPercap
+##    &amp;lt;int&amp;gt;   &amp;lt;dbl&amp;gt;   &amp;lt;int&amp;gt;     &amp;lt;dbl&amp;gt;
+##  1  1952  55.230 1282697  1601.056
+##  2  1957  59.280 1476505  1942.284
+##  3  1962  64.820 1728137  2312.889
+##  4  1967  66.220 1984060  2760.197
+##  5  1972  67.690 2263554  3313.422
+##  6  1977  68.930 2509048  3533.004
+##  7  1982  70.420 2780097  3630.881
+##  8  1987  72.000 3075321  3738.933
+##  9  1992  71.581 3326498  2497.438
+## 10  1997  72.950 3428038  3193.055
+## 11  2002  75.651 3508512  4604.212
+## 12  2007  76.423 3600523  5937.030&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;using-map-to-manipulate-list-cols&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Using map to manipulate list-cols&lt;/h3&gt;
+&lt;p&gt;Since this list column is just a list, we can use map to count the number of rows in each data frame in the list:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;map_dbl(gm_nest[1:10,]$data, nrow)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] 12 12 12 12 12 12 12 12 12 12&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Rather than providing a ready to use function we can also define our own:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;map_dbl(gm_nest[1:10,]$data, function(x) nrow(x))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] 12 12 12 12 12 12 12 12 12 12&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There is also a shorthand formula syntax for this where the period &lt;code&gt;.&lt;/code&gt; represents the element of the list that is being processed:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;map_dbl(gm_nest[1:10,]$data, ~nrow(.))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] 12 12 12 12 12 12 12 12 12 12&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Defining our own function allows us to reach into the data frame and perform an operation, such as summarise one of the columns:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;map_dbl(gm_nest[1:10,]$data, ~round(mean(.$lifeExp),1))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] 37.5 68.4 59.0 37.9 69.1 74.7 73.1 65.6 49.8 73.6&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Importantly we can also do this at the level of the parent tibble and store the output in the data frame:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gm_nest %&amp;gt;% mutate(avg_lifeExp=map_dbl(data, ~round(mean(.$lifeExp),1)))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 142 x 4
+##        country continent              data avg_lifeExp
+##         &amp;lt;fctr&amp;gt;    &amp;lt;fctr&amp;gt;            &amp;lt;list&amp;gt;       &amp;lt;dbl&amp;gt;
+##  1 Afghanistan      Asia &amp;lt;tibble [12 x 4]&amp;gt;        37.5
+##  2     Albania    Europe &amp;lt;tibble [12 x 4]&amp;gt;        68.4
+##  3     Algeria    Africa &amp;lt;tibble [12 x 4]&amp;gt;        59.0
+##  4      Angola    Africa &amp;lt;tibble [12 x 4]&amp;gt;        37.9
+##  5   Argentina  Americas &amp;lt;tibble [12 x 4]&amp;gt;        69.1
+##  6   Australia   Oceania &amp;lt;tibble [12 x 4]&amp;gt;        74.7
+##  7     Austria    Europe &amp;lt;tibble [12 x 4]&amp;gt;        73.1
+##  8     Bahrain      Asia &amp;lt;tibble [12 x 4]&amp;gt;        65.6
+##  9  Bangladesh      Asia &amp;lt;tibble [12 x 4]&amp;gt;        49.8
+## 10     Belgium    Europe &amp;lt;tibble [12 x 4]&amp;gt;        73.6
+## # ... with 132 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-power-of-list-cols&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;The power of list-cols&lt;/h3&gt;
+&lt;p&gt;We could have summarised the gapminder data entirely in dplyr without worrying about list-cols and nested data frames:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gapminder %&amp;gt;%
+    group_by(country) %&amp;gt;%
+    summarise(avg_lifeExp=round(mean(lifeExp),1))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 142 x 2
+##        country avg_lifeExp
+##         &amp;lt;fctr&amp;gt;       &amp;lt;dbl&amp;gt;
+##  1 Afghanistan        37.5
+##  2     Albania        68.4
+##  3     Algeria        59.0
+##  4      Angola        37.9
+##  5   Argentina        69.1
+##  6   Australia        74.7
+##  7     Austria        73.1
+##  8     Bahrain        65.6
+##  9  Bangladesh        49.8
+## 10     Belgium        73.6
+## # ... with 132 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;However, by using &lt;code&gt;map&lt;/code&gt; rather than &lt;code&gt;map_dbl&lt;/code&gt; we can create new list-cols, which can contain lists of any object that we want. In the example below we create a plot for each country, then display the first plot for Afghanistan:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gm_plots &amp;lt;- gm_nest %&amp;gt;%
+    mutate(plot=map(data, ~qplot(x=year, y=lifeExp, data=.)))
+gm_plots&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 142 x 4
+##        country continent              data     plot
+##         &amp;lt;fctr&amp;gt;    &amp;lt;fctr&amp;gt;            &amp;lt;list&amp;gt;   &amp;lt;list&amp;gt;
+##  1 Afghanistan      Asia &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: gg&amp;gt;
+##  2     Albania    Europe &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: gg&amp;gt;
+##  3     Algeria    Africa &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: gg&amp;gt;
+##  4      Angola    Africa &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: gg&amp;gt;
+##  5   Argentina  Americas &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: gg&amp;gt;
+##  6   Australia   Oceania &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: gg&amp;gt;
+##  7     Austria    Europe &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: gg&amp;gt;
+##  8     Bahrain      Asia &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: gg&amp;gt;
+##  9  Bangladesh      Asia &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: gg&amp;gt;
+## 10     Belgium    Europe &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: gg&amp;gt;
+## # ... with 132 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gm_plots$plot[[1]]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-02-21-bioinformatics-in-tidyverse_files/figure-html/unnamed-chunk-17-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;a-complete-example&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;A complete example&lt;/h3&gt;
+&lt;p&gt;In this example we combine the approaches described so far to:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Nest the data&lt;/li&gt;
+&lt;li&gt;Fit a linear regression model for each country&lt;/li&gt;
+&lt;li&gt;Extract the slope and r2 value for each country&lt;/li&gt;
+&lt;li&gt;Plot all countries together&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gapminder_analysis &amp;lt;- gapminder %&amp;gt;%
+    group_by(country, continent) %&amp;gt;%
+    nest() %&amp;gt;%
+    mutate(model=map(data, ~lm(lifeExp ~ year, data=.)),
+           slope=map_dbl(model, ~coef(.)[&amp;#39;year&amp;#39;]),
+           r2=map_dbl(model, ~broom::glance(.)$`r.squared`))
+gapminder_analysis&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 142 x 6
+##        country continent              data    model     slope        r2
+##         &amp;lt;fctr&amp;gt;    &amp;lt;fctr&amp;gt;            &amp;lt;list&amp;gt;   &amp;lt;list&amp;gt;     &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt;
+##  1 Afghanistan      Asia &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: lm&amp;gt; 0.2753287 0.9477123
+##  2     Albania    Europe &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: lm&amp;gt; 0.3346832 0.9105778
+##  3     Algeria    Africa &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: lm&amp;gt; 0.5692797 0.9851172
+##  4      Angola    Africa &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: lm&amp;gt; 0.2093399 0.8878146
+##  5   Argentina  Americas &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: lm&amp;gt; 0.2317084 0.9955681
+##  6   Australia   Oceania &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: lm&amp;gt; 0.2277238 0.9796477
+##  7     Austria    Europe &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: lm&amp;gt; 0.2419923 0.9921340
+##  8     Bahrain      Asia &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: lm&amp;gt; 0.4675077 0.9667398
+##  9  Bangladesh      Asia &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: lm&amp;gt; 0.4981308 0.9893609
+## 10     Belgium    Europe &amp;lt;tibble [12 x 4]&amp;gt; &amp;lt;S3: lm&amp;gt; 0.2090846 0.9945406
+## # ... with 132 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(gapminder_analysis, aes(y=slope, colour=r2, x=continent)) + 
+    geom_point(position=position_jitter(w=0.2)) +
+    theme_bw()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-02-21-bioinformatics-in-tidyverse_files/figure-html/unnamed-chunk-18-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that countries in Asia have has a faster increase in lifespan than those in Europe, whilst for Africa the picture is rather more mixed with some countries increasing and others staying the same or reducing and fitting more poorly to the linear regression model. Further analysis shows that the reasons for this include genocide and the HIV/AIDS epidemic.&lt;/p&gt;
+&lt;p&gt;This example demonstrates how powerful analyses can be carried out with very concise and non-repetitive code using tidyverse principles.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-tidyverse-for-bioinformatics&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The tidyverse for Bioinformatics&lt;/h2&gt;
+&lt;div id=&#34;what-is-bioconductor&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;What is Bioconductor?&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;http://bioconductor.org/&#34;&gt;Bioconductor&lt;/a&gt; is a suite of R packages and classes. This allows biological data to be analysed and stored in efficient and consistent ways. Analyses such as RNAseq analysis can also be controlled effectively using the list-cols framework.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;a-typical-rna-seq-workflow&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;A typical RNA-seq workflow&lt;/h3&gt;
+&lt;p&gt;RNA-sequencing is carried out to quantitate the amount of a gene present in a set of samples. This can be done for all genes in the human genome simulatenously through the power of DNA sequencing. We then ask which genes are &lt;em&gt;differentially expressed&lt;/em&gt; - ie are present in a different abundance in one set of samples (eg from a tumour) than another (eg normal). A typical RNA-seq experiment will have the following workflow:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Align and count reads to form a &lt;a href=&#34;https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html&#34;&gt;SummarizedExperiment&lt;/a&gt; object&lt;/li&gt;
+&lt;li&gt;Filter out genes with a low signal&lt;/li&gt;
+&lt;li&gt;Specify a design formula to do the differential expression&lt;/li&gt;
+&lt;li&gt;Specify a log2 fold change threshold to test for differentially expressed genes&lt;/li&gt;
+&lt;li&gt;Plot the results&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;an-rna-seq-analysis&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;An RNA-seq analysis&lt;/h3&gt;
+&lt;p&gt;First load the SummarizedExperiment object and explore it:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#adapted from https://f1000research.com/articles/4-1070/v2
+library(airway)
+library(DESeq2)
+data(airway)
+se &amp;lt;- airway
+se&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## class: RangedSummarizedExperiment 
+## dim: 64102 8 
+## metadata(1): &amp;#39;&amp;#39;
+## assays(1): counts
+## rownames(64102): ENSG00000000003 ENSG00000000005 ... LRG_98 LRG_99
+## rowData names(0):
+## colnames(8): SRR1039508 SRR1039509 ... SRR1039520 SRR1039521
+## colData names(9): SampleName cell ... Sample BioSample&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;colData(se)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## DataFrame with 8 rows and 9 columns
+##            SampleName     cell      dex    albut        Run avgLength
+##              &amp;lt;factor&amp;gt; &amp;lt;factor&amp;gt; &amp;lt;factor&amp;gt; &amp;lt;factor&amp;gt;   &amp;lt;factor&amp;gt; &amp;lt;integer&amp;gt;
+## SRR1039508 GSM1275862   N61311    untrt    untrt SRR1039508       126
+## SRR1039509 GSM1275863   N61311      trt    untrt SRR1039509       126
+## SRR1039512 GSM1275866  N052611    untrt    untrt SRR1039512       126
+## SRR1039513 GSM1275867  N052611      trt    untrt SRR1039513        87
+## SRR1039516 GSM1275870  N080611    untrt    untrt SRR1039516       120
+## SRR1039517 GSM1275871  N080611      trt    untrt SRR1039517       126
+## SRR1039520 GSM1275874  N061011    untrt    untrt SRR1039520       101
+## SRR1039521 GSM1275875  N061011      trt    untrt SRR1039521        98
+##            Experiment    Sample    BioSample
+##              &amp;lt;factor&amp;gt;  &amp;lt;factor&amp;gt;     &amp;lt;factor&amp;gt;
+## SRR1039508  SRX384345 SRS508568 SAMN02422669
+## SRR1039509  SRX384346 SRS508567 SAMN02422675
+## SRR1039512  SRX384349 SRS508571 SAMN02422678
+## SRR1039513  SRX384350 SRS508572 SAMN02422670
+## SRR1039516  SRX384353 SRS508575 SAMN02422682
+## SRR1039517  SRX384354 SRS508576 SAMN02422673
+## SRR1039520  SRX384357 SRS508579 SAMN02422683
+## SRR1039521  SRX384358 SRS508580 SAMN02422677&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;colnames(assay(se))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;SRR1039508&amp;quot; &amp;quot;SRR1039509&amp;quot; &amp;quot;SRR1039512&amp;quot; &amp;quot;SRR1039513&amp;quot; &amp;quot;SRR1039516&amp;quot;
+## [6] &amp;quot;SRR1039517&amp;quot; &amp;quot;SRR1039520&amp;quot; &amp;quot;SRR1039521&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rownames(assay(se))[1:10]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;ENSG00000000003&amp;quot; &amp;quot;ENSG00000000005&amp;quot; &amp;quot;ENSG00000000419&amp;quot;
+##  [4] &amp;quot;ENSG00000000457&amp;quot; &amp;quot;ENSG00000000460&amp;quot; &amp;quot;ENSG00000000938&amp;quot;
+##  [7] &amp;quot;ENSG00000000971&amp;quot; &amp;quot;ENSG00000001036&amp;quot; &amp;quot;ENSG00000001084&amp;quot;
+## [10] &amp;quot;ENSG00000001167&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;assay(se)[1:5,1:5]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##                 SRR1039508 SRR1039509 SRR1039512 SRR1039513 SRR1039516
+## ENSG00000000003        679        448        873        408       1138
+## ENSG00000000005          0          0          0          0          0
+## ENSG00000000419        467        515        621        365        587
+## ENSG00000000457        260        211        263        164        245
+## ENSG00000000460         60         55         40         35         78&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can count up the number of reads per sample using the &lt;code&gt;colSums&lt;/code&gt; function, or using &lt;code&gt;purrr&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;colSums(assay(se))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## SRR1039508 SRR1039509 SRR1039512 SRR1039513 SRR1039516 SRR1039517 
+##   20637971   18809481   25348649   15163415   24448408   30818215 
+## SRR1039520 SRR1039521 
+##   19126151   21164133&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;purrr::map_dbl(colnames(assay(se)), ~sum(assay(se)[,.]))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 20637971 18809481 25348649 15163415 24448408 30818215 19126151 21164133&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We then create a &lt;code&gt;DESeqDataSet&lt;/code&gt; object and set the design formula&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dds &amp;lt;- DESeqDataSet(se, design = ~ cell + dex)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Get rid of genes with few reads&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dds &amp;lt;- dds[ rowSums(counts(dds)) &amp;gt; 1, ]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Re-count the library size:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dds &amp;lt;- estimateSizeFactors(dds)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Do a Principal Compnent Analysis to understand the data structure:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rld &amp;lt;- vst(dds, blind=FALSE)
+pca_plot &amp;lt;- plotPCA(rld, intgroup = c(&amp;quot;dex&amp;quot;, &amp;quot;cell&amp;quot;))
+pca_plot&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-02-21-bioinformatics-in-tidyverse_files/figure-html/unnamed-chunk-24-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Do the differential expression analysis and extract the results:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dds &amp;lt;- DESeq(dds, quiet = TRUE)
+res &amp;lt;- results(dds, lfcThreshold=0, tidy = TRUE) %&amp;gt;% tbl_df()
+res&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 29,391 x 7
+##                row     baseMean log2FoldChange      lfcSE       stat
+##              &amp;lt;chr&amp;gt;        &amp;lt;dbl&amp;gt;          &amp;lt;dbl&amp;gt;      &amp;lt;dbl&amp;gt;      &amp;lt;dbl&amp;gt;
+##  1 ENSG00000000003  708.6021697     0.38125397 0.10065597  3.7876937
+##  2 ENSG00000000419  520.2979006    -0.20681259 0.11222180 -1.8428915
+##  3 ENSG00000000457  237.1630368    -0.03792034 0.14345322 -0.2643394
+##  4 ENSG00000000460   57.9326331     0.08816367 0.28716771  0.3070111
+##  5 ENSG00000000938    0.3180984     1.37822703 3.49987280  0.3937935
+##  6 ENSG00000000971 5817.3528677    -0.42640216 0.08831006 -4.8284666
+##  7 ENSG00000001036 1282.1063855     0.24107123 0.08871987  2.7172180
+##  8 ENSG00000001084  609.8920919     0.04761687 0.16665615  0.2857192
+##  9 ENSG00000001167  369.3428078     0.50036451 0.12088513  4.1391733
+## 10 ENSG00000001460  183.2376742     0.12389881 0.17991227  0.6886624
+## # ... with 29,381 more rows, and 2 more variables: pvalue &amp;lt;dbl&amp;gt;,
+## #   padj &amp;lt;dbl&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Plot the results as an MA plot with abundance of the gene on the x-axis and fold change on the y-axis. Colour represents significance of the statistical test.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ma_plot &amp;lt;- ggplot(res, aes(log2(baseMean), log2FoldChange, colour=padj&amp;lt;0.1)) + 
+    geom_point(size=rel(0.5), aes(text=row)) + theme_bw()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: Ignoring unknown aesthetics: text&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ma_plot&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-02-21-bioinformatics-in-tidyverse_files/figure-html/unnamed-chunk-26-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can look at the top differentially expressed gene to see that there is indeed a difference between treated and untreated:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;topGene &amp;lt;- res %&amp;gt;% dplyr::arrange(padj) %&amp;gt;% 
+    dplyr::slice(1) %&amp;gt;% dplyr::select(row) %&amp;gt;% unlist() %&amp;gt;% unname()
+plotCounts(dds, gene=topGene, intgroup=c(&amp;quot;dex&amp;quot;))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-02-21-bioinformatics-in-tidyverse_files/figure-html/unnamed-chunk-27-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;rna-seq-in-the-tidyverse&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;RNA-seq in the tidyverse&lt;/h3&gt;
+&lt;p&gt;In the workflow there were a number of parameters that we might wish to vary:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;the design formula&lt;/li&gt;
+&lt;li&gt;the log2 fold change threshold (&lt;code&gt;lfcThreshold&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;the minimum read count&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can set up a control data frame using the &lt;code&gt;tidyr::crossing&lt;/code&gt; function which contains 1 row per combination of parameters, and then add in the SummarizedExperiment object and a row number:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;control_df &amp;lt;- tidyr::crossing(formula=c(&amp;quot;~ cell + dex&amp;quot;, &amp;quot;~ dex&amp;quot;), 
+                       lfcThreshold=c(0,1),
+                       min_count=c(1,5))   
+control_df &amp;lt;- control_df %&amp;gt;% mutate(rn=row_number(),
+                                    se=map(rn, ~se)) 
+control_df&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 8 x 5
+##        formula lfcThreshold min_count    rn
+##          &amp;lt;chr&amp;gt;        &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;
+## 1 ~ cell + dex            0         1     1
+## 2 ~ cell + dex            0         5     2
+## 3 ~ cell + dex            1         1     3
+## 4 ~ cell + dex            1         5     4
+## 5        ~ dex            0         1     5
+## 6        ~ dex            0         5     6
+## 7        ~ dex            1         1     7
+## 8        ~ dex            1         5     8
+## # ... with 1 more variables: se &amp;lt;list&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Using &lt;code&gt;map2&lt;/code&gt; we can execute the &lt;code&gt;DESeqDataSet&lt;/code&gt; function for each row taking the design formula and SummarizedExperiment object as inputs:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;results_df &amp;lt;- control_df %&amp;gt;%
+    mutate(dds=map2(se, formula, ~DESeqDataSet(.x, design=as.formula(.y))))
+results_df&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 8 x 6
+##        formula lfcThreshold min_count    rn
+##          &amp;lt;chr&amp;gt;        &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;
+## 1 ~ cell + dex            0         1     1
+## 2 ~ cell + dex            0         5     2
+## 3 ~ cell + dex            1         1     3
+## 4 ~ cell + dex            1         5     4
+## 5        ~ dex            0         1     5
+## 6        ~ dex            0         5     6
+## 7        ~ dex            1         1     7
+## 8        ~ dex            1         5     8
+## # ... with 2 more variables: se &amp;lt;list&amp;gt;, dds &amp;lt;list&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;At this point it is worth sanity checking that we have done what we wanted to do by comparing the input formula with that extracted from the DESeqDataSet:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;results_df$formula&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;~ cell + dex&amp;quot; &amp;quot;~ cell + dex&amp;quot; &amp;quot;~ cell + dex&amp;quot; &amp;quot;~ cell + dex&amp;quot;
+## [5] &amp;quot;~ dex&amp;quot;        &amp;quot;~ dex&amp;quot;        &amp;quot;~ dex&amp;quot;        &amp;quot;~ dex&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;map_chr(results_df$dds, ~design(.) %&amp;gt;% as.character() %&amp;gt;% paste(collapse=&amp;#39; &amp;#39;))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;~ cell + dex&amp;quot; &amp;quot;~ cell + dex&amp;quot; &amp;quot;~ cell + dex&amp;quot; &amp;quot;~ cell + dex&amp;quot;
+## [5] &amp;quot;~ dex&amp;quot;        &amp;quot;~ dex&amp;quot;        &amp;quot;~ dex&amp;quot;        &amp;quot;~ dex&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then finish off preparing the DESeqDataset object by removing genes below a certain read count:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;results_df &amp;lt;- results_df %&amp;gt;%
+    mutate(dds=map2(dds, min_count, ~.x[ rowSums(counts(.x)) &amp;gt; .y , ]),
+           dds=map(dds, estimateSizeFactors))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And then doing the differential expression analysis itself and extracting the results:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;results_df &amp;lt;- results_df %&amp;gt;%
+    mutate(dds=map(dds, ~DESeq(., quiet=TRUE)),
+           res=map2(dds, lfcThreshold, ~results(.x, lfcThreshold=.y, tidy = TRUE) %&amp;gt;% tbl_df()))&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;viewing-the-results&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Viewing the results&lt;/h3&gt;
+&lt;p&gt;At this point we can add a plot object to the mix like we did for the gapminder example. We define a plotting function to make the analysis more readable:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#define a plot function
+my_plot &amp;lt;- function(df, pthresh) {
+    ggplot(df, aes(log2(baseMean), log2FoldChange, colour=padj&amp;lt;pthresh)) + 
+        geom_point(size=rel(0.5)) + 
+        theme_bw()
+}
+
+#make the plots
+plots_df &amp;lt;- results_df %&amp;gt;%
+    mutate(ma_plot=map2(res, rn, ~my_plot(.x, 0.1) + ggtitle(.y)))
+plots_df&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 8 x 8
+##        formula lfcThreshold min_count    rn
+##          &amp;lt;chr&amp;gt;        &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;
+## 1 ~ cell + dex            0         1     1
+## 2 ~ cell + dex            0         5     2
+## 3 ~ cell + dex            1         1     3
+## 4 ~ cell + dex            1         5     4
+## 5        ~ dex            0         1     5
+## 6        ~ dex            0         5     6
+## 7        ~ dex            1         1     7
+## 8        ~ dex            1         5     8
+## # ... with 4 more variables: se &amp;lt;list&amp;gt;, dds &amp;lt;list&amp;gt;, res &amp;lt;list&amp;gt;,
+## #   ma_plot &amp;lt;list&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can then display the plots from the ma_plot list-col:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cowplot::plot_grid(plotlist=plots_df$ma_plot[1:4])&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-02-21-bioinformatics-in-tidyverse_files/figure-html/unnamed-chunk-34-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Or we can filter the data frame and just show some plots, for example those where the minimum read count was 1:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plots_df %&amp;gt;% 
+    dplyr::filter(min_count==1) %&amp;gt;% 
+    dplyr::select(ma_plot) %&amp;gt;%
+    .$ma_plot %&amp;gt;%
+    cowplot::plot_grid(plotlist=.)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2017-02-21-bioinformatics-in-tidyverse_files/figure-html/unnamed-chunk-35-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;limitations&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Limitations&lt;/h2&gt;
+&lt;p&gt;Although the list-col approach provides useful framework for this type of analysis it does have some limitations:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;All of the data and results have to be held in the memory of one session.&lt;/li&gt;
+&lt;li&gt;Can end up with multiple copies of data and very large data frames - models and plots will often contain the same data within the R object.&lt;/li&gt;
+&lt;li&gt;Operations on a normal list can be easily parallelised using parallel::parLapply for example. This is more difficult using the list-col approach although one way is to split the tibble into a list of tibbles, and then parallelise across this.&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;It can also be hard to wrap your brain around the necessary levels of abstraction!&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusion&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Storing and manipulating objects in a data frame is a powerful and useful framework for an analysis since it keeps related things together and avoids code repetition and bloat. Analyses are parameterised which makes it very easy to add new values or change existing onces without copying and pasting big bits of code or having huge complicated functions. Although in this post it is applied to bioinformatics it could be applied to anything where work is done in specialised R object classes.&lt;/p&gt;
+&lt;p&gt;There is lots of work being done in the R community to extend these concepts, so keep an eye out for online presentations and tutorials!!&lt;/p&gt;
+&lt;/div&gt;
+</description>
     </item>
     
     <item>
@@ -27,8 +534,38 @@
       <pubDate>Fri, 13 Jan 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017/01/13/rstudioconf-highlights-day-3/</guid>
-      <description>Introduction I’ve been lucky enough to spend the last few days in sunny Florida at the RStudio::conf 2017. This was made possible by RStudio’s very generous academic discount scheme, so thanks to them for that! Whilst I’ve been tweeting a few of the key moments as they happened this series of posts expands further on these tweets and gives links to further information.
- RStudio::conf Highlights Days 1-2: shiny workshop RStudio::conf Highlights Day 3: the tidyverse RStudio::conf Highlights Day 3: the tidyverse   The tidyverse Inevitably a big theme of the first day was the tidyverse and Hadley Wickham kicked the conference off with an overview of his latest thinking and developments in the suite of packages.</description>
+      <description>&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;I’ve been lucky enough to spend the last few days in sunny Florida at the &lt;a href=&#34;https://www.rstudio.com/conference/&#34;&gt;RStudio::conf 2017&lt;/a&gt;. This was made possible by RStudio’s very generous academic discount scheme, so thanks to them for that! Whilst I’ve been &lt;a href=&#34;https://twitter.com/search?f=tweets&amp;amp;vertical=default&amp;amp;q=chapmandu2%20%23rstudioconf&amp;amp;src=typd&#34;&gt;tweeting&lt;/a&gt; a few of the key moments as they happened this series of posts expands further on these tweets and gives links to further information.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;/post/2017-01-12-rstudio-conference-highlights-1/&#34;&gt;RStudio::conf Highlights Days 1-2: shiny workshop&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;/post/2017-01-13-rstudio-conference-highlights-2/&#34;&gt;RStudio::conf Highlights Day 3: the tidyverse&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;/post/2017-01-14-rstudio-conference-highlights-3/&#34;&gt;RStudio::conf Highlights Day 3: the tidyverse&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-tidyverse&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The tidyverse&lt;/h2&gt;
+&lt;p&gt;Inevitably a big theme of the first day was the &lt;a href=&#34;http://www.tidyverse.org&#34;&gt;tidyverse&lt;/a&gt; and Hadley Wickham kicked the conference off with an overview of his latest thinking and developments in the suite of packages. Hadley seems to be really driving the concept on now that he’s successfully convinced the R community to stop embarassing him by referring to it as the Hadleyverse. I like his ‘pit of success’ analogy - make it easy to do things well - although Stephen Turner raised an issue that I come across on a daily basis which is the messiness that can happen when trying to combine tidy approaches withing the &lt;a href=&#34;http://www.bioconductor.org&#34;&gt;Bioconductor&lt;/a&gt; ecosystem of packages.&lt;/p&gt;
+&lt;p&gt;Next up was Charlotte Wickham, Hadley’s sister, giving a tutorial on the use of the &lt;a href=&#34;https://cran.r-project.org/web/packages/purrr/index.html&#34;&gt;purrr&lt;/a&gt; package. This package provides some great functional programming tools for working with lists that provide an alternative to working with &lt;code&gt;apply&lt;/code&gt; in base R. In particular the &lt;code&gt;map&lt;/code&gt; family of functions allows iterating through a list with the guarantee that the result will be of a particular type. The &lt;code&gt;walk&lt;/code&gt; functions do not return anything so are used for their side-effects - ie plotting or writing to files.&lt;/p&gt;
+&lt;p&gt;In the afternoon &lt;a href=&#34;https://twitter.com/hrbrmstr&#34;&gt;Bob Rudis&lt;/a&gt; gave a &lt;a href=&#34;https://github.com/hrbrmstr/rstudioconf2017&#34;&gt;brilliant talk&lt;/a&gt; on writing readable code using pipes which really helped cement some concepts in my head, before &lt;a href=&#34;https://twitter.com/JennyBryan&#34;&gt;Jenny Bryan&lt;/a&gt; followed on with an equally excellent talk discussing the use of list-cols in tibbles. The idea here is that just as data frames keep vectors of data together, they can also keep lists of data together. So a row could, for example, contain some data as a nested data frame, a model, an r-squared value, and a plot. This avoids the use of disconnected lists in an analysis which, as in Excel, can fall prey to unintended mixing up. In particular, the combination of &lt;code&gt;purrr::map&lt;/code&gt; and &lt;code&gt;dplyr::mutate&lt;/code&gt; can allow list-cols to be manipulated in situ in very powerful ways. I’m using this approach to store various Bioconductor objects in data frames to make my analysis code more concise with some success. Jenny’s slides were based on a &lt;a href=&#34;http://jennybc.github.io/purrr-tutorial/&#34;&gt;tutorial on GitHub&lt;/a&gt; and Hadley described the principles in this &lt;a href=&#34;https://www.youtube.com/watch?v=rz3_FDVt9eg&#34;&gt;YouTube video&lt;/a&gt; and a chapter in &lt;a href=&#34;http://r4ds.had.co.nz/many-models.html&#34;&gt;R for Data Science&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;getting-data-into-r&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Getting data into R&lt;/h2&gt;
+&lt;p&gt;Jim Hester from RStudio presented a completely rewritten version of the RODBC package called &lt;a href=&#34;https://github.com/rstats-db/odbc&#34;&gt;odbc&lt;/a&gt; which is faster, more robust and more secure. It includes drivers for a variety of databases and will be really helpful for anyone wanting to interact with databases in their analysis or shiny apps. In addition, SQL chunks can now be included in RMarkdown documents which are then executed and the result depicted as a data table when the RMarkdown is rendered. Finally the &lt;a href=&#34;https://github.com/rstudio/pool&#34;&gt;pool&lt;/a&gt; package is also being developed which helps manage database connections better.&lt;/p&gt;
+&lt;p&gt;Amanda Gadrow, also from Rstudio, presented some of her work &lt;a href=&#34;https://github.com/ajmcoqui/webAPIsR&#34;&gt;analysing data from web API’s&lt;/a&gt; using &lt;code&gt;httr&lt;/code&gt;, &lt;code&gt;jsonlite&lt;/code&gt;, &lt;code&gt;dplyr&lt;/code&gt;, &lt;code&gt;ggplot2&lt;/code&gt; etc. The primary motivation was to analyse RStudio’s support tickets, apparently they get more in the afternoon USA eastern time which means in the UK we should get an instant response, and that RStudio’s next support hire will be on the US West Coast!&lt;/p&gt;
+&lt;p&gt;Karthik Ram from ropensci.org also presented some useful packages in a &lt;a href=&#34;http://inundata.org/talks/rc17/&#34;&gt;lightning talk&lt;/a&gt;: magick for image processing, hunspell for spell checking, and tesseract for OCR.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;miscellaneous&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Miscellaneous&lt;/h2&gt;
+&lt;p&gt;I also enjoyed &lt;a href=&#34;https://twitter.com/juliasilge&#34;&gt;Julia Silge’s&lt;/a&gt; presentation on the &lt;a href=&#34;http://www.tidytextmining.org&#34;&gt;tidytext&lt;/a&gt; package whose uses, amongst other things, included an analysis of Donald Trump’s tweets! The basic concept is to generate a tidy data frame with one row per word for a dataset whilst retaining contextual information (chapter, line, book). Examples included sentiment analysis of Jane Austen, and also &lt;a href=&#34;https://en.wikipedia.org/wiki/Tf%E2%80%93idf&#34;&gt;TF-IDF&lt;/a&gt; analysis of some NASA datasets. It would be interesting to try this package for text mining biomedical literature.&lt;/p&gt;
+&lt;p&gt;Meanwhile Jonathan Sidi presented a short talk on &lt;a href=&#34;https://github.com/yonicd/ggedit&#34;&gt;ggedit&lt;/a&gt; which allows interactive editing of ggplots, before returning the code to make the new plot. This looks like a really useful tool for both new and advanced users of ggplot2 - there’s an article with videos &lt;a href=&#34;https://t.co/m7VlmjI5SV&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Finally, Chester Ismay &lt;a href=&#34;http://ismayc.github.io/rsconf/slides.html&#34;&gt;talked about&lt;/a&gt; how he has developed &lt;a href=&#34;http://moderndive.com/&#34;&gt;teaching materials&lt;/a&gt; for introductory stats using bookdown, shiny and the tidyverse. Even now stats is taught with calculators and worksheets of t-distributions and Z-scores, so using R both made the course more interesting for students, and also gave them experience in programming.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusion&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Having spent the previous 2 days in a shiny workshop I opted to avoid the shiny talks today, but there was a lot of buzz coming out of those sessions especially about &lt;a href=&#34;https://www.rstudio.com/products/connect/&#34;&gt;RStudio Connect&lt;/a&gt; and the &lt;a href=&#34;https://github.com/rstudio/shinytest&#34;&gt;shinytest&lt;/a&gt; package for testing shiny apps. RStudio have recorded all of the sessions so I’m looking forward to watching what I’ve missed when it’s available! Tomorrow I’m looking forward to the RMarkdown sessions, and hoping that blogdown will get a mention!!&lt;/p&gt;
+&lt;/div&gt;
+</description>
     </item>
     
   </channel>

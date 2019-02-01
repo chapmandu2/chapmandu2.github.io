@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>RStudio::conf 2016 on Phil Chapman&#39;s Blog</title>
-    <link>/categories/rstudioconf-2016/</link>
-    <description>Recent content in RStudio::conf 2016 on Phil Chapman&#39;s Blog</description>
+    <title>rstudioconf-2016 on Phil Chapman&#39;s Blog</title>
+    <link>/categories/rstudioconf-2016/index.xml</link>
+    <description>Recent content in rstudioconf-2016 on Phil Chapman&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 14 Jan 2017 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="/categories/rstudioconf-2016/index.xml" rel="self" type="application/rss+xml" />
-    
+    <atom:link href="/categories/rstudioconf-2016/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>RStudio::conf Highlights Day 4</title>
@@ -17,8 +14,55 @@
       <pubDate>Sat, 14 Jan 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017/01/14/rstudioconf-highlights-day-4/</guid>
-      <description>Introduction I’ve been lucky enough to spend the last few days in sunny Florida at the RStudio::conf 2017. This was made possible by RStudio’s very generous academic discount scheme, so thanks to them for that! Whilst I’ve been tweeting a few of the key moments as they happened this series of posts expands further on these tweets and gives links to further information.
- RStudio::conf Highlights Days 1-2: shiny workshop RStudio::conf Highlights Day 3: the tidyverse RStudio::conf Highlights Day 3: the tidyverse   Applications of R Markdown Much of my day was spent listening to Yihue Xie talking us through an Advanced R Markdown tutorial as well as two conference presentations, one of which was on blogdown which I was excited about since it’s what I used to create this blog and has only been around a few months.</description>
+      <description>&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;I’ve been lucky enough to spend the last few days in sunny Florida at the &lt;a href=&#34;https://www.rstudio.com/conference/&#34;&gt;RStudio::conf 2017&lt;/a&gt;. This was made possible by RStudio’s very generous academic discount scheme, so thanks to them for that! Whilst I’ve been &lt;a href=&#34;https://twitter.com/search?f=tweets&amp;amp;vertical=default&amp;amp;q=chapmandu2%20%23rstudioconf&amp;amp;src=typd&#34;&gt;tweeting&lt;/a&gt; a few of the key moments as they happened this series of posts expands further on these tweets and gives links to further information.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;/post/2017-01-12-rstudio-conference-highlights-1/&#34;&gt;RStudio::conf Highlights Days 1-2: shiny workshop&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;/post/2017-01-13-rstudio-conference-highlights-2/&#34;&gt;RStudio::conf Highlights Day 3: the tidyverse&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;/post/2017-01-14-rstudio-conference-highlights-3/&#34;&gt;RStudio::conf Highlights Day 3: the tidyverse&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;applications-of-r-markdown&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Applications of R Markdown&lt;/h2&gt;
+&lt;p&gt;Much of my day was spent listening to Yihue Xie talking us through an &lt;a href=&#34;https://slides.yihui.name/2017-rstudio-conf-rmarkdown-Yihui-Xie.html#1&#34;&gt;Advanced R Markdown tutorial&lt;/a&gt; as well as two conference presentations, one of which was on &lt;a href=&#34;http://github.com/rstudio/blogdown/&#34;&gt;blogdown&lt;/a&gt; which I was excited about since it’s what I used to create this blog and has only been around a few months.&lt;/p&gt;
+&lt;p&gt;In his &lt;a href=&#34;https://slides.yihui.name/2017-rstudio-conf-blogdown-Yihui-Xie.html#1&#34;&gt;blogdown talk&lt;/a&gt; Yihue described an R Markdown based blogging package based on &lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt;, a fast and flexible static HTML page generator. The advantage of this approach is that it makes hosting very easy since nothing is dynamic, and that the user can visualise exactly what the website will look like locally. Interestingly it also includes some of the features of bookdown for captioning figures and writing math formulae. There are many different themes available for Hugo which can be easily modified for use with blogdown (documentation pending!).&lt;/p&gt;
+&lt;p&gt;The advanced R Markdown talk was a bit too advanced for me but did help to cement some core concepts in my head. Firstly was the R Markdown workflow: essentially R markdown is converted to markdown by knitr, and this markdown is the converted to any number of formats by the pandoc software. There are a variety of output formats eg &lt;code&gt;html_document()&lt;/code&gt; which essentially generates a list of parameters both for knitr and pandoc. These parameters can be customised either in the function call, or in the YAML header. Additional customisation is available through providing additional css code, or by writing user defined output format functions.&lt;/p&gt;
+&lt;p&gt;Yihue then discussed some &lt;a href=&#34;https://slides.yihui.name/2017-rstudio-conf-ext-rmd-Yihui-Xie.html#1&#34;&gt;packages based on rmarkdown&lt;/a&gt; including rticles for creating pdf articles in journal specific format, tufte to create articles based on the style of Edward Tufte’s books, bookdown for writing books including Hadley’s R for Data Science, and xaringan for creating HTML5 presentations. All of these packages really increase my motivation for using R Markdown more extensively in my own work.&lt;/p&gt;
+&lt;p&gt;Finally Jonathan McPherson presented some detail on R Markdown Notebooks which provide an improved workflow for analysts using R markdown since the entire analysis doesn’t have to be rendered from scratch every time but can be rendered in chunks, and also allow code to be extracted from the document from the output html. I’m still a little unsure how well this will work for more complex analyses, but certainly the ability to combine analysis documentation and code in a single file is very attractive.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;stories-and-opinions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Stories and opinions&lt;/h2&gt;
+&lt;p&gt;In his keynote &lt;a href=&#34;https://twitter.com/andrewflowers&#34;&gt;Andrew Flowers&lt;/a&gt;, previously of &lt;a href=&#34;https://fivethirtyeight.com/&#34;&gt;FiveThirtyEight&lt;/a&gt;, described data journalism and the six types of data stories:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Novelty: analysis of new datasets eg Uber vs taxis in NYC&lt;/li&gt;
+&lt;li&gt;Outlier: focus on a surprising result eg most valuable sportspeople&lt;/li&gt;
+&lt;li&gt;Archetype: story about the most typical thing eg common names in America&lt;/li&gt;
+&lt;li&gt;Trends: changes over time eg deaths from terrorism&lt;/li&gt;
+&lt;li&gt;Debunking: attacking a misconception&lt;/li&gt;
+&lt;li&gt;Forecast: election results&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;For each story type Andrew highlighted the pitfalls and potential solutions. For example, the pitfal of a trend story is variance, where an apparent trend is just noise. The solution is to be conservative and explore variance correctly. Interestingly as well as the &lt;a href=&#34;https://github.com/fivethirtyeight&#34;&gt;FiveThirtyEight GitHub repo&lt;/a&gt; containing data and code, there is now also a &lt;a href=&#34;https://cran.r-project.org/package=fivethirtyeight&#34;&gt;FiveThirtyEight R package&lt;/a&gt; containing the curated data.&lt;/p&gt;
+&lt;p&gt;Switching gears &lt;a href=&#34;https://twitter.com/hspter&#34;&gt;Hilary Parker&lt;/a&gt; discussed opinionated data analysis and the concept of &lt;a href=&#34;https://codeascraft.com/2012/05/22/blameless-postmortems/&#34;&gt;blameless post mortems&lt;/a&gt;. The idea here is that we might have opinions on the best way to do data analysis, but how do we encourage best practice in a positive way rather than just beat people with a stick.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;qa-session&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Q&amp;amp;A Session&lt;/h2&gt;
+&lt;p&gt;Finally there was a Q&amp;amp;A session with JJ Allaire, &lt;a href=&#34;https://twitter.com/hadleywickham&#34;&gt;Hadley Wickham&lt;/a&gt; and &lt;a href=&#34;https://twitter.com/hadleywickham&#34;&gt;Joe Cheng&lt;/a&gt; discussing various topics in the R and data science universe. There was too much covered to present here but what struck me was how committed and enthusiasic the panellists were to helping people do great data science and how the medium of open source software really encouraged this since open source software is not dependent on one company.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;links-to-other-summaries&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Links to other summaries&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.rstudio.com/conference/&#34;&gt;RStudio conference page where recordings will appear&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.computerworld.com/article/3157004/data-analytics/best-tips-and-takeaways-from-rstudio-conference.html&#34;&gt;Computerworld best tips and tricks&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/kbroman/RStudioConf2017Slides&#34;&gt;KBroman github repo of slide links&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.gettinggeneticsdone.com/2017/01/rstudio-conference-2017-recap.html&#34;&gt;Getting genetics done blog summary&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusion&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;RStudio put on a terrific conference with a good balance of tutorial/workshop and information. My metric of a conference like this is how much of what I learnt could I have learnt just by staying at home and working through tutorials and blog posts myself, and I definitely learnt a lot more. There is no substitute for being able to interact with and ask questions of the creators of the software that I use on a daily basis, as well as talking to fellow users about common experiences. It also struck me how different the conference was to user group meetings of commercial software, which seems far more about trying to sell you something than helping you to get the most out of what’s available. Thanks RStudio!!&lt;/p&gt;
+&lt;/div&gt;
+</description>
     </item>
     
     <item>
@@ -27,8 +71,38 @@
       <pubDate>Fri, 13 Jan 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017/01/13/rstudioconf-highlights-day-3/</guid>
-      <description>Introduction I’ve been lucky enough to spend the last few days in sunny Florida at the RStudio::conf 2017. This was made possible by RStudio’s very generous academic discount scheme, so thanks to them for that! Whilst I’ve been tweeting a few of the key moments as they happened this series of posts expands further on these tweets and gives links to further information.
- RStudio::conf Highlights Days 1-2: shiny workshop RStudio::conf Highlights Day 3: the tidyverse RStudio::conf Highlights Day 3: the tidyverse   The tidyverse Inevitably a big theme of the first day was the tidyverse and Hadley Wickham kicked the conference off with an overview of his latest thinking and developments in the suite of packages.</description>
+      <description>&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;I’ve been lucky enough to spend the last few days in sunny Florida at the &lt;a href=&#34;https://www.rstudio.com/conference/&#34;&gt;RStudio::conf 2017&lt;/a&gt;. This was made possible by RStudio’s very generous academic discount scheme, so thanks to them for that! Whilst I’ve been &lt;a href=&#34;https://twitter.com/search?f=tweets&amp;amp;vertical=default&amp;amp;q=chapmandu2%20%23rstudioconf&amp;amp;src=typd&#34;&gt;tweeting&lt;/a&gt; a few of the key moments as they happened this series of posts expands further on these tweets and gives links to further information.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;/post/2017-01-12-rstudio-conference-highlights-1/&#34;&gt;RStudio::conf Highlights Days 1-2: shiny workshop&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;/post/2017-01-13-rstudio-conference-highlights-2/&#34;&gt;RStudio::conf Highlights Day 3: the tidyverse&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;/post/2017-01-14-rstudio-conference-highlights-3/&#34;&gt;RStudio::conf Highlights Day 3: the tidyverse&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-tidyverse&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The tidyverse&lt;/h2&gt;
+&lt;p&gt;Inevitably a big theme of the first day was the &lt;a href=&#34;http://www.tidyverse.org&#34;&gt;tidyverse&lt;/a&gt; and Hadley Wickham kicked the conference off with an overview of his latest thinking and developments in the suite of packages. Hadley seems to be really driving the concept on now that he’s successfully convinced the R community to stop embarassing him by referring to it as the Hadleyverse. I like his ‘pit of success’ analogy - make it easy to do things well - although Stephen Turner raised an issue that I come across on a daily basis which is the messiness that can happen when trying to combine tidy approaches withing the &lt;a href=&#34;http://www.bioconductor.org&#34;&gt;Bioconductor&lt;/a&gt; ecosystem of packages.&lt;/p&gt;
+&lt;p&gt;Next up was Charlotte Wickham, Hadley’s sister, giving a tutorial on the use of the &lt;a href=&#34;https://cran.r-project.org/web/packages/purrr/index.html&#34;&gt;purrr&lt;/a&gt; package. This package provides some great functional programming tools for working with lists that provide an alternative to working with &lt;code&gt;apply&lt;/code&gt; in base R. In particular the &lt;code&gt;map&lt;/code&gt; family of functions allows iterating through a list with the guarantee that the result will be of a particular type. The &lt;code&gt;walk&lt;/code&gt; functions do not return anything so are used for their side-effects - ie plotting or writing to files.&lt;/p&gt;
+&lt;p&gt;In the afternoon &lt;a href=&#34;https://twitter.com/hrbrmstr&#34;&gt;Bob Rudis&lt;/a&gt; gave a &lt;a href=&#34;https://github.com/hrbrmstr/rstudioconf2017&#34;&gt;brilliant talk&lt;/a&gt; on writing readable code using pipes which really helped cement some concepts in my head, before &lt;a href=&#34;https://twitter.com/JennyBryan&#34;&gt;Jenny Bryan&lt;/a&gt; followed on with an equally excellent talk discussing the use of list-cols in tibbles. The idea here is that just as data frames keep vectors of data together, they can also keep lists of data together. So a row could, for example, contain some data as a nested data frame, a model, an r-squared value, and a plot. This avoids the use of disconnected lists in an analysis which, as in Excel, can fall prey to unintended mixing up. In particular, the combination of &lt;code&gt;purrr::map&lt;/code&gt; and &lt;code&gt;dplyr::mutate&lt;/code&gt; can allow list-cols to be manipulated in situ in very powerful ways. I’m using this approach to store various Bioconductor objects in data frames to make my analysis code more concise with some success. Jenny’s slides were based on a &lt;a href=&#34;http://jennybc.github.io/purrr-tutorial/&#34;&gt;tutorial on GitHub&lt;/a&gt; and Hadley described the principles in this &lt;a href=&#34;https://www.youtube.com/watch?v=rz3_FDVt9eg&#34;&gt;YouTube video&lt;/a&gt; and a chapter in &lt;a href=&#34;http://r4ds.had.co.nz/many-models.html&#34;&gt;R for Data Science&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;getting-data-into-r&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Getting data into R&lt;/h2&gt;
+&lt;p&gt;Jim Hester from RStudio presented a completely rewritten version of the RODBC package called &lt;a href=&#34;https://github.com/rstats-db/odbc&#34;&gt;odbc&lt;/a&gt; which is faster, more robust and more secure. It includes drivers for a variety of databases and will be really helpful for anyone wanting to interact with databases in their analysis or shiny apps. In addition, SQL chunks can now be included in RMarkdown documents which are then executed and the result depicted as a data table when the RMarkdown is rendered. Finally the &lt;a href=&#34;https://github.com/rstudio/pool&#34;&gt;pool&lt;/a&gt; package is also being developed which helps manage database connections better.&lt;/p&gt;
+&lt;p&gt;Amanda Gadrow, also from Rstudio, presented some of her work &lt;a href=&#34;https://github.com/ajmcoqui/webAPIsR&#34;&gt;analysing data from web API’s&lt;/a&gt; using &lt;code&gt;httr&lt;/code&gt;, &lt;code&gt;jsonlite&lt;/code&gt;, &lt;code&gt;dplyr&lt;/code&gt;, &lt;code&gt;ggplot2&lt;/code&gt; etc. The primary motivation was to analyse RStudio’s support tickets, apparently they get more in the afternoon USA eastern time which means in the UK we should get an instant response, and that RStudio’s next support hire will be on the US West Coast!&lt;/p&gt;
+&lt;p&gt;Karthik Ram from ropensci.org also presented some useful packages in a &lt;a href=&#34;http://inundata.org/talks/rc17/&#34;&gt;lightning talk&lt;/a&gt;: magick for image processing, hunspell for spell checking, and tesseract for OCR.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;miscellaneous&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Miscellaneous&lt;/h2&gt;
+&lt;p&gt;I also enjoyed &lt;a href=&#34;https://twitter.com/juliasilge&#34;&gt;Julia Silge’s&lt;/a&gt; presentation on the &lt;a href=&#34;http://www.tidytextmining.org&#34;&gt;tidytext&lt;/a&gt; package whose uses, amongst other things, included an analysis of Donald Trump’s tweets! The basic concept is to generate a tidy data frame with one row per word for a dataset whilst retaining contextual information (chapter, line, book). Examples included sentiment analysis of Jane Austen, and also &lt;a href=&#34;https://en.wikipedia.org/wiki/Tf%E2%80%93idf&#34;&gt;TF-IDF&lt;/a&gt; analysis of some NASA datasets. It would be interesting to try this package for text mining biomedical literature.&lt;/p&gt;
+&lt;p&gt;Meanwhile Jonathan Sidi presented a short talk on &lt;a href=&#34;https://github.com/yonicd/ggedit&#34;&gt;ggedit&lt;/a&gt; which allows interactive editing of ggplots, before returning the code to make the new plot. This looks like a really useful tool for both new and advanced users of ggplot2 - there’s an article with videos &lt;a href=&#34;https://t.co/m7VlmjI5SV&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Finally, Chester Ismay &lt;a href=&#34;http://ismayc.github.io/rsconf/slides.html&#34;&gt;talked about&lt;/a&gt; how he has developed &lt;a href=&#34;http://moderndive.com/&#34;&gt;teaching materials&lt;/a&gt; for introductory stats using bookdown, shiny and the tidyverse. Even now stats is taught with calculators and worksheets of t-distributions and Z-scores, so using R both made the course more interesting for students, and also gave them experience in programming.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusion&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Having spent the previous 2 days in a shiny workshop I opted to avoid the shiny talks today, but there was a lot of buzz coming out of those sessions especially about &lt;a href=&#34;https://www.rstudio.com/products/connect/&#34;&gt;RStudio Connect&lt;/a&gt; and the &lt;a href=&#34;https://github.com/rstudio/shinytest&#34;&gt;shinytest&lt;/a&gt; package for testing shiny apps. RStudio have recorded all of the sessions so I’m looking forward to watching what I’ve missed when it’s available! Tomorrow I’m looking forward to the RMarkdown sessions, and hoping that blogdown will get a mention!!&lt;/p&gt;
+&lt;/div&gt;
+</description>
     </item>
     
     <item>
@@ -37,8 +111,71 @@
       <pubDate>Thu, 12 Jan 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017/01/12/rstudioconf-highlights-days-1-2/</guid>
-      <description>Introduction I’ve been lucky enough to spend the last few days in sunny Florida at the RStudio::conf 2017. This was made possible by RStudio’s very generous academic discount scheme, so thanks to them for that! Whilst I’ve been tweeting a few of the key moments as they happened this series of posts expands further on these tweets and gives links to further information.
- RStudio::conf Highlights Days 1-2: shiny workshop RStudio::conf Highlights Day 3: the tidyverse RStudio::conf Highlights Day 3: the tidyverse   Shiny The first two days was the Intermediate Shiny Workshop run by Joe Cheng - creator of shiny.</description>
+      <description>&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;I’ve been lucky enough to spend the last few days in sunny Florida at the &lt;a href=&#34;https://www.rstudio.com/conference/&#34;&gt;RStudio::conf 2017&lt;/a&gt;. This was made possible by RStudio’s very generous academic discount scheme, so thanks to them for that! Whilst I’ve been &lt;a href=&#34;https://twitter.com/search?f=tweets&amp;amp;vertical=default&amp;amp;q=chapmandu2%20%23rstudioconf&amp;amp;src=typd&#34;&gt;tweeting&lt;/a&gt; a few of the key moments as they happened this series of posts expands further on these tweets and gives links to further information.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;/post/2017-01-12-rstudio-conference-highlights-1/&#34;&gt;RStudio::conf Highlights Days 1-2: shiny workshop&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;/post/2017-01-13-rstudio-conference-highlights-2/&#34;&gt;RStudio::conf Highlights Day 3: the tidyverse&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;/post/2017-01-14-rstudio-conference-highlights-3/&#34;&gt;RStudio::conf Highlights Day 3: the tidyverse&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;shiny&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Shiny&lt;/h2&gt;
+&lt;p&gt;The first two days was the Intermediate Shiny Workshop run by &lt;a href=&#34;https://twitter.com/jcheng&#34;&gt;Joe Cheng&lt;/a&gt; - creator of shiny. The slides and examples from the workshop are &lt;a href=&#34;https://github.com/jcheng5/rstudio2017-shiny-workshop&#34;&gt;available on github&lt;/a&gt; and are definitely worth a look. It’s impossible to do any sort of justice to what was covered in a brief blog post but here are some of my key take home points.&lt;/p&gt;
+&lt;div id=&#34;reactivity-graphs&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reactivity graphs&lt;/h3&gt;
+&lt;p&gt;Reactivity is a key concept to understand in shiny. Joe advised us to watch his &lt;a href=&#34;https://www.rstudio.com/resources/webinars/shiny-developer-conference/&#34;&gt;talks from the 2016 Shiny Dev Conference&lt;/a&gt; for more information but one really useful feature we learnt about was the ability to view reactivity graphs while the app is running. This allows the shiny developer to really see the sequence of events and links between the various components of the shiny app. To do this set &lt;code&gt;options(shiny.reactlog=TRUE)&lt;/code&gt; before running your app, then hit Command-F3 on the mac. See &lt;code&gt;?showReactLog&lt;/code&gt; for more information.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;events-and-reactives&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Events and reactives&lt;/h3&gt;
+&lt;p&gt;The concept of clicking on buttons (event) to update shiny apps is fundamental, but the innards of shiny and how to do this has changed a bit. There are now &lt;code&gt;observeEvent&lt;/code&gt; and &lt;code&gt;eventReactive&lt;/code&gt; functions which make this much simpler. In brief the difference is that you use &lt;code&gt;observeEvent&lt;/code&gt; when you want something to be &lt;em&gt;done&lt;/em&gt; when an event occurs, whereas you use &lt;code&gt;eventReactive&lt;/code&gt; when you want something to be &lt;em&gt;calculated&lt;/em&gt;. Want to write out a csv, use &lt;code&gt;observeEvent&lt;/code&gt;, want to filter a data frame, use &lt;code&gt;eventReactive&lt;/code&gt;. Crucially this replaces this code:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;observe({
+  # Take a reactive dependency on input$save_button
+  input$save_button
+  isolate({
+    write.csv(movies_subset(), &amp;quot;movies.csv&amp;quot;)
+  })
+})&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;with this:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;observeEvent(input$save_button, {
+  write.csv(movies_subset(), &amp;quot;movies.csv&amp;quot;)
+})&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;reactivevalues&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;reactiveValues&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;reactiveValues&lt;/code&gt; are something you should only rarely need to use according to Joe, and this is most often when you need to preserve the history of the state of the shiny app. The best example of this was a simple app that incremented or decremented a value when a button was clicked.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;checking-preconditions-with-req&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Checking preconditions with req&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;req&lt;/code&gt; is an incredibly useful little function that is a bit like &lt;code&gt;stopifnot&lt;/code&gt; but plays more nicely with shinyapps. Rather than getting an ugly error message, a NULL is returned and downstream components of the shiny app are told not to run either. A really useful application of this is a shiny app that requires a file to be uploaded. &lt;code&gt;req&lt;/code&gt; can be used to stop the shiny app from doing anything until there is some data to work from.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;invalidatelater-reactivepoll-reactivefilereader&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;invalidateLater, reactivePoll, reactiveFileReader&lt;/h3&gt;
+&lt;p&gt;These functions allow time or changes to datasources to be used as reactives. &lt;code&gt;invalidateLater&lt;/code&gt; causes a reactive to invalidate itself automatically after a certain time period, and so can be used to automatically update data at set intervals. &lt;code&gt;reactivePoll&lt;/code&gt; uses a check function to monitor a data source (eg the length of a database table) and update itself when the data changes. &lt;code&gt;reactiveFileReader&lt;/code&gt; is a specific case of &lt;code&gt;reactivePoll&lt;/code&gt; which can monitor the timestamps of files for changes.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;modules&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Modules&lt;/h3&gt;
+&lt;p&gt;We spent a very challenging afternoon on modules, but I ended up being convinced by their utilty. The problem in shiny is that UI and server components rely on uniquely named HTML elements, and so using a normal function to package up a commonly used bit of code for re-use risks inadvertantly using the same id as another element. To circumvent this modules are pairs of ui and server code which are constructed in such a way that they have their own namespace. This approach reduces duplication of code and makes shiny apps more streamlined and robust. &lt;em&gt;Modules are functions that are UI aware&lt;/em&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;htmltoolsbrowsable&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;htmltools::browsable&lt;/h3&gt;
+&lt;p&gt;This is a useful little function which helps check out and debug elements of UI. Use as follows: &lt;code&gt;htmltools::browsable(my_app_ui)&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;debounce-and-throttle&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;debounce and throttle&lt;/h3&gt;
+&lt;p&gt;These functions can be used to prevent apps from updating too frequently either. &lt;code&gt;throttle&lt;/code&gt; creates a reactive that updates no more than every &lt;em&gt;N&lt;/em&gt; seconds, whereas &lt;code&gt;debounce&lt;/code&gt; creates a reactive that updates once an input has stopped updating for at least &lt;em&gt;N&lt;/em&gt; seconds.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusion&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Whilst RStudio do a great job of recording webinars and writing fantastic documentation, hearing personally from shiny’s creator Joe Cheng and sitting in a room full of shiny developers was a great experience!&lt;/p&gt;
+&lt;div id=&#34;footnote-on-this-blog&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Footnote on this blog&lt;/h3&gt;
+&lt;p&gt;I’ve recently moved my blog over to Yihui Xie’s &lt;a href=&#34;https://github.com/rstudio/blogdown&#34;&gt;blogdown&lt;/a&gt; package which is fantastic if you want to write blogs in RMarkdown and joins the family of RMarkdown packages including packagedown, bookdown etc. I do still need to iron out a few glitches and choose a theme, so unfortunately Disqus isn’t working just now - sorry!!&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
     </item>
     
   </channel>

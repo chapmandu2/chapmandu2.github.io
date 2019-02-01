@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Docker on Phil Chapman&#39;s Blog</title>
-    <link>/categories/docker/</link>
-    <description>Recent content in Docker on Phil Chapman&#39;s Blog</description>
+    <title>docker on Phil Chapman&#39;s Blog</title>
+    <link>/categories/docker/index.xml</link>
+    <description>Recent content in docker on Phil Chapman&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 26 May 2018 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="/categories/docker/index.xml" rel="self" type="application/rss+xml" />
-    
+    <atom:link href="/categories/docker/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Reproducible data science environments with Docker</title>
@@ -17,7 +14,153 @@
       <pubDate>Sat, 26 May 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/2018/05/26/reproducible-data-science-environments-with-docker/</guid>
-      <description>Introduction Since starting at DWP Digital, I&amp;rsquo;ve spent quite a bit of time working with some colleagues developing our analysis environments. We need to be able to control and adapt our environments quite rapidly so that we can use the latest and greatest tools, but we also need these environments to be robust and reproducible and to be deployed in a variety of hosting contexts including laptops and our secure internal environment.</description>
+      <description>
+
+&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+
+&lt;p&gt;Since starting at DWP Digital, I&amp;rsquo;ve spent quite a bit of time working with some colleagues developing our analysis environments.  We need to be able to control and adapt our environments quite rapidly so that we can use the latest and greatest tools, but we also need these environments to be robust and reproducible and to be deployed in a variety of hosting contexts including laptops and our secure internal environment.  Containerisation technology, specifically &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt;, has emerged as a key tool in this and I wrote a non-technical &amp;lsquo;official&amp;rsquo; &lt;a href=&#34;https://dwpdigital.blog.gov.uk/2018/05/18/using-containers-to-deliver-our-data-projects/&#34;&gt;blog for DWP Digital&lt;/a&gt; which gained quite a bit of interest.  This post covers the technical aspects of how what we actually did this which will hopefully be helpful to others in a similar situation by walking through an example codebase on GitHub at &lt;a href=&#34;https://github.com/chapmandu2/datasci_docker&#34;&gt;chapmandu2/datasci_docker&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;three-components-of-reproducibility&#34;&gt;Three components of reproducibility&lt;/h2&gt;
+
+&lt;p&gt;There are three important aspects to reproducible data science:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;code&lt;/li&gt;
+&lt;li&gt;data&lt;/li&gt;
+&lt;li&gt;environment&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Unless we have systems and processes in place to control and monitor changes to these three aspects, we won&amp;rsquo;t be able to reproduce our analysis.  Data is perhaps the easiest aspect to control, since in many cases the data is static and just won&amp;rsquo;t change, but even so it is worth recording data time stamps or creation dates.  If the data is a live feed then things become a lot more complex.  Code version control is a critical component of data analysis and git has emerged as the de-facto standard in data science.&lt;/p&gt;
+
+&lt;h2 id=&#34;open-source-is-great-but-also-a-challenge-for-reproducibility&#34;&gt;Open source is great, but also a challenge for reproducibility&lt;/h2&gt;
+
+&lt;p&gt;Control of environments is more difficult.  The diversity and rapid evolution of data science tools is a huge benefit in contemporary data science, but the plethora of libraries, packages and versions can also cause problems.  A slight change in functionality between versions of one library can result in a change in the output of an analysis, even though the same code is used.  Although environment management options are available for R and Python themselves (packrat for R, pipenv and conda for Python), these can still be problematic to use, especially if components outside of R/Python are important, for example system libraries.&lt;/p&gt;
+
+&lt;h2 id=&#34;enter-docker&#34;&gt;Enter Docker&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt; has emerged as a way to manage data science environments.  Docker containers can be thought of as very lightweight virtual machines, with the advantage that they can be relatively small and also fast to instantiate.  A Docker container is derived from a Docker image, and an image can be built from a recipe file called a Dockerfile.  This means that the code to build the Docker image can be version controlled in the same way as the analysis code, but also that the Docker image can be archived and retrieved in future so that the exact same environment can be used to run an analysis.  The rest of this blog post describes one possible workflow for using Docker for environment management, that also integrates &lt;a href=&#34;https://www.gnu.org/software/make/manual/html_node/Introduction.html&#34;&gt;Makefiles&lt;/a&gt; and &lt;a href=&#34;https://git-scm.com/&#34;&gt;git&lt;/a&gt; for a very high level of reproducibility.&lt;/p&gt;
+
+&lt;h2 id=&#34;overview-of-the-workflow&#34;&gt;Overview of the workflow&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&#34;/post/docker_workflow.png&#34; alt=&#34;Docker Workflow&#34; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;images-as-layers&#34;&gt;Images as layers&lt;/h3&gt;
+
+&lt;p&gt;We built our images as layers which build on top of eachother:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;00-docker: creates some foundations for capturing metadata&lt;/li&gt;
+&lt;li&gt;01-linux: installs the linux system libraries and applications such as R&lt;/li&gt;
+&lt;li&gt;02-r: installs a set of R packages which tend to be used across all projects&lt;/li&gt;
+&lt;li&gt;03-rstudio: installs RStudio Server&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;On top of these we then build further project specific images which share the components above, but add project specific requirements.  For example, an NLP project might add various NLP packages.  This gives a balance of having some consistency between projects, whilst allowing projects to have flexibility over the tools they have access to.&lt;/p&gt;
+
+&lt;h3 id=&#34;dockerfiles-as-recipes&#34;&gt;Dockerfiles as recipes&lt;/h3&gt;
+
+&lt;p&gt;A &lt;a href=&#34;https://docs.docker.com/engine/reference/builder/&#34;&gt;Dockerfile&lt;/a&gt; is like a recipe for a cake.  Just as a recipe species which ingredients in what order are required to make the cake mix, we can specify the exact instructions required to make a Docker image. Which directories have to be created, which software has to be installed, all of this is captured in a Dockerfile, and as this is just a text file it can be version controlled using git.&lt;/p&gt;
+
+&lt;h3 id=&#34;makefiles-as-oven-settings&#34;&gt;Makefiles as oven settings&lt;/h3&gt;
+
+&lt;p&gt;If a Dockerfile is a recipe, then Makefiles are like the cooking instructions.  To bake a cake we need to know how long we need to bake it for and at what temperature, otherwise the cake will turn out differently even though the cake mix was the same. The same Dockerfile will give a slightly different result depending on the parameters that are specified in the &lt;code&gt;docker build&lt;/code&gt;  and &lt;code&gt;docker run&lt;/code&gt; commands.  This is especially important for controlling how metadata is captured.  Just like Dockerfiles, Makefiles can also be version controlled with git.&lt;/p&gt;
+
+&lt;h3 id=&#34;container-registries-as-a-freezer&#34;&gt;Container registries as a freezer&lt;/h3&gt;
+
+&lt;p&gt;So we have our recipe and our cooking instructions, but if I bake a cake today it won&amp;rsquo;t be exactly the same as a cake baked in a year&amp;rsquo;s time: the eggs will be slightly different, I might be using a different oven.  In the same way, even with our best efforts it is very difficult to guarantee that a docker image will be the same because the build process depends on various resources on the internet from which we download the software.  Even if we try to specify exact software versions, it&amp;rsquo;s going to be difficult to guarantee an identical build.  Therefore the only solution is to archive the Docker image itself, just as we might freeze a cake.  To do this we can use a container registry such as Amazon&amp;rsquo;s Elastic Container Registry.&lt;/p&gt;
+
+&lt;h3 id=&#34;metadata-and-git-integration&#34;&gt;Metadata and git integration&lt;/h3&gt;
+
+&lt;p&gt;We&amp;rsquo;ve gone to a lot of effort to ensure reproducibility, the last step is to capture metadata in our Docker image so that we know how it was created and what version it was.  We want to link the Docker image back to the code that created it, and the way to do this is to link it to our version control system: git.  There are two ways in which we need this metadata to be visible:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;from the outside: so we can choose which Docker image to use.&lt;/li&gt;
+&lt;li&gt;from the inside: so that when we carry out our analysis we know which Docker image we&amp;rsquo;re using.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The way that this is managed in the example repository is as follows:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;the make command captures the current git commit and any git tags&lt;/li&gt;
+&lt;li&gt;these are included in the &lt;code&gt;docker build&lt;/code&gt; command as build arguments&lt;/li&gt;
+&lt;li&gt;the build arguments are captured in the Dockerfile as Docker labels that can be retrieved with a &lt;code&gt;docker inspect&lt;/code&gt; command (external metadata)&lt;/li&gt;
+&lt;li&gt;the build arguments are fed to a shell script (see 00-docker) which creates various audit files in &lt;code&gt;/etc/docker&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;the information in &lt;code&gt;/etc/docker&lt;/code&gt; is then available to anything running within the Docker container (internal metadata)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In practice a message is shown when R is launched that shows the build information, and this message can also be included in output log files or within an RMarkdown document.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;################################ 
+# DOCKER BUILD INFORMATION 
+################################ 
+ 
+This is docker image: ds-stage-02-r:v1.1 
+Built from git commit: 3d07371 
+See https://github.com/chapmandu2/datasci_docker/tree/3d07371 for Dockerfile code 
+See /etc/docker/docker_build_history.txt for provenance of this environment. 
+See /etc/docker for more information 
+ 
+################################ 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;workflow-instructions&#34;&gt;Workflow instructions&lt;/h2&gt;
+
+&lt;h3 id=&#34;clone-the-git-repo&#34;&gt;Clone the git repo&lt;/h3&gt;
+
+&lt;p&gt;Assuming that you already have Docker installed on your computer, clone the git repository &lt;a href=&#34;https://github.com/chapmandu2/datasci_docker&#34;&gt;chapmandu2/datasci_docker&lt;/a&gt; from GitHub:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git clone https://github.com/chapmandu2/datasci_docker
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;repo-structure&#34;&gt;Repo structure&lt;/h3&gt;
+
+&lt;p&gt;Within the repo there is a Makefile and a readme and a number of directories each corresponding to an image.  The Makefile at the top level is the master Makefile and contains the shared logic required to build all of the images.  Each image also has its own Makefile which references the master Makefile.  Feel free to look at the Makefile but you don&amp;rsquo;t need to understand the details at this stage.&lt;/p&gt;
+
+&lt;h3 id=&#34;make-the-00-docker-image&#34;&gt;Make the 00-docker image&lt;/h3&gt;
+
+&lt;p&gt;Navigate to the &lt;code&gt;ds-stage-00-docker&lt;/code&gt; directory and enter &lt;code&gt;make build&lt;/code&gt; - this will build the first docker image which includes the metadata audit functionality.  If you wish you can enter &lt;code&gt;make run&lt;/code&gt; which will create and run a container from this image and you can look in the &lt;code&gt;/etc/docker&lt;/code&gt; directory.  The &lt;code&gt;generate_docker_info.sh&lt;/code&gt; script is run during the docker build process to capture and store all of the metadata.&lt;/p&gt;
+
+&lt;h3 id=&#34;make-the-01-linux-image&#34;&gt;Make the 01-linux image&lt;/h3&gt;
+
+&lt;p&gt;Next navigate to the &lt;code&gt;ds-stage-01-linux&lt;/code&gt; directory and again enter &lt;code&gt;make build&lt;/code&gt; to build the linux base image.  This will take a minute or two depending on your internet connection as various software libraries are downloaded.  Once finished, you can again enter &lt;code&gt;make run&lt;/code&gt; to explore the image - check out the &lt;code&gt;/etc/docker&lt;/code&gt; directory to see how the metadata has changed.&lt;/p&gt;
+
+&lt;h3 id=&#34;make-the-02-r-image&#34;&gt;Make the 02-r image&lt;/h3&gt;
+
+&lt;p&gt;Now navigate to the &lt;code&gt;ds-stage-02-r&lt;/code&gt; directory do the same steps as above: &lt;code&gt;make build&lt;/code&gt; to build the image and &lt;code&gt;make run&lt;/code&gt; to run it.  For a bit of fun try this command:&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;docker run -it --rm --entrypoint R ds-stage-02-r:latest&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;This will instantiate a container from the image as before, but rather than expose a bash prompt will run R and expose this.  To the user it&amp;rsquo;s almost as quick as launching R running natively on their local system.&lt;/p&gt;
+
+&lt;h3 id=&#34;make-the-03-rstudio-image&#34;&gt;Make the 03-rstudio image&lt;/h3&gt;
+
+&lt;p&gt;As before, navigate to the directory and enter &lt;code&gt;make build&lt;/code&gt; and &lt;code&gt;make run&lt;/code&gt;.  This time, however, the container runs in detatched mode and exposes an RStudio Server instance which can be accessed from &lt;code&gt;localhost:8787&lt;/code&gt; in a browser and authenticated using &lt;code&gt;rstudio:rstudio&lt;/code&gt;.  Now we are running R within the RStudio Server IDE.  It is this image which can be deployed onto a server, whether on the local network or on the cloud, allowing users to log in from their browser and use a reproducible data environment.&lt;/p&gt;
+
+&lt;h3 id=&#34;make-a-project-specific-image&#34;&gt;Make a project specific image&lt;/h3&gt;
+
+&lt;p&gt;To make a project specific image, it is as simple as building on the contents of the &lt;code&gt;ds-stage-11-project&lt;/code&gt; directory.  Add any linux system requirements, such as &lt;code&gt;libpng&lt;/code&gt; in this case, and any R packages to the relevant sections.  You can be as sophisticated as you like here, but the best approach is to work out your installation process on a container of the base image first, and then transfer this process into the Dockerfile.  I will try to add some more sophisticated examples later, we have images with Python also installed, difficult R installs such as the RStan, and R packages installed from github. &lt;a href=&#34;https://hub.docker.com/&#34;&gt;Dockerhub&lt;/a&gt; is a good place to look for inspiration.&lt;/p&gt;
+
+&lt;h2 id=&#34;docker-registries&#34;&gt;Docker registries&lt;/h2&gt;
+
+&lt;p&gt;I have deliberately not included in this post the part of the workflow that involves pushing the Docker image to a registry. However, the code is present in the Makefile and it is just a case of specifying &lt;code&gt;my-repo/my-image&lt;/code&gt; as the base image, and modifying the Amazon ECR section of the master Makefile (line 40).  Then add a &lt;code&gt;make push&lt;/code&gt; command to the sequence of make commands used thus far.  Note that I set up some logic that required a git commit associated with the image to be tagged in order to be pushed to a repository.&lt;/p&gt;
+
+&lt;p&gt;The benefit of using a registry is that it makes it easier to deploy and share images, and that the build process can be carried out anywhere that the git repo and docker registry is accessible from.  One useful option is to build images on an EC2 instance on AWS, since this has a very fast network connection that expidites the build process.&lt;/p&gt;
+
+&lt;h2 id=&#34;potential-improvements&#34;&gt;Potential improvements&lt;/h2&gt;
+
+&lt;p&gt;The template shared here seems to have worked reasonably well but there is room for improvement.  I am a complete beginner in using Make and whilst it&amp;rsquo;s very powerful, the Makefiles could be more cleanly constructed.  In addition, shared parameters such as the registry address could be stored in a repo-wide yaml file rather than being buried within a Makefile.  The main improvement, however, would be in how git tags and commit id&amp;rsquo;s are used.  As it stands, changes to the Dockerfile could be made but not committed, and the resultant image would still have the current git commit associated with it.  I left it like this for pragmatic reasons - when you are developing Docker containers it&amp;rsquo;s a pain to have to commit every time you attempt to build!  So it&amp;rsquo;s important to remember this, and at the end when you think you&amp;rsquo;re done, to go back and build every image again with the same code.&lt;/p&gt;
+
+&lt;h2 id=&#34;conclusions&#34;&gt;Conclusions&lt;/h2&gt;
+
+&lt;p&gt;In this blog post I have shared a workflow for developing reproducible data science environments using Docker.  I hope that it useful to others in their research, and please let me know if you have any ideas for improvements!&lt;/p&gt;
+
+&lt;h2 id=&#34;postscript&#34;&gt;Postscript&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;There are RStudio and R images available on DockerHub under the &lt;a href=&#34;https://hub.docker.com/u/rocker/&#34;&gt;rocker&lt;/a&gt; account.  These can be more convenient starting points than a linux base image.  In our case we needed Centos as the base Linux OS rather than Ubuntu, hence why we started from scratch.&lt;/li&gt;
+&lt;li&gt;The example git repo was designed to be relatively quick to build for example purposes, it probably doesn&amp;rsquo;t include enough linux libraries or R packages to actually be useful.  I&amp;rsquo;ll try to add a more useful example to the repo.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
     </item>
     
   </channel>
