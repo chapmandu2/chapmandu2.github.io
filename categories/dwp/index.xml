@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>dwp on Phil Chapman&#39;s Blog</title>
-    <link>/categories/dwp/index.xml</link>
-    <description>Recent content in dwp on Phil Chapman&#39;s Blog</description>
+    <title>DWP on Phil Chapman&#39;s Blog</title>
+    <link>/categories/dwp/</link>
+    <description>Recent content in DWP on Phil Chapman&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="/categories/dwp/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 27 Nov 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/dwp/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>Last day as a civil servant</title>
@@ -14,54 +17,8 @@
       <pubDate>Tue, 27 Nov 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/2018/11/27/last-day-civil-servant/</guid>
-      <description>
-
-&lt;h2 id=&#34;moving-from-bioinformatics-to-data-science&#34;&gt;Moving from bioinformatics to data science&lt;/h2&gt;
-
-&lt;p&gt;Almost exactly a year after contemplating my last day as a bioinformatician, I am now contemplating my last day as a data scientist in the Department for Work and Pensions, part of the UK civil service.&lt;/p&gt;
-
-&lt;p&gt;As I&amp;rsquo;ve &lt;a href=&#34;https://chapmandu2.github.io/post/2018/03/03/why-bioinformaticians-should-consider-themselves-data-scientists/&#34;&gt;blogged about previously&lt;/a&gt;, bioinformatics experience is highly relevant in the data science job market, and I&amp;rsquo;ve also discovered how important the ‘science’ bit of data science is.  Being able to bring experience in experimental design and interpretation of results to an environment where people have more diverse and often non-scientific backgrounds has been valuable, and I’ve learnt a lot in return about things I have never come across before.&lt;/p&gt;
-
-&lt;p&gt;The main conclusion from this year: moving into data science was both smoother and more straightforward than I ever hoped for!&lt;/p&gt;
-
-&lt;h2 id=&#34;reasons-to-stay&#34;&gt;Reasons to stay&lt;/h2&gt;
-
-&lt;p&gt;So why am I leaving? There are things that I&amp;rsquo;ve thoroughly enjoyed about working in the civil service.  By and large civil servants are a diverse and friendly bunch, committed to making a difference to society.  I was lucky to work with some really awesome colleagues. Being a huge organisation, it was relatively easy to find &amp;lsquo;like minds&amp;rsquo;, especially on the Government Data Science Slack forum which was fantastic for asking for help and advice, and sharing knowledge.&lt;/p&gt;
-
-&lt;p&gt;There is also a real drive towards using data for public good, so it&amp;rsquo;s an exciting place to be.  The scale of the problems is vast too, affection potentially millions of people and budgets into the billions.  The opportunities are exciting and enticing!&lt;/p&gt;
-
-&lt;h2 id=&#34;reasons-to-go-organisational&#34;&gt;Reasons to go - organisational&lt;/h2&gt;
-
-&lt;p&gt;Unfortunately, whilst there is a vision at the top of the organisation and willing at the bottom, somewhere in the middle things get snarled up.  Government is rightly concerned about the security of its citizens data, and controlling costs. Unfortunately this frequently made it difficult to make progress due to the number of different beaurocratic layers to be negotiated, and the lack of empowerment and trust the organisation has in individual civil servants.&lt;/p&gt;
-
-&lt;p&gt;It often felt that we were battling against &amp;lsquo;the system&amp;rsquo; to get our jobs done, and had little or no ability to influence or change the things that were important to us.  A really key example of this was the difficulty we had in establishing a good data science platform to work on, not just for data scientists, but also the wider analytical community (who were using SAS).  Even though there was support  at the highest levels for using open source tools such as Python and R, getting a good solution in place proved elusive for reasons that seemed more cultural than technical.&lt;/p&gt;
-
-&lt;h2 id=&#34;reasons-to-go-career-progression&#34;&gt;Reasons to go - career progression&lt;/h2&gt;
-
-&lt;p&gt;Another significant reason, and one that I believe contributes to the problems around delivering digital projects in general, is that there isn&amp;rsquo;t really a clear career progression for data scientists on the technical side.  Once you get to a certain level the only way up is to become a manager, it&amp;rsquo;s not possible to stay close to the technical work.&lt;/p&gt;
-
-&lt;p&gt;This contrasts with my previous experience in the pharmaceutical industry where a scientific leadership career track is available for people who want to continue to focus on science rather than people management.  Top tech companies such as Spotify also offer technical career tracks.&lt;/p&gt;
-
-&lt;p&gt;This has two unfortunate effects.  Firstly, it deprives the organisation not just of crucial technical knowledge but also of leaders with deep technical expertise.  Secondly, it deprives senior data scientists looking to make their next career step of mentors and role models who they can learn from.&lt;/p&gt;
-
-&lt;p&gt;Technical leadership is not just technical knowledge, it is also about how to develop technical expertise in an organisation and how to integrate technical strategy into business strategy.&lt;/p&gt;
-
-&lt;h2 id=&#34;reasons-to-go-personal&#34;&gt;Reasons to go - personal&lt;/h2&gt;
-
-&lt;p&gt;Finally, as with any job move decision, I had to consider what I wanted from a job and how that lined up with what was on offer.  I felt strongly that I wanted to continue to develop my technical skills in both the software and mathematical side of data science.  It seemed that staying put would pull me further away from that and towards a role helping to manage a group, something that I want to do ultimately, but that I&amp;rsquo;m not sure I want just yet (and perhaps not somewere with the bureaucratic and political overhead of the civil service).&lt;/p&gt;
-
-&lt;p&gt;My ideal role would have been driving and championing the adoption of data science approaches and techniques within DWP, but I didn&amp;rsquo;t feel my skillset was quite there yet, and that role didn&amp;rsquo;t exist.&lt;/p&gt;
-
-&lt;h2 id=&#34;advice-if-you-re-considering-a-civil-service-career&#34;&gt;Advice if you&amp;rsquo;re considering a civil service career&lt;/h2&gt;
-
-&lt;p&gt;Would I recommend the civil service to budding data scientists?  The answer is a definite YES!  It&amp;rsquo;s certainly a great way into data science from academia for example.  But equally I would advocate not staying more than a few years at a time because you will learn a different way in the private sector and have more opportunity to work with the latest technology.  In my opinion it’s also important for people working in government to also have experience outside of government.&lt;/p&gt;
-
-&lt;p&gt;Even if you only want to work in government, I think you’ll become a better civil servant for having some experience of industry, and you will also be able to bring back into the civil service new ways of doing things.  In addition, you may find your time in the civil service limited because of the lack of career progression opportunities for data scientists at present, although there are hopeful signs that this is changing!&lt;/p&gt;
-
-&lt;h2 id=&#34;looking-forward&#34;&gt;Looking forward&lt;/h2&gt;
-
-&lt;p&gt;My next role is a really exciting opportunity with a small, dynamic software company where I will be working alongside experts in cutting edge cloud technologies.  I’m looking forward to the new challenge of working in a different environment again, and being the technical dunce with lots to learn from all those smart software and DevOps engineers!!  But equally I&amp;rsquo;m confident that I can bring a different way of looking at things, not just from my scientific career but also from my experience working in government.  Bring it on!&lt;/p&gt;
-</description>
+      <description>Moving from bioinformatics to data science Almost exactly a year after contemplating my last day as a bioinformatician, I am now contemplating my last day as a data scientist in the Department for Work and Pensions, part of the UK civil service.
+As I&amp;rsquo;ve blogged about previously, bioinformatics experience is highly relevant in the data science job market, and I&amp;rsquo;ve also discovered how important the ‘science’ bit of data science is.</description>
     </item>
     
   </channel>

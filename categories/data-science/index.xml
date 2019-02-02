@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>data-science on Phil Chapman&#39;s Blog</title>
-    <link>/categories/data-science/index.xml</link>
-    <description>Recent content in data-science on Phil Chapman&#39;s Blog</description>
+    <title>Data Science on Phil Chapman&#39;s Blog</title>
+    <link>/categories/data-science/</link>
+    <description>Recent content in Data Science on Phil Chapman&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="/categories/data-science/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 02 Feb 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/data-science/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Dockerizing your R analysis</title>
+      <link>/post/2019/02/02/dockerizing-your-r-analysis/</link>
+      <pubDate>Sat, 02 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019/02/02/dockerizing-your-r-analysis/</guid>
+      <description>Introduction This post is the first in a series of blog posts about getting the things that we do with R out into the world beyond the normal R ecosystem. I&amp;rsquo;ll be talking about exploratory analyses, shiny apps, models, serverless functions, R packages, and Docker. A lot about Docker.
+Why should you care? Why should you care about this? Well, if as a R user you can only really collaborate with other R users, you&amp;rsquo;re limiting yourself as a data scientist.</description>
+    </item>
     
     <item>
       <title>Last day as a civil servant</title>
@@ -14,54 +27,8 @@
       <pubDate>Tue, 27 Nov 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/2018/11/27/last-day-civil-servant/</guid>
-      <description>
-
-&lt;h2 id=&#34;moving-from-bioinformatics-to-data-science&#34;&gt;Moving from bioinformatics to data science&lt;/h2&gt;
-
-&lt;p&gt;Almost exactly a year after contemplating my last day as a bioinformatician, I am now contemplating my last day as a data scientist in the Department for Work and Pensions, part of the UK civil service.&lt;/p&gt;
-
-&lt;p&gt;As I&amp;rsquo;ve &lt;a href=&#34;https://chapmandu2.github.io/post/2018/03/03/why-bioinformaticians-should-consider-themselves-data-scientists/&#34;&gt;blogged about previously&lt;/a&gt;, bioinformatics experience is highly relevant in the data science job market, and I&amp;rsquo;ve also discovered how important the ‘science’ bit of data science is.  Being able to bring experience in experimental design and interpretation of results to an environment where people have more diverse and often non-scientific backgrounds has been valuable, and I’ve learnt a lot in return about things I have never come across before.&lt;/p&gt;
-
-&lt;p&gt;The main conclusion from this year: moving into data science was both smoother and more straightforward than I ever hoped for!&lt;/p&gt;
-
-&lt;h2 id=&#34;reasons-to-stay&#34;&gt;Reasons to stay&lt;/h2&gt;
-
-&lt;p&gt;So why am I leaving? There are things that I&amp;rsquo;ve thoroughly enjoyed about working in the civil service.  By and large civil servants are a diverse and friendly bunch, committed to making a difference to society.  I was lucky to work with some really awesome colleagues. Being a huge organisation, it was relatively easy to find &amp;lsquo;like minds&amp;rsquo;, especially on the Government Data Science Slack forum which was fantastic for asking for help and advice, and sharing knowledge.&lt;/p&gt;
-
-&lt;p&gt;There is also a real drive towards using data for public good, so it&amp;rsquo;s an exciting place to be.  The scale of the problems is vast too, affection potentially millions of people and budgets into the billions.  The opportunities are exciting and enticing!&lt;/p&gt;
-
-&lt;h2 id=&#34;reasons-to-go-organisational&#34;&gt;Reasons to go - organisational&lt;/h2&gt;
-
-&lt;p&gt;Unfortunately, whilst there is a vision at the top of the organisation and willing at the bottom, somewhere in the middle things get snarled up.  Government is rightly concerned about the security of its citizens data, and controlling costs. Unfortunately this frequently made it difficult to make progress due to the number of different beaurocratic layers to be negotiated, and the lack of empowerment and trust the organisation has in individual civil servants.&lt;/p&gt;
-
-&lt;p&gt;It often felt that we were battling against &amp;lsquo;the system&amp;rsquo; to get our jobs done, and had little or no ability to influence or change the things that were important to us.  A really key example of this was the difficulty we had in establishing a good data science platform to work on, not just for data scientists, but also the wider analytical community (who were using SAS).  Even though there was support  at the highest levels for using open source tools such as Python and R, getting a good solution in place proved elusive for reasons that seemed more cultural than technical.&lt;/p&gt;
-
-&lt;h2 id=&#34;reasons-to-go-career-progression&#34;&gt;Reasons to go - career progression&lt;/h2&gt;
-
-&lt;p&gt;Another significant reason, and one that I believe contributes to the problems around delivering digital projects in general, is that there isn&amp;rsquo;t really a clear career progression for data scientists on the technical side.  Once you get to a certain level the only way up is to become a manager, it&amp;rsquo;s not possible to stay close to the technical work.&lt;/p&gt;
-
-&lt;p&gt;This contrasts with my previous experience in the pharmaceutical industry where a scientific leadership career track is available for people who want to continue to focus on science rather than people management.  Top tech companies such as Spotify also offer technical career tracks.&lt;/p&gt;
-
-&lt;p&gt;This has two unfortunate effects.  Firstly, it deprives the organisation not just of crucial technical knowledge but also of leaders with deep technical expertise.  Secondly, it deprives senior data scientists looking to make their next career step of mentors and role models who they can learn from.&lt;/p&gt;
-
-&lt;p&gt;Technical leadership is not just technical knowledge, it is also about how to develop technical expertise in an organisation and how to integrate technical strategy into business strategy.&lt;/p&gt;
-
-&lt;h2 id=&#34;reasons-to-go-personal&#34;&gt;Reasons to go - personal&lt;/h2&gt;
-
-&lt;p&gt;Finally, as with any job move decision, I had to consider what I wanted from a job and how that lined up with what was on offer.  I felt strongly that I wanted to continue to develop my technical skills in both the software and mathematical side of data science.  It seemed that staying put would pull me further away from that and towards a role helping to manage a group, something that I want to do ultimately, but that I&amp;rsquo;m not sure I want just yet (and perhaps not somewere with the bureaucratic and political overhead of the civil service).&lt;/p&gt;
-
-&lt;p&gt;My ideal role would have been driving and championing the adoption of data science approaches and techniques within DWP, but I didn&amp;rsquo;t feel my skillset was quite there yet, and that role didn&amp;rsquo;t exist.&lt;/p&gt;
-
-&lt;h2 id=&#34;advice-if-you-re-considering-a-civil-service-career&#34;&gt;Advice if you&amp;rsquo;re considering a civil service career&lt;/h2&gt;
-
-&lt;p&gt;Would I recommend the civil service to budding data scientists?  The answer is a definite YES!  It&amp;rsquo;s certainly a great way into data science from academia for example.  But equally I would advocate not staying more than a few years at a time because you will learn a different way in the private sector and have more opportunity to work with the latest technology.  In my opinion it’s also important for people working in government to also have experience outside of government.&lt;/p&gt;
-
-&lt;p&gt;Even if you only want to work in government, I think you’ll become a better civil servant for having some experience of industry, and you will also be able to bring back into the civil service new ways of doing things.  In addition, you may find your time in the civil service limited because of the lack of career progression opportunities for data scientists at present, although there are hopeful signs that this is changing!&lt;/p&gt;
-
-&lt;h2 id=&#34;looking-forward&#34;&gt;Looking forward&lt;/h2&gt;
-
-&lt;p&gt;My next role is a really exciting opportunity with a small, dynamic software company where I will be working alongside experts in cutting edge cloud technologies.  I’m looking forward to the new challenge of working in a different environment again, and being the technical dunce with lots to learn from all those smart software and DevOps engineers!!  But equally I&amp;rsquo;m confident that I can bring a different way of looking at things, not just from my scientific career but also from my experience working in government.  Bring it on!&lt;/p&gt;
-</description>
+      <description>Moving from bioinformatics to data science Almost exactly a year after contemplating my last day as a bioinformatician, I am now contemplating my last day as a data scientist in the Department for Work and Pensions, part of the UK civil service.
+As I&amp;rsquo;ve blogged about previously, bioinformatics experience is highly relevant in the data science job market, and I&amp;rsquo;ve also discovered how important the ‘science’ bit of data science is.</description>
     </item>
     
     <item>
@@ -70,153 +37,7 @@
       <pubDate>Sat, 26 May 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/2018/05/26/reproducible-data-science-environments-with-docker/</guid>
-      <description>
-
-&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
-
-&lt;p&gt;Since starting at DWP Digital, I&amp;rsquo;ve spent quite a bit of time working with some colleagues developing our analysis environments.  We need to be able to control and adapt our environments quite rapidly so that we can use the latest and greatest tools, but we also need these environments to be robust and reproducible and to be deployed in a variety of hosting contexts including laptops and our secure internal environment.  Containerisation technology, specifically &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt;, has emerged as a key tool in this and I wrote a non-technical &amp;lsquo;official&amp;rsquo; &lt;a href=&#34;https://dwpdigital.blog.gov.uk/2018/05/18/using-containers-to-deliver-our-data-projects/&#34;&gt;blog for DWP Digital&lt;/a&gt; which gained quite a bit of interest.  This post covers the technical aspects of how what we actually did this which will hopefully be helpful to others in a similar situation by walking through an example codebase on GitHub at &lt;a href=&#34;https://github.com/chapmandu2/datasci_docker&#34;&gt;chapmandu2/datasci_docker&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&#34;three-components-of-reproducibility&#34;&gt;Three components of reproducibility&lt;/h2&gt;
-
-&lt;p&gt;There are three important aspects to reproducible data science:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;code&lt;/li&gt;
-&lt;li&gt;data&lt;/li&gt;
-&lt;li&gt;environment&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Unless we have systems and processes in place to control and monitor changes to these three aspects, we won&amp;rsquo;t be able to reproduce our analysis.  Data is perhaps the easiest aspect to control, since in many cases the data is static and just won&amp;rsquo;t change, but even so it is worth recording data time stamps or creation dates.  If the data is a live feed then things become a lot more complex.  Code version control is a critical component of data analysis and git has emerged as the de-facto standard in data science.&lt;/p&gt;
-
-&lt;h2 id=&#34;open-source-is-great-but-also-a-challenge-for-reproducibility&#34;&gt;Open source is great, but also a challenge for reproducibility&lt;/h2&gt;
-
-&lt;p&gt;Control of environments is more difficult.  The diversity and rapid evolution of data science tools is a huge benefit in contemporary data science, but the plethora of libraries, packages and versions can also cause problems.  A slight change in functionality between versions of one library can result in a change in the output of an analysis, even though the same code is used.  Although environment management options are available for R and Python themselves (packrat for R, pipenv and conda for Python), these can still be problematic to use, especially if components outside of R/Python are important, for example system libraries.&lt;/p&gt;
-
-&lt;h2 id=&#34;enter-docker&#34;&gt;Enter Docker&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt; has emerged as a way to manage data science environments.  Docker containers can be thought of as very lightweight virtual machines, with the advantage that they can be relatively small and also fast to instantiate.  A Docker container is derived from a Docker image, and an image can be built from a recipe file called a Dockerfile.  This means that the code to build the Docker image can be version controlled in the same way as the analysis code, but also that the Docker image can be archived and retrieved in future so that the exact same environment can be used to run an analysis.  The rest of this blog post describes one possible workflow for using Docker for environment management, that also integrates &lt;a href=&#34;https://www.gnu.org/software/make/manual/html_node/Introduction.html&#34;&gt;Makefiles&lt;/a&gt; and &lt;a href=&#34;https://git-scm.com/&#34;&gt;git&lt;/a&gt; for a very high level of reproducibility.&lt;/p&gt;
-
-&lt;h2 id=&#34;overview-of-the-workflow&#34;&gt;Overview of the workflow&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src=&#34;/post/docker_workflow.png&#34; alt=&#34;Docker Workflow&#34; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;images-as-layers&#34;&gt;Images as layers&lt;/h3&gt;
-
-&lt;p&gt;We built our images as layers which build on top of eachother:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;00-docker: creates some foundations for capturing metadata&lt;/li&gt;
-&lt;li&gt;01-linux: installs the linux system libraries and applications such as R&lt;/li&gt;
-&lt;li&gt;02-r: installs a set of R packages which tend to be used across all projects&lt;/li&gt;
-&lt;li&gt;03-rstudio: installs RStudio Server&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;On top of these we then build further project specific images which share the components above, but add project specific requirements.  For example, an NLP project might add various NLP packages.  This gives a balance of having some consistency between projects, whilst allowing projects to have flexibility over the tools they have access to.&lt;/p&gt;
-
-&lt;h3 id=&#34;dockerfiles-as-recipes&#34;&gt;Dockerfiles as recipes&lt;/h3&gt;
-
-&lt;p&gt;A &lt;a href=&#34;https://docs.docker.com/engine/reference/builder/&#34;&gt;Dockerfile&lt;/a&gt; is like a recipe for a cake.  Just as a recipe species which ingredients in what order are required to make the cake mix, we can specify the exact instructions required to make a Docker image. Which directories have to be created, which software has to be installed, all of this is captured in a Dockerfile, and as this is just a text file it can be version controlled using git.&lt;/p&gt;
-
-&lt;h3 id=&#34;makefiles-as-oven-settings&#34;&gt;Makefiles as oven settings&lt;/h3&gt;
-
-&lt;p&gt;If a Dockerfile is a recipe, then Makefiles are like the cooking instructions.  To bake a cake we need to know how long we need to bake it for and at what temperature, otherwise the cake will turn out differently even though the cake mix was the same. The same Dockerfile will give a slightly different result depending on the parameters that are specified in the &lt;code&gt;docker build&lt;/code&gt;  and &lt;code&gt;docker run&lt;/code&gt; commands.  This is especially important for controlling how metadata is captured.  Just like Dockerfiles, Makefiles can also be version controlled with git.&lt;/p&gt;
-
-&lt;h3 id=&#34;container-registries-as-a-freezer&#34;&gt;Container registries as a freezer&lt;/h3&gt;
-
-&lt;p&gt;So we have our recipe and our cooking instructions, but if I bake a cake today it won&amp;rsquo;t be exactly the same as a cake baked in a year&amp;rsquo;s time: the eggs will be slightly different, I might be using a different oven.  In the same way, even with our best efforts it is very difficult to guarantee that a docker image will be the same because the build process depends on various resources on the internet from which we download the software.  Even if we try to specify exact software versions, it&amp;rsquo;s going to be difficult to guarantee an identical build.  Therefore the only solution is to archive the Docker image itself, just as we might freeze a cake.  To do this we can use a container registry such as Amazon&amp;rsquo;s Elastic Container Registry.&lt;/p&gt;
-
-&lt;h3 id=&#34;metadata-and-git-integration&#34;&gt;Metadata and git integration&lt;/h3&gt;
-
-&lt;p&gt;We&amp;rsquo;ve gone to a lot of effort to ensure reproducibility, the last step is to capture metadata in our Docker image so that we know how it was created and what version it was.  We want to link the Docker image back to the code that created it, and the way to do this is to link it to our version control system: git.  There are two ways in which we need this metadata to be visible:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;from the outside: so we can choose which Docker image to use.&lt;/li&gt;
-&lt;li&gt;from the inside: so that when we carry out our analysis we know which Docker image we&amp;rsquo;re using.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;The way that this is managed in the example repository is as follows:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;the make command captures the current git commit and any git tags&lt;/li&gt;
-&lt;li&gt;these are included in the &lt;code&gt;docker build&lt;/code&gt; command as build arguments&lt;/li&gt;
-&lt;li&gt;the build arguments are captured in the Dockerfile as Docker labels that can be retrieved with a &lt;code&gt;docker inspect&lt;/code&gt; command (external metadata)&lt;/li&gt;
-&lt;li&gt;the build arguments are fed to a shell script (see 00-docker) which creates various audit files in &lt;code&gt;/etc/docker&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;the information in &lt;code&gt;/etc/docker&lt;/code&gt; is then available to anything running within the Docker container (internal metadata)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;In practice a message is shown when R is launched that shows the build information, and this message can also be included in output log files or within an RMarkdown document.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;################################ 
-# DOCKER BUILD INFORMATION 
-################################ 
- 
-This is docker image: ds-stage-02-r:v1.1 
-Built from git commit: 3d07371 
-See https://github.com/chapmandu2/datasci_docker/tree/3d07371 for Dockerfile code 
-See /etc/docker/docker_build_history.txt for provenance of this environment. 
-See /etc/docker for more information 
- 
-################################ 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;workflow-instructions&#34;&gt;Workflow instructions&lt;/h2&gt;
-
-&lt;h3 id=&#34;clone-the-git-repo&#34;&gt;Clone the git repo&lt;/h3&gt;
-
-&lt;p&gt;Assuming that you already have Docker installed on your computer, clone the git repository &lt;a href=&#34;https://github.com/chapmandu2/datasci_docker&#34;&gt;chapmandu2/datasci_docker&lt;/a&gt; from GitHub:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;git clone https://github.com/chapmandu2/datasci_docker
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;repo-structure&#34;&gt;Repo structure&lt;/h3&gt;
-
-&lt;p&gt;Within the repo there is a Makefile and a readme and a number of directories each corresponding to an image.  The Makefile at the top level is the master Makefile and contains the shared logic required to build all of the images.  Each image also has its own Makefile which references the master Makefile.  Feel free to look at the Makefile but you don&amp;rsquo;t need to understand the details at this stage.&lt;/p&gt;
-
-&lt;h3 id=&#34;make-the-00-docker-image&#34;&gt;Make the 00-docker image&lt;/h3&gt;
-
-&lt;p&gt;Navigate to the &lt;code&gt;ds-stage-00-docker&lt;/code&gt; directory and enter &lt;code&gt;make build&lt;/code&gt; - this will build the first docker image which includes the metadata audit functionality.  If you wish you can enter &lt;code&gt;make run&lt;/code&gt; which will create and run a container from this image and you can look in the &lt;code&gt;/etc/docker&lt;/code&gt; directory.  The &lt;code&gt;generate_docker_info.sh&lt;/code&gt; script is run during the docker build process to capture and store all of the metadata.&lt;/p&gt;
-
-&lt;h3 id=&#34;make-the-01-linux-image&#34;&gt;Make the 01-linux image&lt;/h3&gt;
-
-&lt;p&gt;Next navigate to the &lt;code&gt;ds-stage-01-linux&lt;/code&gt; directory and again enter &lt;code&gt;make build&lt;/code&gt; to build the linux base image.  This will take a minute or two depending on your internet connection as various software libraries are downloaded.  Once finished, you can again enter &lt;code&gt;make run&lt;/code&gt; to explore the image - check out the &lt;code&gt;/etc/docker&lt;/code&gt; directory to see how the metadata has changed.&lt;/p&gt;
-
-&lt;h3 id=&#34;make-the-02-r-image&#34;&gt;Make the 02-r image&lt;/h3&gt;
-
-&lt;p&gt;Now navigate to the &lt;code&gt;ds-stage-02-r&lt;/code&gt; directory do the same steps as above: &lt;code&gt;make build&lt;/code&gt; to build the image and &lt;code&gt;make run&lt;/code&gt; to run it.  For a bit of fun try this command:&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;docker run -it --rm --entrypoint R ds-stage-02-r:latest&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;This will instantiate a container from the image as before, but rather than expose a bash prompt will run R and expose this.  To the user it&amp;rsquo;s almost as quick as launching R running natively on their local system.&lt;/p&gt;
-
-&lt;h3 id=&#34;make-the-03-rstudio-image&#34;&gt;Make the 03-rstudio image&lt;/h3&gt;
-
-&lt;p&gt;As before, navigate to the directory and enter &lt;code&gt;make build&lt;/code&gt; and &lt;code&gt;make run&lt;/code&gt;.  This time, however, the container runs in detatched mode and exposes an RStudio Server instance which can be accessed from &lt;code&gt;localhost:8787&lt;/code&gt; in a browser and authenticated using &lt;code&gt;rstudio:rstudio&lt;/code&gt;.  Now we are running R within the RStudio Server IDE.  It is this image which can be deployed onto a server, whether on the local network or on the cloud, allowing users to log in from their browser and use a reproducible data environment.&lt;/p&gt;
-
-&lt;h3 id=&#34;make-a-project-specific-image&#34;&gt;Make a project specific image&lt;/h3&gt;
-
-&lt;p&gt;To make a project specific image, it is as simple as building on the contents of the &lt;code&gt;ds-stage-11-project&lt;/code&gt; directory.  Add any linux system requirements, such as &lt;code&gt;libpng&lt;/code&gt; in this case, and any R packages to the relevant sections.  You can be as sophisticated as you like here, but the best approach is to work out your installation process on a container of the base image first, and then transfer this process into the Dockerfile.  I will try to add some more sophisticated examples later, we have images with Python also installed, difficult R installs such as the RStan, and R packages installed from github. &lt;a href=&#34;https://hub.docker.com/&#34;&gt;Dockerhub&lt;/a&gt; is a good place to look for inspiration.&lt;/p&gt;
-
-&lt;h2 id=&#34;docker-registries&#34;&gt;Docker registries&lt;/h2&gt;
-
-&lt;p&gt;I have deliberately not included in this post the part of the workflow that involves pushing the Docker image to a registry. However, the code is present in the Makefile and it is just a case of specifying &lt;code&gt;my-repo/my-image&lt;/code&gt; as the base image, and modifying the Amazon ECR section of the master Makefile (line 40).  Then add a &lt;code&gt;make push&lt;/code&gt; command to the sequence of make commands used thus far.  Note that I set up some logic that required a git commit associated with the image to be tagged in order to be pushed to a repository.&lt;/p&gt;
-
-&lt;p&gt;The benefit of using a registry is that it makes it easier to deploy and share images, and that the build process can be carried out anywhere that the git repo and docker registry is accessible from.  One useful option is to build images on an EC2 instance on AWS, since this has a very fast network connection that expidites the build process.&lt;/p&gt;
-
-&lt;h2 id=&#34;potential-improvements&#34;&gt;Potential improvements&lt;/h2&gt;
-
-&lt;p&gt;The template shared here seems to have worked reasonably well but there is room for improvement.  I am a complete beginner in using Make and whilst it&amp;rsquo;s very powerful, the Makefiles could be more cleanly constructed.  In addition, shared parameters such as the registry address could be stored in a repo-wide yaml file rather than being buried within a Makefile.  The main improvement, however, would be in how git tags and commit id&amp;rsquo;s are used.  As it stands, changes to the Dockerfile could be made but not committed, and the resultant image would still have the current git commit associated with it.  I left it like this for pragmatic reasons - when you are developing Docker containers it&amp;rsquo;s a pain to have to commit every time you attempt to build!  So it&amp;rsquo;s important to remember this, and at the end when you think you&amp;rsquo;re done, to go back and build every image again with the same code.&lt;/p&gt;
-
-&lt;h2 id=&#34;conclusions&#34;&gt;Conclusions&lt;/h2&gt;
-
-&lt;p&gt;In this blog post I have shared a workflow for developing reproducible data science environments using Docker.  I hope that it useful to others in their research, and please let me know if you have any ideas for improvements!&lt;/p&gt;
-
-&lt;h2 id=&#34;postscript&#34;&gt;Postscript&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;There are RStudio and R images available on DockerHub under the &lt;a href=&#34;https://hub.docker.com/u/rocker/&#34;&gt;rocker&lt;/a&gt; account.  These can be more convenient starting points than a linux base image.  In our case we needed Centos as the base Linux OS rather than Ubuntu, hence why we started from scratch.&lt;/li&gt;
-&lt;li&gt;The example git repo was designed to be relatively quick to build for example purposes, it probably doesn&amp;rsquo;t include enough linux libraries or R packages to actually be useful.  I&amp;rsquo;ll try to add a more useful example to the repo.&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+      <description>Introduction Since starting at DWP Digital, I&amp;rsquo;ve spent quite a bit of time working with some colleagues developing our analysis environments. We need to be able to control and adapt our environments quite rapidly so that we can use the latest and greatest tools, but we also need these environments to be robust and reproducible and to be deployed in a variety of hosting contexts including laptops and our secure internal environment.</description>
     </item>
     
     <item>
@@ -225,42 +46,8 @@ See /etc/docker for more information
       <pubDate>Sat, 03 Mar 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/2018/03/03/why-bioinformaticians-should-consider-themselves-data-scientists/</guid>
-      <description>
-
-&lt;h2 id=&#34;my-background&#34;&gt;My background&lt;/h2&gt;
-
-&lt;p&gt;I&amp;rsquo;ve been a bioinformatician for most of the 20 years since I graduated, but now I&amp;rsquo;m a data scientist working for the Civil Service.  In this post I&amp;rsquo;m going to explain why I made this change, and why I think all bioinformaticians should think of themselves as data scientists with a specialism in biology, rather than as a biologist with a specialism in computational science.&lt;/p&gt;
-
-&lt;p&gt;I started my career at AstraZeneca working in a genetics and sequencing lab, looking for variations in genes that might explain differential response to drugs.  I soon realised that I&amp;rsquo;d rather be analysing data than generating it, and was able to transition to a bioinformatics role in the company.  I ended up being responsible for bioinformatics support to drug discovery projects in the company&amp;rsquo;s diabetes and obesity group, and then left and joined Cancer Research UK where I did a very similar job supporting oncology projects.&lt;/p&gt;
-
-&lt;h2 id=&#34;issues&#34;&gt;Issues&lt;/h2&gt;
-
-&lt;p&gt;Whilst I loved what I did, there were issues:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;I was on my own in a group of 30-40 people who didn&amp;rsquo;t really understand what I did, and couldn&amp;rsquo;t really help me improve or develop.&lt;/li&gt;
-&lt;li&gt;There wasn&amp;rsquo;t really anywhere I could progress to in my role.&lt;/li&gt;
-&lt;li&gt;Other jobs tended to be similar, providing support to others, sometimes in a small group, sometimes alone.&lt;/li&gt;
-&lt;li&gt;Academia offered roles in bioinformatics support groups, or maybe even being head of such a group.  But I wasn&amp;rsquo;t sure that this idea of being a service function really suited me, and the pay wasn&amp;rsquo;t very good.&lt;/li&gt;
-&lt;li&gt;Most independent positions in bioinformatics tended to be Principal Investigator track, not an easy career path to follow with many pitfalls!&lt;/li&gt;
-&lt;li&gt;Industry offered some options, but senior positions are still quite rare and in the UK tend to be focussed in specific parts of the country (Cambridge, Oxford and London)&lt;/li&gt;
-&lt;li&gt;Whilst I enjoyed my role, I was acutely aware than many bioinformatics roles were for &amp;lsquo;someone to push the buttons&amp;rsquo; as a colleague once described it.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;becoming-a-data-scientist&#34;&gt;Becoming a data scientist&lt;/h2&gt;
-
-&lt;p&gt;When my group leader at CRUK retired, I decided that I should give data science a go.  I could see that many of my skills in consultation, stakeholder engagement, project planning, coding and statistics would be transferrable.  To my surprised I got the first job I applied for and started in November 2017.&lt;/p&gt;
-
-&lt;p&gt;What have I discovered?  Well for a start the definition of a data scientist is just as varied as that of a bioinformatician!  I was concerned that my lack of formal statistical training might be a problem, but I&amp;rsquo;ve not found that to be the case.  Perhaps if you want to be a deep learning specialst at Google you need that specific background, but mostly companies are literally crying out for people who can not only write code and do analysis, but also work independently, develop an understanding of the business, and communicate with non-technical people.  As a bioinformatician you will definitely have something to offer!  In fact, bioinformatics experience is quite sought after in data science.&lt;/p&gt;
-
-&lt;h2 id=&#34;what-s-great-about-being-a-data-scientist&#34;&gt;What&amp;rsquo;s great about being a data scientist?&lt;/h2&gt;
-
-&lt;p&gt;The thing I like the most about my job is working in a team and in a community of data scientists, and being focussed on projects with practical benefit.  Doing the computational stuff well is important, other people in the organisation are really interested in what you do, and want to develop data science skills themselves.  But most of all it&amp;rsquo;s the universe of opportunity that opens up - since I changed my LinkedIn job title to &amp;lsquo;Data Scientist&amp;rsquo; I get 4 or 5 messages a week from recruiters.  It&amp;rsquo;s a really competitive job market, and you&amp;rsquo;re in demand.  There is a clear career progression from Data Scientist, to Senior Data Scientist, to Lead Data Scientist, to Head of Data Science, and this doesn&amp;rsquo;t have to be in the same organisation.  Apart from a very few biotech and pharmaceutical companies, those sorts of opportunities just don&amp;rsquo;t exist in bioinformatics.&lt;/p&gt;
-
-&lt;p&gt;As a Data Scientist, there are opportunities in almost every sector you can imagine, from energy, to finance, retail and so on.  Whilst I would love to work in healthcare again eventually, for now I&amp;rsquo;m quite content to learn my trade in other sectors, knowing that I can bring that experience back at some point in the future.&lt;/p&gt;
-
-&lt;p&gt;So if you&amp;rsquo;re a bioinformatician and wondering where to go next, there might be more opportunities out there than you think if you think of yourself as a data scientist!&lt;/p&gt;
-</description>
+      <description>My background I&amp;rsquo;ve been a bioinformatician for most of the 20 years since I graduated, but now I&amp;rsquo;m a data scientist working for the Civil Service. In this post I&amp;rsquo;m going to explain why I made this change, and why I think all bioinformaticians should think of themselves as data scientists with a specialism in biology, rather than as a biologist with a specialism in computational science.
+I started my career at AstraZeneca working in a genetics and sequencing lab, looking for variations in genes that might explain differential response to drugs.</description>
     </item>
     
   </channel>

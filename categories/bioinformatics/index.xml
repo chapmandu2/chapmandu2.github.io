@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>bioinformatics on Phil Chapman&#39;s Blog</title>
-    <link>/categories/bioinformatics/index.xml</link>
-    <description>Recent content in bioinformatics on Phil Chapman&#39;s Blog</description>
+    <title>Bioinformatics on Phil Chapman&#39;s Blog</title>
+    <link>/categories/bioinformatics/</link>
+    <description>Recent content in Bioinformatics on Phil Chapman&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="/categories/bioinformatics/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 03 Mar 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/bioinformatics/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>Why bioinformaticians should consider themselves data scientists</title>
@@ -14,42 +17,8 @@
       <pubDate>Sat, 03 Mar 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/2018/03/03/why-bioinformaticians-should-consider-themselves-data-scientists/</guid>
-      <description>
-
-&lt;h2 id=&#34;my-background&#34;&gt;My background&lt;/h2&gt;
-
-&lt;p&gt;I&amp;rsquo;ve been a bioinformatician for most of the 20 years since I graduated, but now I&amp;rsquo;m a data scientist working for the Civil Service.  In this post I&amp;rsquo;m going to explain why I made this change, and why I think all bioinformaticians should think of themselves as data scientists with a specialism in biology, rather than as a biologist with a specialism in computational science.&lt;/p&gt;
-
-&lt;p&gt;I started my career at AstraZeneca working in a genetics and sequencing lab, looking for variations in genes that might explain differential response to drugs.  I soon realised that I&amp;rsquo;d rather be analysing data than generating it, and was able to transition to a bioinformatics role in the company.  I ended up being responsible for bioinformatics support to drug discovery projects in the company&amp;rsquo;s diabetes and obesity group, and then left and joined Cancer Research UK where I did a very similar job supporting oncology projects.&lt;/p&gt;
-
-&lt;h2 id=&#34;issues&#34;&gt;Issues&lt;/h2&gt;
-
-&lt;p&gt;Whilst I loved what I did, there were issues:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;I was on my own in a group of 30-40 people who didn&amp;rsquo;t really understand what I did, and couldn&amp;rsquo;t really help me improve or develop.&lt;/li&gt;
-&lt;li&gt;There wasn&amp;rsquo;t really anywhere I could progress to in my role.&lt;/li&gt;
-&lt;li&gt;Other jobs tended to be similar, providing support to others, sometimes in a small group, sometimes alone.&lt;/li&gt;
-&lt;li&gt;Academia offered roles in bioinformatics support groups, or maybe even being head of such a group.  But I wasn&amp;rsquo;t sure that this idea of being a service function really suited me, and the pay wasn&amp;rsquo;t very good.&lt;/li&gt;
-&lt;li&gt;Most independent positions in bioinformatics tended to be Principal Investigator track, not an easy career path to follow with many pitfalls!&lt;/li&gt;
-&lt;li&gt;Industry offered some options, but senior positions are still quite rare and in the UK tend to be focussed in specific parts of the country (Cambridge, Oxford and London)&lt;/li&gt;
-&lt;li&gt;Whilst I enjoyed my role, I was acutely aware than many bioinformatics roles were for &amp;lsquo;someone to push the buttons&amp;rsquo; as a colleague once described it.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;becoming-a-data-scientist&#34;&gt;Becoming a data scientist&lt;/h2&gt;
-
-&lt;p&gt;When my group leader at CRUK retired, I decided that I should give data science a go.  I could see that many of my skills in consultation, stakeholder engagement, project planning, coding and statistics would be transferrable.  To my surprised I got the first job I applied for and started in November 2017.&lt;/p&gt;
-
-&lt;p&gt;What have I discovered?  Well for a start the definition of a data scientist is just as varied as that of a bioinformatician!  I was concerned that my lack of formal statistical training might be a problem, but I&amp;rsquo;ve not found that to be the case.  Perhaps if you want to be a deep learning specialst at Google you need that specific background, but mostly companies are literally crying out for people who can not only write code and do analysis, but also work independently, develop an understanding of the business, and communicate with non-technical people.  As a bioinformatician you will definitely have something to offer!  In fact, bioinformatics experience is quite sought after in data science.&lt;/p&gt;
-
-&lt;h2 id=&#34;what-s-great-about-being-a-data-scientist&#34;&gt;What&amp;rsquo;s great about being a data scientist?&lt;/h2&gt;
-
-&lt;p&gt;The thing I like the most about my job is working in a team and in a community of data scientists, and being focussed on projects with practical benefit.  Doing the computational stuff well is important, other people in the organisation are really interested in what you do, and want to develop data science skills themselves.  But most of all it&amp;rsquo;s the universe of opportunity that opens up - since I changed my LinkedIn job title to &amp;lsquo;Data Scientist&amp;rsquo; I get 4 or 5 messages a week from recruiters.  It&amp;rsquo;s a really competitive job market, and you&amp;rsquo;re in demand.  There is a clear career progression from Data Scientist, to Senior Data Scientist, to Lead Data Scientist, to Head of Data Science, and this doesn&amp;rsquo;t have to be in the same organisation.  Apart from a very few biotech and pharmaceutical companies, those sorts of opportunities just don&amp;rsquo;t exist in bioinformatics.&lt;/p&gt;
-
-&lt;p&gt;As a Data Scientist, there are opportunities in almost every sector you can imagine, from energy, to finance, retail and so on.  Whilst I would love to work in healthcare again eventually, for now I&amp;rsquo;m quite content to learn my trade in other sectors, knowing that I can bring that experience back at some point in the future.&lt;/p&gt;
-
-&lt;p&gt;So if you&amp;rsquo;re a bioinformatician and wondering where to go next, there might be more opportunities out there than you think if you think of yourself as a data scientist!&lt;/p&gt;
-</description>
+      <description>My background I&amp;rsquo;ve been a bioinformatician for most of the 20 years since I graduated, but now I&amp;rsquo;m a data scientist working for the Civil Service. In this post I&amp;rsquo;m going to explain why I made this change, and why I think all bioinformaticians should think of themselves as data scientists with a specialism in biology, rather than as a biologist with a specialism in computational science.
+I started my career at AstraZeneca working in a genetics and sequencing lab, looking for variations in genes that might explain differential response to drugs.</description>
     </item>
     
     <item>
@@ -58,10 +27,7 @@
       <pubDate>Sat, 11 Nov 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017/11/11/last-day-as-a-bioinformatician/</guid>
-      <description>&lt;p&gt;Today is my last day in the Drug Discovery Unit at CRUK-MI.  There has been so much change this year it&amp;rsquo;s been hard to keep track!  In April our previous group head Donald Ogilvie retired, and on the day he retired there was a serious fire at the Institute.  We have subsequently relocated to Alderley Park, where I used to work when I was at Astrazeneca, which is causing me serious problems from a commuting perspective - rather than just over an hour on the train I now have to change trains and get a bus.  When combined with the inevitable uncertainty that comes with a change in group management, it just seemed like a good time to move on from a job I&amp;rsquo;ve really enjoyed for 5 years.&lt;/p&gt;
-
-&lt;p&gt;So what next?  Well I&amp;rsquo;ve taken a job as a Data Scientist at DWP Digital.  I have no idea how this will turn out, but I&amp;rsquo;m really looking forward to finding out how well what I&amp;rsquo;ve learnt as a bioinformatician translates to a different role, and hopefully learning loads of cool stuff as well.  I see it as a no-lose proposition, if it&amp;rsquo;s not for me I&amp;rsquo;m sure I won&amp;rsquo;t be any less qualified for a bioinformatics role than I am now, but if I enjoy it then it opens up a much deeper job pool than there is as a drug discovery bioinformatician, which is rather a niche of a niche.  We shall see!&lt;/p&gt;
-</description>
+      <description>Today is my last day in the Drug Discovery Unit at CRUK-MI. There has been so much change this year it&amp;rsquo;s been hard to keep track! In April our previous group head Donald Ogilvie retired, and on the day he retired there was a serious fire at the Institute. We have subsequently relocated to Alderley Park, where I used to work when I was at Astrazeneca, which is causing me serious problems from a commuting perspective - rather than just over an hour on the train I now have to change trains and get a bus.</description>
     </item>
     
     <item>
@@ -70,20 +36,8 @@
       <pubDate>Mon, 06 Nov 2017 00:00:00 +0000</pubDate>
       
       <guid>/post/2017/11/06/bioinformatics-tutorials/</guid>
-      <description>&lt;p&gt;I recorded a number of video tutorials before I left CRUK-MI on how to use various resources.  These can be found on their own &lt;a href=&#34;https://www.youtube.com/playlist?list=PL-qAmPoTXMBTdV26X-hgud7jU5fKjXPc5&#34;&gt;YouTube Channel&lt;/a&gt; or via the list below:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://youtu.be/_H8wbeKM2Is&#34;&gt;Introduction to cell line data&lt;/a&gt;: Overview of data available and an explanation of different genomics data types and what they can be used for.&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;Using IGV To Explore RNAseq Data&#34;&gt;Using IGV To Explore RNAseq Data&lt;/a&gt;: How to use the Broad Integrated Genomics Vieer to identify mutations and their consequences in RNAseq data&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://youtu.be/wrCuW87xppk&#34;&gt;Using the CCLE Genomics Explorer Shiny App To Identify Cell Lines &lt;/a&gt;: How to explore public domain cell line genomic data to identify suitable cell lines for further experimentation.&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://youtu.be/4-Af4-qeoCY&#34;&gt;Using IGV To Understand Cell Line Copy Number Data&lt;/a&gt;: How to explore copy number information at the genomic level using IGV&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://youtu.be/DT8cLOn3epw&#34;&gt;Using ENSEMBL To Find A Gene Sequence&lt;/a&gt;: How to use ENSEMBL to understand different transcript variants for a gene and choose the most appropriate one for experimentation.&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://youtu.be/EQzeKefmZVw&#34;&gt;IncucyteDRC Demo&lt;/a&gt;: Demonstration of the Incucyte DRC shiny application&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;cBioPortal Demo &lt;a href=&#34;https://youtu.be/aXtJWYJs4Xw&#34;&gt;Part 1&lt;/a&gt; and &lt;a href=&#34;https://youtu.be/F_-eJ2mrXrM&#34;&gt;Part 2&lt;/a&gt;: Demonstration of how to use the cBioPortal to explore large genomics cohorts such as TCGA&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+      <description>I recorded a number of video tutorials before I left CRUK-MI on how to use various resources. These can be found on their own YouTube Channel or via the list below:
+ Introduction to cell line data: Overview of data available and an explanation of different genomics data types and what they can be used for. Using IGV To Explore RNAseq Data: How to use the Broad Integrated Genomics Vieer to identify mutations and their consequences in RNAseq data Using the CCLE Genomics Explorer Shiny App To Identify Cell Lines : How to explore public domain cell line genomic data to identify suitable cell lines for further experimentation.</description>
     </item>
     
   </channel>

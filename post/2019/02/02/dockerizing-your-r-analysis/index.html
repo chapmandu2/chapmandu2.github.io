@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dockerizing your R analysis | Phil Chapman&#39;s Blog</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
+    
+  </head>
+
+  <body>
+    <nav>
+    <ul class="menu">
+      
+      <li><a href="/">Home</a></li>
+      
+      <li><a href="/about/">About</a></li>
+      
+      <li><a href="/consulting/">Consulting</a></li>
+      
+      <li><a href="/categories/">Categories</a></li>
+      
+    </ul>
+    <hr/>
+    </nav>
+
+<div class="article-meta">
+<h1><span class="title">Dockerizing your R analysis</span></h1>
+<h2 class="author">Phil Chapman</h2>
+<h2 class="date">2019/02/02</h2>
+</div>
+
+<main>
+
+
+<h2 id="introduction">Introduction</h2>
+
+<p>This post is the first in a series of blog posts about getting the things that we do with R out into the world beyond the normal R ecosystem.  I&rsquo;ll be talking about exploratory analyses, shiny apps, models, serverless functions, R packages, and Docker.  A lot about Docker.</p>
+
+<h2 id="why-should-you-care">Why should you care?</h2>
+
+<p>Why should you care about this? Well, if as a R user you can only really collaborate with other R users, you&rsquo;re limiting yourself as a data scientist.  If you send someone in IT an R script, what do you expect them to be able to do with it?  If you develop a model in R, how will you use that in production when your DevOps colleagues have never used R? What happens if everyone else in your team uses Python?</p>
+
+<h2 id="what-solutions-already-exist">What solutions already exist?</h2>
+
+<p>There are already some very good solutions to this problem: basically the software that RStudio provides.  RStudio Server Pro is a terrific collaboration tool for R users that gets an organisation away from the horrors of having R installed on every desktop, whilst RStudio Connect takes R users further in being able to publish their R Markdown files, shiny apps, Plumber API&rsquo;s and so on.</p>
+
+<h2 id="so-what-s-the-problem">So what&rsquo;s the problem?</h2>
+
+<p>The problem is that RStudio Connect and Server Pro are commercial, enterprise grade tools.  This means that within your organisation you will need to find a) someone to set them up and maintain them and (most likely) b) someone to agree to pay for them.  This is hard in small organisations, non-profit organisations, or even commercial organisations where you might be the only R user.  In addition, non-R users just won&rsquo;t be familiar with these tools, they don&rsquo;t translate into the world of a DevOps engineer.</p>
+
+<h2 id="where-docker-comes-in">Where Docker comes in</h2>
+
+<p>Docker is a containerization technology tha I&rsquo;ve <a href="https://chapmandu2.github.io/post/2018/03/03/why-bioinformaticians-should-consider-themselves-data-scientists/">blogged about before</a>, written a <a href="https://github.com/chapmandu2/docker-tutorial">tutorial</a> on, and recorded a <a href="https://www.youtube.com/playlist?list=PL-qAmPoTXMBQCvYlN1CuShvOyPWaocrYw">YouTube screencast</a>.  There are also some excellent other blog posts and tutorials in the &lsquo;other resources&rsquo; section at the end of this post.  It basically allows you to wrap up your R product in a self contained mini computer that can then be easily shared and run in a variety of different environments.</p>
+
+<p>Docker has fast become the lingua franca of software development and DevOps, so if you can translate your R data science product into a Docker data science product, it makes collaborating easier.</p>
+
+<h2 id="an-example">An example</h2>
+
+<p>In these blog posts, I am going to use the famous gapminder dataset to carry out a very similar analysis to that used as an example in Hadley Wickham&rsquo;s R for Data Science book: <a href="https://r4ds.had.co.nz/many-models.html">Chapter 25 Many Models</a>.  The scenario is that as an R user we have written an analysis of this dataset, and now want to share that analysis with someone else who isn&rsquo;t familiar with R but is technical enough to know Docker and Git.  So we&rsquo;re not sharing the analysis output with a non-technical colleague (the html or pdf knitted report would be fine for that), we want to share the analysis with a technical collaborator.</p>
+
+<h2 id="the-git-repo">The git repo</h2>
+
+<h3 id="running-instructions">Running instructions</h3>
+
+<p>The code for these blog posts is on GitHub - <a href="https://github.com/chapmandu2/gapminder-pipeline/">https://github.com/chapmandu2/gapminder-pipeline/</a>.  In this post we are considering the code in the directory <code>01-exploratory-analysis</code>.  Within this repo there are three files:</p>
+
+<ul>
+<li>Dockerfile</li>
+<li>Makefile</li>
+<li>gapminder-analysis.Rmd</li>
+</ul>
+
+<p>These three files contain all of the information needed to run the analysis.</p>
+
+<p>To run the analysis:</p>
+
+<ul>
+<li>type <code>git clone https://github.com/chapmandu2/gapminder-pipeline</code></li>
+<li>type <code>make run</code></li>
+<li>go to <code>http://localhost:8787</code> in your browser to launch RStudio Server</li>
+<li>find the cloned repo within the <code>hostdata</code> directory</li>
+<li>open the .Rproj file to open the RStudio Project</li>
+<li>open the .Rmd file and click on the <code>knit</code> button.</li>
+</ul>
+
+<h3 id="the-dockerfile">The Dockerfile</h3>
+
+<p>The Dockerfile is very simple:</p>
+
+<pre><code>FROM rocker/verse:3.5.2
+
+################
+#install linux deps
+################
+
+RUN apt-get update -y &amp;&amp; \
+	apt-get install -y \ 
+		curl
+
+################
+#install R packages
+################
+
+RUN R -e &quot;install.packages(c('gapminder'))&quot;
+</code></pre>
+
+<p>What this specifies is that the base image is the <code>rocker/verse</code> image of the <a href="https://www.rocker-project.org/">Rocker project</a>.  This amazing project develops and maintains Docker images that contain different versions of R, different sets of standard packages, as well as the open source version of RStudio and Shiny Server.  The <code>rocker/verse</code> image contains tidyverse packages as well as RStudio Server.</p>
+
+<p>We then run two commands, one to install any required linux utilities and another to install the gapminder package.  This gives us a Docker image on which we can run our analysis.</p>
+
+<h3 id="the-makefile">The Makefile</h3>
+
+<p>Makefiles are really useful for providing to the user the (version controlled) Docker commands required to build the Docker image and run the Docker containers.</p>
+
+<pre><code>build:
+	docker build --file=./Dockerfile --tag=gapminder-01 .
+
+run: build
+	docker run -d -p 8787:8787 \
+		-e DISABLE_AUTH=true \
+		--name='gapminder-01-ct' \
+		-v ${HOME}:/home/rstudio/hostdata \
+		gapminder-01;
+
+	sleep 3;
+	firefox 127.0.0.1:8787;
+
+stop:
+	docker stop gapminder-01-ct
+
+start:
+	docker start gapminder-01-ct
+
+remove: stop
+	docker rm gapminder-01-ct
+
+</code></pre>
+
+<p>The <code>make build</code> command is fairly straightforward, but the <code>make run</code> command is a little more complex:</p>
+
+<ul>
+<li><code>-d</code> runs the container in detatched mode</li>
+<li><code>-p 8787:8787</code> binds port 8787 on the container to port 8787 on the local computer</li>
+<li><code>-e DISABLE_AUTH=true</code> means that you don&rsquo;t have to log into RStudio Server</li>
+<li><code>-v ${HOME}:/home/rstudio/hostdata</code> binds the home directory on the local computer to an accessible location within the Docker container.  It&rsquo;s really important that you don&rsquo;t store any files you want to keep within the Docker container, since Docker containers are disposable!</li>
+<li><code>firefox 127.0.0.1:8787</code> this will open RStudio Server in firefox on linux, on a Mac replace <code>firefox</code> with <code>open</code>.</li>
+</ul>
+
+<p>The other commands are convenience commands to start, stop and delete containers.  In addition the run command re-builds the image before the docker run command, and the remove command stops the docker container before removing it.</p>
+
+<h2 id="portability-vs-reproducibility">Portability vs reproducibility</h2>
+
+<p>The three files in the 01-exploratory-analysis directory provide everything required to run the analysis.  It makes the analysis easily portable to other computers, virtual machines, cloud environments and so on.  It is somewhat reproducible but not entirely so.  The rocker project provides versioned images which are useful, but there is no guarantee if you build the image in Janurary that the same versions of different system dependencies and other R packages will be installed when you rebuild it in April.</p>
+
+<p>There are ways that you can specify versions, for example using the <code>remotes</code> package:</p>
+
+<pre><code>RUN R -e &quot;install.packages('remotes'); \
+  remotes::install_version('gapminder', '0.3.0')&quot;
+</code></pre>
+
+<p>However, it is more difficult to do this for any system libraries.  For example I had a situation where a pipeline broke on importing an excel file not because the version of the <code>readxl</code> R package was different, but because the version of the <code>libxls</code> system library had changed!</p>
+
+<p>The best way to absolutely guarantee reproducibility is to save the Docker image in a container registry such as <a href="https://hub.docker.com/">Docker Hub</a> so that you can re-use it.  This is beyond the scope of this blog post but you can read more about it in a <a href="https://chapmandu2.github.io/post/2018/05/26/reproducible-data-science-environments-with-docker/">previous post</a>.</p>
+
+<p>Tools such as <code>packrat</code> permit project specific management of package dependencies, although I&rsquo;m not sure how well they deal with system dependency issues!</p>
+
+<h2 id="conclusions">Conclusions</h2>
+
+<p>This blog post has provided a basic template for Dockerizing an exploratory analysis in R so that it is easily portable and relatively reproducible.  This approach allows analyses to be easily shared between colleagues, even if that colleague isn&rsquo;t familiar with R, and also allows different projects to maintain their own project specific environments.  The overhead is not large in terms of understanding, just a simple Dockerfile and a Makefile to script the Docker commands is all that is required.</p>
+
+<h2 id="other-resources">Other resources</h2>
+
+<ul>
+<li><a href="https://colinfay.me/docker-r-reproducibility/">https://colinfay.me/docker-r-reproducibility/</a></li>
+<li><a href="https://github.com/chapmandu2/docker-tutorial">https://github.com/chapmandu2/docker-tutorial</a></li>
+<li><a href="https://www.youtube.com/playlist?list=PL-qAmPoTXMBQCvYlN1CuShvOyPWaocrYw">https://www.youtube.com/playlist?list=PL-qAmPoTXMBQCvYlN1CuShvOyPWaocrYw</a></li>
+<li><a href="https://ropenscilabs.github.io/r-docker-tutorial/">https://ropenscilabs.github.io/r-docker-tutorial/</a></li>
+<li><a href="https://blog.revolutionanalytics.com/2018/03/r-and-docker.html">https://blog.revolutionanalytics.com/2018/03/r-and-docker.html</a></li>
+<li><a href="https://mdneuzerling.com/post/user-getting-started-with-r-and-docker/">https://mdneuzerling.com/post/user-getting-started-with-r-and-docker/</a></li>
+</ul>
+
+</main>
+
+  <footer>
+  <script src="//yihui.name/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+  
+  <hr/>
+  &copy; <a href="https://chapmandu2.github.io">Phil Chapman</a> 2019 | <a href="https://github.com/chapmandu2">Github</a> | <a href="https://twitter.com/chapmandu2">Twitter</a>
+  
+  </footer>
+  </body>
+</html>
+
