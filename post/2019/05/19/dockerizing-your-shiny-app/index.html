@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dockerizing your shiny app | Phil Chapman&#39;s Blog</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
+    
+  </head>
+
+  <body>
+    <nav>
+    <ul class="menu">
+      
+      <li><a href="/">Home</a></li>
+      
+      <li><a href="/about/">About</a></li>
+      
+      <li><a href="/consulting/">Consulting</a></li>
+      
+      <li><a href="/categories/">Categories</a></li>
+      
+    </ul>
+    <hr/>
+    </nav>
+
+<div class="article-meta">
+<h1><span class="title">Dockerizing your shiny app</span></h1>
+<h2 class="author">Phil Chapman</h2>
+<h2 class="date">2019/05/19</h2>
+</div>
+
+<main>
+
+
+<h1 id="introduction">Introduction</h1>
+
+<p>This is the second post in a series about turning data science products written in R into products that can be consumed by technical and non-technical colleagues who don&rsquo;t use R, without any significant additional infrastructure.  As I discussed in more detail in the <a href="/post/2019/02/02/dockerizing-your-r-analysis/">first post</a>, this requires taking advantage of common DevOps workflows and approaches involving  <a href="https://www.docker.com/">Docker</a>.</p>
+
+<h1 id="why-shiny">Why Shiny?</h1>
+
+<p>Most R users will have heard of <a href="https://shiny.rstudio.com/">Shiny</a>, it is an R package that makes it exceptionally easy to turn some R code into an interactive web application.  If you haven&rsquo;t heard of it then take a look at the <a href="https://shiny.rstudio.com/gallery/">Shiny Gallery</a> for some examples.</p>
+
+<h1 id="how-are-shiny-apps-typically-deployed-and-used">How are Shiny apps typically deployed and used?</h1>
+
+<p>Shiny apps are initially developed and used interactively within an RStudio session, and the code can be shared between R users relatively easily.  If there is a requirement for a non-R user to use a Shiny application, then RStudio&rsquo;s <a href="https://www.rstudio.com/products/shiny/shiny-server/">Shiny Server</a> can host apps on a central server and has an open source and Pro version available.  A Software-as-a-service option version of Shiny Server is also available called <a href="https://www.shinyapps.io/">ShinyApps.io</a>, whilst <a href="https://www.rstudio.com/products/connect/">RStudio Connect</a> offers even more functionality including hosting Shiny apps.</p>
+
+<h1 id="why-dockerize-then">Why Dockerize then?</h1>
+
+<p>Given all of these options for hosting Shiny apps, what role does Docker play?  As I explained in my , assuming that you don&rsquo;t want to host your Shiny app in the public domain then you either have to rely on your collaborator to be able to know enough about R to run your app in RStudio, or to have some secure hosting infrastructure available.  Dockerizing a Shiny app gives the option that your collaborator only needs to know the basics of git, the command line, and Docker, and nothing about R or Shiny.</p>
+
+<h1 id="an-example">An example</h1>
+
+<p>As in the , we are using the famous gapminder dataset.  The scenario is that we have written a very simple shiny app to interactively explore the data via some basic plots, and we want to share that app with someone who isn&rsquo;t familiar with R but has got at least a basic understanding of Docker and Git.</p>
+
+<h1 id="the-git-repo">The git repo</h1>
+
+<h2 id="running-instructions">Running instructions</h2>
+
+<p>The code for these blog posts is on GitHub - <a href="https://github.com/chapmandu2/gapminder-pipeline/">https://github.com/chapmandu2/gapminder-pipeline/</a>.  In this post we are considering the code in the directory <code>02-shiny-app</code>.  Within this repo there are three files in the top directory and a further file in the <code>plot-app</code> subdirectory:</p>
+
+<ul>
+<li>plot-app
+
+<ul>
+<li>app.R</li>
+</ul></li>
+<li>Dockerfile</li>
+<li>Makefile</li>
+<li>shiny-server.conf</li>
+</ul>
+
+<p>These four files contain all of the information needed to run the Shiny app.</p>
+
+<p>To run the app:</p>
+
+<ul>
+<li>type <code>git clone https://github.com/chapmandu2/gapminder-pipeline</code> (if you haven&rsquo;t already)</li>
+<li>navigate to the <code>02-shiny-app</code> directory</li>
+<li>type <code>make run</code></li>
+<li>two windows will open in firefox (if available)</li>
+<li>one browser window will open RStudio Server at <code>http://localhost:8787</code></li>
+<li>the second browser window will open Shiny Server at <code>http://localhost:3838/users/rstudio</code></li>
+<li>click on <code>plot-app</code> in the second window to open the shiny app.</li>
+</ul>
+
+<h2 id="the-dockerfile">The Dockerfile</h2>
+
+<p>The Dockerfile builds on that used in the  by installing and configuring Shiny Server:</p>
+
+<pre><code>FROM rocker/verse:3.5.2
+
+# add shiny server
+RUN export ADD=shiny &amp;&amp; bash /etc/cont-init.d/add
+
+################
+#install linux deps
+################
+
+RUN apt-get update -y &amp;&amp; \
+	apt-get install -y \ 
+		curl
+
+################
+#install R packages
+################
+
+RUN R -e &quot;install.packages(c('gapminder'))&quot;
+
+################
+# configure shiny server
+################
+
+COPY ./shiny-server.conf /etc/shiny-server/shiny-server.conf
+COPY ./plot-app /home/rstudio/ShinyApps/plot-app/
+RUN chown -hR rstudio:rstudio /home/rstudio/ShinyApps
+</code></pre>
+
+<p>The base image is <code>rocker/verse</code> from the <a href="https://www.rocker-project.org/">Rocker project</a>, but this Dockerfile takes advantage of the functionality provided with the Rocker images to add Shiny Server as well as RStudio Server.  It then runs the commands to install linux utilities and the gapminder R package.  Finally it configures Shiny Server by copying a shiny-server configuration file <code>shiny-server.conf</code> into the image, as well as the contents of the <code>plot-app</code> directory.  Finally it sets the appropriate owner permissions for the newly created ShinyApps directory.</p>
+
+<h2 id="the-makefile">The Makefile</h2>
+
+<p>The Makefile provides the user with an easy way to execute the Docker commands required to build the Docker image and run the Docker containers.  The <code>make run</code> command is below:</p>
+
+<pre><code>run: build
+	docker run -d -p 8787:8787 -p 3838:3838 \
+		-e DISABLE_AUTH=true \
+		--name='gapminder-02-ct' \
+		-v ${HOME}:/home/rstudio/hostdata \
+		gapminder-02;
+
+	sleep 3;
+	firefox 127.0.0.1:8787;
+	firefox 127.0.0.1:3838/users/rstudio;
+</code></pre>
+
+<ul>
+<li><code>-d</code> runs the container in detatched mode</li>
+<li><code>-p 8787:8787</code> binds port 8787 on the container to port 8787 on the local computer for RStudio Server</li>
+<li><code>-p 3838:3838</code> binds port 3838 on the container to port 3838 on the local computer for Shiny Server</li>
+<li><code>-e DISABLE_AUTH=true</code> means that you don&rsquo;t have to log into RStudio Server</li>
+<li><code>-v ${HOME}:/home/rstudio/hostdata</code> binds the home directory on the local computer to an accessible location within the Docker container.<br /></li>
+<li><code>firefox 127.0.0.1:8787</code> this will open RStudio Server in firefox on linux, on a Mac replace <code>firefox</code> with <code>open</code>.</li>
+<li><code>firefox 127.0.0.1:3838/users/rstudio</code> this will open Shiny Server in firefox on linux, on a Mac replace <code>firefox</code> with <code>open</code>.</li>
+</ul>
+
+<p>The other commands in the Makefile are convenience commands to start, stop and delete containers.</p>
+
+<p>This approach of exposing both RStudio Server and Shiny Server allows a user to not only view the Shiny App, but to also use RStudio to explore the code in more detail and potentially make changes.</p>
+
+<h2 id="deploying-a-shiny-app">Deploying a Shiny app</h2>
+
+<p>There is also a <code>make deploy</code> command:</p>
+
+<pre><code>deploy: build
+	docker run -d -p 9001:3838 \
+		-e DISABLE_AUTH=true \
+		--name='gapminder-02-deploy' \
+		gapminder-02;
+
+	sleep 3;
+	firefox 127.0.0.1:9001/users/rstudio/plot-app/;
+</code></pre>
+
+<p>This command only exposes the Shiny Server endpoint on port 9001 also jumps straight to the <code>plot-app</code> Shiny app.  This command could also be used to deploy the Docker image as a service, for example using <a href="https://azure.microsoft.com/en-gb/services/app-service/">MS Azure App Services</a> or on a Kubernetes cluster.</p>
+
+<h1 id="conclusions">Conclusions</h1>
+
+<p>This blog post has provided a basic template for Dockerizing a shiny app so that it is portable and relatively reproducible.  This approach allows a Shiny app and its dependencies (and an RStudio Server to modify the app) to be shared between colleagues with only a minimal understanding of Docker and the command line required.  It also sets the foundation for the Shiny app to be deployed as a Docker container service, for example using <a href="https://azure.microsoft.com/en-gb/services/app-service/">MS Azure App Services</a> or equivalent services from Amazon Web Services or Google Cloud Platform.</p>
+
+</main>
+
+  <footer>
+  <script src="//yihui.name/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+  
+  <hr/>
+  &copy; <a href="https://chapmandu2.github.io">Phil Chapman</a> 2019 | <a href="https://github.com/chapmandu2">Github</a> | <a href="https://twitter.com/chapmandu2">Twitter</a>
+  
+  </footer>
+  </body>
+</html>
+

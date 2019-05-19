@@ -6,10 +6,20 @@
     <description>Recent content in Docker on Phil Chapman&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 02 Feb 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 19 May 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/docker/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Dockerizing your shiny app</title>
+      <link>/post/2019/05/19/dockerizing-your-shiny-app/</link>
+      <pubDate>Sun, 19 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019/05/19/dockerizing-your-shiny-app/</guid>
+      <description>Introduction This is the second post in a series about turning data science products written in R into products that can be consumed by technical and non-technical colleagues who don&amp;rsquo;t use R, without any significant additional infrastructure. As I discussed in more detail in the first post, this requires taking advantage of common DevOps workflows and approaches involving Docker.
+Why Shiny? Most R users will have heard of Shiny, it is an R package that makes it exceptionally easy to turn some R code into an interactive web application.</description>
+    </item>
     
     <item>
       <title>Dockerizing your R analysis</title>
