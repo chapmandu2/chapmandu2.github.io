@@ -48,11 +48,11 @@
 
 <h1 id="why-dockerize-then">Why Dockerize then?</h1>
 
-<p>Given all of these options for hosting Shiny apps, what role does Docker play?  As I explained in my , assuming that you don&rsquo;t want to host your Shiny app in the public domain then you either have to rely on your collaborator to be able to know enough about R to run your app in RStudio, or to have some secure hosting infrastructure available.  Dockerizing a Shiny app gives the option that your collaborator only needs to know the basics of git, the command line, and Docker, and nothing about R or Shiny.</p>
+<p>Given all of these options for hosting Shiny apps, what role does Docker play?  As I explained in my <a href="/post/2019/02/02/dockerizing-your-r-analysis/">first post</a>, assuming that you don&rsquo;t want to host your Shiny app in the public domain then you either have to rely on your collaborator to be able to know enough about R to run your app in RStudio, or to have some secure hosting infrastructure available.  Dockerizing a Shiny app gives the option that your collaborator only needs to know the basics of git, the command line, and Docker, and nothing about R or Shiny.</p>
 
 <h1 id="an-example">An example</h1>
 
-<p>As in the , we are using the famous gapminder dataset.  The scenario is that we have written a very simple shiny app to interactively explore the data via some basic plots, and we want to share that app with someone who isn&rsquo;t familiar with R but has got at least a basic understanding of Docker and Git.</p>
+<p>As in the <a href="/post/2019/02/02/dockerizing-your-r-analysis/">first post</a>, we are using the famous gapminder dataset.  The scenario is that we have written a very simple shiny app to interactively explore the data via some basic plots, and we want to share that app with someone who isn&rsquo;t familiar with R but has got at least a basic understanding of Docker and Git.</p>
 
 <h1 id="the-git-repo">The git repo</h1>
 
@@ -87,7 +87,7 @@
 
 <h2 id="the-dockerfile">The Dockerfile</h2>
 
-<p>The Dockerfile builds on that used in the  by installing and configuring Shiny Server:</p>
+<p>The Dockerfile builds on that used in the <a href="/post/2019/02/02/dockerizing-your-r-analysis/">first post</a> by installing and configuring Shiny Server:</p>
 
 <pre><code>FROM rocker/verse:3.5.2
 
